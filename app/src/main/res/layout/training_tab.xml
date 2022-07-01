@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/start_training_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="200dp"
+        android:text="Start"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/speed_down_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="25dp"
+        android:text="slower"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/speed_display"
+        app:layout_constraintStart_toStartOf="@id/speed_down_button"
+        app:layout_constraintBottom_toTopOf="@id/speed_down_button"
+        app:layout_constraintEnd_toEndOf="@id/speed_down_button"
+        android:textSize="25dp"
+        android:layout_marginBottom="15dp"
+        android:text = "0.0"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/speed_up_button"
+        app:layout_constraintBottom_toTopOf="@id/speed_display"
+        app:layout_constraintStart_toStartOf="@id/speed_down_button"
+        app:layout_constraintEnd_toEndOf="@id/speed_down_button"
+        android:layout_marginBottom="15dp"
+        android:text="faster"/>
+
+
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/tilt_down_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="25dp"
+        android:text="slower"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/tilt_display"
+        app:layout_constraintStart_toStartOf="@id/tilt_down_button"
+        app:layout_constraintBottom_toTopOf="@id/tilt_down_button"
+        app:layout_constraintEnd_toEndOf="@id/tilt_down_button"
+        android:textSize="25dp"
+        android:layout_marginBottom="15dp"
+        android:text = "0.0"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/tilt_up_button"
+        app:layout_constraintBottom_toTopOf="@id/tilt_display"
+        app:layout_constraintStart_toStartOf="@id/tilt_down_button"
+        app:layout_constraintEnd_toEndOf="@id/tilt_down_button"
+        android:layout_marginBottom="15dp"
+        android:text="faster"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
