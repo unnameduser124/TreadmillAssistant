@@ -1,6 +1,6 @@
 package com.example.treadmillassistant.backend
 
-class Treadmill(public val id: Int=0, private var speed: Double, private var tilt: Double, private var mode: String = "", var name: String = "empty name") {
+class Treadmill(private var speed: Double = 0.0, private var tilt: Double = 0.0, private var mode: String = "", var name: String = "empty name", val id: Int=0) {
 
     fun increaseSpeed(){
         speed+=0.1
