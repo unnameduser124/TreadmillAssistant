@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.backend.workout.Workout
+import com.example.treadmillassistant.backend.workoutCalendar
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
+import java.time.LocalDateTime
 import java.util.*
 import java.util.Calendar.DATE
 
@@ -30,14 +34,16 @@ class CalendarPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = CalendarTabBinding.inflate(layoutInflater)
+        val calendar = Calendar.getInstance()
+
+        var dataset = workoutCalendar.workoutList.filter{ it.workoutTime.date == calendar.get(Calendar.DAY_OF_MONTH)
+                && it.workoutTime.month == calendar.get(Calendar.MONTH)
+                && it.workoutTime.year == calendar.get(Calendar.YEAR)}
         binding.trainingScheduleCalendar.setOnDateChangeListener { calendarView, i, i2, i3 ->
-
+            dataset = workoutCalendar.workoutList.filter{ it.workoutTime.date == i3 && it.workoutTime.month == i2 && it.workoutTime.year == i}
+            val itemAdapter = CalendarTrainingItemAdapter(dataset)
+            binding.dayWorkoutsList.adapter = itemAdapter
         }
-
-        val dataset = mutableListOf<Int>()
-        dataset.add(1)
-        dataset.add(2)
-        dataset.add(3)
 
         val itemAdapter = CalendarTrainingItemAdapter(dataset)
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)

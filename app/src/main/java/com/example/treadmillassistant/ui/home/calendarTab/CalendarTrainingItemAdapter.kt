@@ -13,11 +13,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
+import com.example.treadmillassistant.backend.workout.Workout
 import com.google.android.material.button.MaterialButton
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class CalendarTrainingItemAdapter(private val dataset: List<Int>): RecyclerView.Adapter<CalendarTrainingItemAdapter.ItemViewHolder>(){
+class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerView.Adapter<CalendarTrainingItemAdapter.ItemViewHolder>(){
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
         val timeView: TextView = view.findViewById(R.id.training_time)
@@ -30,8 +31,19 @@ class CalendarTrainingItemAdapter(private val dataset: List<Int>): RecyclerView.
     }
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = dataset[position]
-        holder.timeView.text = "17:30"
-        holder.durationView.text = "69 min"
+        if(item.workoutTime.minutes<10 && item.workoutTime.hours<10){
+            holder.timeView.text = "0${item.workoutTime.hours}:0${item.workoutTime.minutes}"
+        }
+        else if(item.workoutTime.minutes<10 && item.workoutTime.hours>10){
+            holder.timeView.text = "${item.workoutTime.hours}:0${item.workoutTime.minutes}"
+        }
+        else if(item.workoutTime.minutes>10 && item.workoutTime.hours<10){
+            holder.timeView.text = "0${item.workoutTime.hours}:${item.workoutTime.minutes}"
+        }
+        else{
+            holder.timeView.text = "${item.workoutTime.hours}:${item.workoutTime.minutes}"
+        }
+        holder.durationView.text = "Duration: ${item.workoutDuration} minutes"
 
     }
 
