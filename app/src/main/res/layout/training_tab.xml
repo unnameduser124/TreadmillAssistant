@@ -8,11 +8,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id = "@+id/start_training_button"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/speed_display"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="200dp"
-        android:text="Start"/>
+        android:text="start"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
@@ -21,7 +21,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="25dp"
-        android:text="slower"/>
+        android:background="@drawable/ic_baseline_keyboard_arrow_down_24"
+        android:backgroundTint="@color/black"
+        android:foreground="#00ffffff"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +42,9 @@
         app:layout_constraintStart_toStartOf="@id/speed_down_button"
         app:layout_constraintEnd_toEndOf="@id/speed_down_button"
         android:layout_marginBottom="15dp"
-        android:text="faster"/>
+        android:background="@drawable/ic_baseline_keyboard_arrow_up_24"
+        android:backgroundTint="@color/black"
+        android:foreground="#00ffffff"/>
 
 
 
@@ -51,7 +55,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="25dp"
-        android:text="slower"/>
+        android:background="@drawable/ic_baseline_keyboard_arrow_down_24"
+        android:backgroundTint="@color/black"
+        android:foreground="#00ffffff"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,5 +76,79 @@
         app:layout_constraintStart_toStartOf="@id/tilt_down_button"
         app:layout_constraintEnd_toEndOf="@id/tilt_down_button"
         android:layout_marginBottom="15dp"
-        android:text="faster"/>
+        android:background="@drawable/ic_baseline_keyboard_arrow_up_24"
+        android:backgroundTint="@color/black"
+        android:foreground="#00ffffff"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/distance_label"
+        android:text = "distance"
+        app:layout_constraintBottom_toTopOf="@id/distance_text_view"
+        android:gravity="center"
+        android:textSize="17dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/distance_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="150dp"
+        android:text = "10km"
+        android:textSize = "40dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/pace_label"
+        android:text = "pace"
+        app:layout_constraintBottom_toTopOf="@id/pace_text_view"
+        android:gravity="center"
+        android:textSize="17dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/pace_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/distance_text_view"
+        android:layout_margin="50dp"
+        android:text = "5'"
+        android:textSize = "40dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/time_label"
+        android:text = "time"
+        app:layout_constraintBottom_toTopOf="@id/time_text_view"
+        android:gravity="center"
+        android:textSize="17dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/time_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pace_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="50dp"
+        android:text = "100:07"
+        android:textSize = "40dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/progress_label"
+        android:text = "progress"
+        app:layout_constraintBottom_toTopOf="@id/progress_text_view"
+        android:gravity="center"
+        android:textSize="17dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/progress_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="50dp"
+        android:text = "98%"
+        android:textSize = "40dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

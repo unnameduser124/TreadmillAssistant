@@ -10,13 +10,13 @@ enum class WorkoutStatus{
     abandoned
 }
 
-class Workout(var workoutTime: Date,
-              var workoutDuration: Int,
-              var treadmill: Treadmill,
-              var mediaLink: String,
-              var workoutStatus: WorkoutStatus,
+class Workout(var workoutTime: Date = Date(),
+              var workoutDuration: Int = 0,
+              var treadmill: Treadmill = Treadmill(),
+              var mediaLink: String = "",
+              var workoutStatus: WorkoutStatus = WorkoutStatus.inProgress,
               var currentMoment: Int = 0,
-              var workoutPlan: WorkoutPlan,
+              var workoutPlan: WorkoutPlan = WorkoutPlan(),
               val ID: Int = 0) {
 
     fun getCurrentPhase(): WorkoutPhase{

@@ -29,7 +29,7 @@ fun generateMockData(){
         workoutPlanList.add(newWorkoutPlan)
     }
     for(i in 0..200){
-        workoutList.add(Workout(Date(2022, 6, i%30+1, (0..23).random(), (0..60).random()),
+        workoutList.add(Workout(Date(2022, 6, i%30+1, (0..23).random(), (0..60).random(), 0),
             (1..500).random(),
             Treadmill(),
             "mediaLink",

@@ -1,13 +1,27 @@
 package com.example.treadmillassistant.backend
 
-class Treadmill(private var speed: Double = 0.0, private var tilt: Double = 0.0, private var mode: String = "", var name: String = "empty name", val id: Int=0) {
+import javax.net.ssl.SSLPeerUnverifiedException
+
+class Treadmill(private var speed: Double = 0.0,
+                private var tilt: Double = 0.0,
+                private var mode: String = "",
+                var name: String = "empty name",
+                val id: Int = 0,
+                val maxSpeed: Double = 20.0,
+                val minSpeed: Double = 0.1,
+                val maxTilt: Double = 15.0,
+                val minTilt: Double = -5.0) {
 
     fun increaseSpeed(){
-        speed+=0.1
+        if(speed<maxSpeed) {
+            speed += 0.1
+        }
     }
 
     fun decreaseSpeed(){
-        speed-=0.1
+        if(speed>minSpeed){
+            speed-=0.1
+        }
     }
 
     fun setSpeed(speed: Double){
@@ -19,11 +33,18 @@ class Treadmill(private var speed: Double = 0.0, private var tilt: Double = 0.0,
     }
 
     fun increaseTilt(){
-        tilt+=0.1
+        if(tilt<maxTilt){
+            tilt+=0.1
+        }
     }
 
     fun decreaseTilt(){
-        tilt-=0.1
+        if(tilt>minTilt){
+            tilt-=0.1
+            if(tilt<minTilt){
+                tilt = minTilt
+            }
+        }
     }
 
     fun setTilt(tilt: Double){

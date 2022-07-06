@@ -14,6 +14,7 @@ import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workoutCalendar
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
+import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.util.*
 import java.util.Calendar.DATE
@@ -53,6 +54,14 @@ class CalendarPlaceholderFragment: Fragment() {
 
         return binding.root
     }
+
+    fun hashMessage(message: String): String {
+        val bytes = message.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("", { str, it -> str + "%02x".format(it) })
+    }
+
     companion object{
 
         private const val SECTION_NUMBER = "section number"

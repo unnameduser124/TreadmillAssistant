@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
@@ -23,6 +25,7 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
         val timeView: TextView = view.findViewById(R.id.training_time)
         val durationView: TextView = view.findViewById(R.id.training_duration)
+        val startButton: MaterialButton = view.findViewById(R.id.start_training_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder{
@@ -44,6 +47,11 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
             holder.timeView.text = "${item.workoutTime.hours}:${item.workoutTime.minutes}"
         }
         holder.durationView.text = "Duration: ${item.workoutDuration} minutes"
+
+        val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
+        if(item.workoutTime.before(date)){
+            holder.startButton.isGone = true
+        }
 
     }
 
