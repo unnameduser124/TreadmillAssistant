@@ -2,10 +2,12 @@ package com.example.treadmillassistant.backend
 
 import androidx.core.util.rangeTo
 import com.example.treadmillassistant.backend.workout.*
+import com.example.treadmillassistant.ui.hashMessage
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 var workoutCalendar = WorkoutCalendar()
+lateinit var user: User
 
 fun generateMockData(){
     workoutCalendar = WorkoutCalendar()
@@ -43,4 +45,6 @@ fun generateMockData(){
         workoutCalendar.addNewWorkout(it)
     }
     workoutCalendar.workoutList.sortBy { it.workoutTime }
+
+    user = User(workoutCalendar,"defaultUser", hashMessage("easyPassword"))
 }

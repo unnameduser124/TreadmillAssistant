@@ -9,10 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.treadmillassistant.backend.Treadmill
-import com.example.treadmillassistant.backend.lastPhaseStart
-import com.example.treadmillassistant.backend.trainingRunning
-import com.example.treadmillassistant.backend.trainingStartTime
+import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.example.treadmillassistant.databinding.TrainingTabBinding
@@ -36,14 +33,16 @@ class TrainingTabPlaceholderFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = TrainingTabBinding.inflate(layoutInflater)
+        val binding = com.example.treadmillassistant.databinding.TrainingTabBinding.inflate(layoutInflater)
         val treadmill = Treadmill()
-        val workout = Workout(treadmill = treadmill)
+        var workout = Workout(treadmill = treadmill)
 
+        binding.finishTrainingButton.isGone = true
         hideTrainingItems(binding)
 
         binding.startTrainingButton.setOnClickListener {
             if(!trainingRunning){
+                trainingRunning = true
                 lastPhaseStart = Calendar.getInstance().timeInMillis
                 showGenericWorkoutItems(binding)
                 treadmill.setSpeed(10.0)
@@ -55,11 +54,36 @@ class TrainingTabPlaceholderFragment: Fragment() {
                 trainingStartTime = Calendar.getInstance().timeInMillis
                 runTimer(binding, workout, treadmill)
             }
+            else if(trainingRunning && !trainingPaused){
+                trainingPaused = true
+                (it as MaterialButton).text = "resume"
+                binding.finishTrainingButton.isGone = false
+                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
+                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
+                workout.workoutPlan.addNewPhase(phase)
+            }
             else{
-                hideTrainingItems(binding)
-                (it as MaterialButton).text = "start"
+                trainingPaused = false
+                (it as MaterialButton).text = "stop"
+                binding.finishTrainingButton.isGone = true
+                lastPhaseStart = Calendar.getInstance().timeInMillis
+                trainingStartTime = Calendar.getInstance().timeInMillis
+                treadmill.setSpeed(10.0)
+                treadmill.setTilt(0.0)
+                runTimer(binding, workout, treadmill)
             }
 
+        }
+
+        binding.finishTrainingButton.setOnClickListener{
+            if(trainingRunning && trainingPaused){
+                trainingRunning = false
+                trainingPaused = false
+                workout = Workout(treadmill = treadmill)
+                hideTrainingItems(binding)
+                it.isGone = true
+                binding.startTrainingButton.text = "start"
+            }
         }
 
         binding.speedUpButton.setOnClickListener{
@@ -147,9 +171,9 @@ class TrainingTabPlaceholderFragment: Fragment() {
         val handler = Handler()
         var runnableCode = object: Runnable {
             override fun run() {
-                    if(binding.startTrainingButton.text=="stop"){
+                    if(trainingRunning && !trainingPaused ){
                         val timeInSeconds = Calendar.getInstance().timeInMillis/1000 - trainingStartTime/1000
-                        binding.timeTextView.text = "$timeInSeconds"
+                        binding.timeTextView.text = "${workout.workoutPlan.getTotalDuration() + timeInSeconds}"
                         val lastPhaseTimeInHours = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toDouble()/3600.0
                         binding.distanceTextView.text = "${Math.round((workout.workoutPlan.getTotalDistance()+ lastPhaseTimeInHours*treadmill.getSpeed())*100.0)/100.0} km"
                         handler.postDelayed(this, 250)
