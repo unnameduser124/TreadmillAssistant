@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.workout.Workout
+import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.google.android.material.button.MaterialButton
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -46,10 +47,10 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         else{
             holder.timeView.text = "${item.workoutTime.hours}:${item.workoutTime.minutes}"
         }
-        holder.durationView.text = "Duration: ${item.workoutDuration} minutes"
+        holder.durationView.text = "Duration: ${item.workoutDuration/60} minutes"
 
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
-        if(item.workoutTime.before(date)){
+        if(item.workoutTime.before(date) || item.workoutStatus!=WorkoutStatus.upcoming){
             holder.startButton.isGone = true
         }
 

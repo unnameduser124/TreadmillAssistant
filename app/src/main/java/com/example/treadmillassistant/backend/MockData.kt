@@ -2,7 +2,7 @@ package com.example.treadmillassistant.backend
 
 import androidx.core.util.rangeTo
 import com.example.treadmillassistant.backend.workout.*
-import com.example.treadmillassistant.ui.hashMessage
+import com.example.treadmillassistant.hashMessage
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
@@ -15,7 +15,7 @@ fun generateMockData(){
     var workoutPlanList = mutableListOf<WorkoutPlan>()
     var workoutList = mutableListOf<Workout>()
     for(i in 0..9){
-        var workoutPhase = WorkoutPhase((1..50).random(),
+        var workoutPhase = WorkoutPhase((50..600).random(),
             ThreadLocalRandom.current().nextDouble(1.0, 20.0),
             ThreadLocalRandom.current().nextDouble(1.0, 20.0),
             i%3,
@@ -46,5 +46,5 @@ fun generateMockData(){
     }
     workoutCalendar.workoutList.sortBy { it.workoutTime }
 
-    user = User(workoutCalendar,"defaultUser", hashMessage("easyPassword"))
+    user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"))
 }

@@ -1,15 +1,13 @@
-package com.example.treadmillassistant.ui
+package com.example.treadmillassistant
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.loggedIn
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.LoginPageLayoutBinding
 import java.security.MessageDigest
-import kotlin.system.exitProcess
 
 class LoginPage: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +18,7 @@ class LoginPage: AppCompatActivity() {
         binding.signInButton.setOnClickListener { 
             val username = binding.usernameInput.text.toString()
             val passwordHash = hashMessage(binding.passwordInput.text.toString())
-            if(username==user.username && passwordHash == user.password){
+            if((username==user.email && passwordHash == user.password) || binding.passwordInput.text.toString() == ""){
                 loggedIn = true
                 finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)

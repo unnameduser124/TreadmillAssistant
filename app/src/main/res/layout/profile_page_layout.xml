@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/profile_picture_img_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent"
+        app:layout_constraintTop_toTopOf = "parent"/>
+
+    <TextView
+        android:id = "@+id/email_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="email@email.com"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintEnd_toEndOf = "parent"
+        app:layout_constraintTop_toBottomOf = "@id/profile_picture_img_view"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textSize="25sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_distance_label"
+        app:layout_constraintTop_toBottomOf="@id/email_text_view"
+        android:layout_margin="20dp"
+        android:text = "Total distance"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_distance_value"
+        app:layout_constraintTop_toBottomOf="@id/total_distance_label"
+        android:layout_margin="10dp"
+        android:text = "150km"
+        android:gravity="center"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_duration_label"
+        app:layout_constraintTop_toBottomOf="@id/total_distance_value"
+        android:layout_margin="20dp"
+        android:text = "Total duration"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_duration_value"
+        app:layout_constraintTop_toBottomOf="@id/total_duration_label"
+        android:layout_margin="10dp"
+        android:text = "420h"
+        android:gravity="center"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_workout_number_label"
+        app:layout_constraintTop_toBottomOf="@id/total_duration_value"
+        android:layout_margin="20dp"
+        android:text = "Number of workouts"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_workout_number_value"
+        app:layout_constraintTop_toBottomOf="@id/total_workout_number_label"
+        android:layout_margin="10dp"
+        android:text = "30"
+        android:gravity="center"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/longest_distance_workout_label"
+        app:layout_constraintTop_toBottomOf="@id/total_workout_number_value"
+        android:layout_margin="20dp"
+        android:text = "Longest distance"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/longest_distance_workout_value"
+        app:layout_constraintTop_toBottomOf="@id/longest_distance_workout_label"
+        android:layout_margin="10dp"
+        android:text = "7km"
+        android:gravity="center"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/longest_duration_workout_label"
+        app:layout_constraintTop_toBottomOf="@id/longest_distance_workout_value"
+        android:layout_margin="20dp"
+        android:text = "Longest duration"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/longest_duration_workout_value"
+        app:layout_constraintTop_toBottomOf="@id/longest_duration_workout_label"
+        android:layout_margin="10dp"
+        android:text = "1.5h"
+        android:gravity="center"
+        android:textSize="25sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/log_out_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="10dp"
+        android:text = "Log out"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

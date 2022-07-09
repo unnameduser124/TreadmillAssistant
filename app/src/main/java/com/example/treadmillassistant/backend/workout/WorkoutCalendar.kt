@@ -10,6 +10,7 @@ class WorkoutCalendar(var currentDate: Date = Date(), var workoutList: MutableLi
 
     fun addNewWorkout(workout: Workout){
         workoutList.add(workout)
+        sortCalendar()
     }
 
     fun removeWorkout(workout: Workout){
@@ -18,5 +19,9 @@ class WorkoutCalendar(var currentDate: Date = Date(), var workoutList: MutableLi
 
     fun getWorkout(workoutID: Int): Workout{
         return workoutList.first{ it.ID == workoutID}
+    }
+
+    fun sortCalendar(){
+        workoutList.sortBy{ it.workoutTime }
     }
 }
