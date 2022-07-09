@@ -103,8 +103,6 @@ class TrainingTabPlaceholderFragment: Fragment() {
                 binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
                 binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
             }
-
-
         }
         binding.speedDownButton.setOnClickListener{
             if(trainingRunning && !trainingPaused){
