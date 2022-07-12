@@ -1,25 +1,16 @@
 package com.example.treadmillassistant.ui.home.calendarTab
 
-import android.content.Intent
-import android.graphics.Color
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.google.android.material.button.MaterialButton
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerView.Adapter<CalendarTrainingItemAdapter.ItemViewHolder>(){
 
@@ -50,7 +41,7 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         holder.durationView.text = "Duration: ${item.workoutDuration/60} minutes"
 
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
-        if(item.workoutTime.before(date) || item.workoutStatus!=WorkoutStatus.upcoming){
+        if(item.workoutTime.before(date) || item.workoutStatus!=WorkoutStatus.Upcoming){
             holder.startButton.isGone = true
         }
 

@@ -3,7 +3,6 @@ package com.example.treadmillassistant.ui.home.trainingTab
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
@@ -15,9 +14,7 @@ import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.example.treadmillassistant.databinding.TrainingTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
-import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFragment
 import com.google.android.material.button.MaterialButton
-import java.time.Year
 
 import java.util.*
 
@@ -38,52 +35,39 @@ class TrainingTabPlaceholderFragment: Fragment() {
     ): View? {
         val binding = TrainingTabBinding.inflate(layoutInflater)
         val treadmill = Treadmill()
-        var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance().time)
+        var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance().time, workoutStatus = WorkoutStatus.Upcoming)
         workout.workoutTime.year = Calendar.getInstance().get(Calendar.YEAR)
 
         binding.finishTrainingButton.isGone = true
         hideTrainingItems(binding)
 
         binding.startTrainingButton.setOnClickListener {
-            if(!trainingRunning){
-                trainingRunning = true
-                lastPhaseStart = Calendar.getInstance().timeInMillis
+            if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished){
                 showGenericWorkoutItems(binding)
-                treadmill.setSpeed(10.0)
-                treadmill.setTilt(0.0)
+                workout.startWorkout()
                 binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
                 binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
                 binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
                 (it as MaterialButton).text = "stop"
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                runTimer(binding, workout, treadmill)
+                runTimer(binding, workout)
             }
-            else if(trainingRunning && !trainingPaused){
-                trainingPaused = true
+            else if(workout.workoutStatus == WorkoutStatus.InProgress){
                 (it as MaterialButton).text = "resume"
                 binding.finishTrainingButton.isGone = false
-                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
-                workout.workoutPlan.addNewPhase(phase)
+                workout.pauseWorkout()
             }
             else{
-                trainingPaused = false
                 (it as MaterialButton).text = "stop"
                 binding.finishTrainingButton.isGone = true
-                lastPhaseStart = Calendar.getInstance().timeInMillis
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                treadmill.setSpeed(10.0)
-                treadmill.setTilt(0.0)
-                runTimer(binding, workout, treadmill)
+                workout.resumeWorkout()
+                runTimer(binding, workout)
             }
 
         }
 
         binding.finishTrainingButton.setOnClickListener{
-            if(trainingRunning && trainingPaused){
-                trainingRunning = false
-                trainingPaused = false
-                workout.workoutStatus = WorkoutStatus.finished
+            if(workout.workoutStatus==WorkoutStatus.Paused){
+                workout.finishWorkout()
                 user.workoutSchedule.addNewWorkout(workout)
                 workout = Workout(treadmill = treadmill)
                 hideTrainingItems(binding)
@@ -93,25 +77,15 @@ class TrainingTabPlaceholderFragment: Fragment() {
         }
 
         binding.speedUpButton.setOnClickListener{
-            if(trainingRunning && !trainingPaused){
-                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
-                workout.workoutPlan.addNewPhase(phase)
-                lastPhaseStart = Calendar.getInstance().timeInMillis
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                treadmill.increaseSpeed()
+            if(workout.workoutStatus==WorkoutStatus.InProgress){
+                workout.speedUp()
                 binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
                 binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
             }
         }
         binding.speedDownButton.setOnClickListener{
-            if(trainingRunning && !trainingPaused){
-                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
-                workout.workoutPlan.addNewPhase(phase)
-                lastPhaseStart = Calendar.getInstance().timeInMillis
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                treadmill.decreaseSpeed()
+            if(workout.workoutStatus==WorkoutStatus.InProgress){
+                workout.speedDown()
                 binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
                 binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
             }
@@ -119,25 +93,15 @@ class TrainingTabPlaceholderFragment: Fragment() {
         }
 
         binding.tiltUpButton.setOnClickListener{
-            if(trainingRunning && !trainingPaused){
-                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
-                workout.workoutPlan.addNewPhase(phase)
-                lastPhaseStart = Calendar.getInstance().timeInMillis
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                treadmill.increaseTilt()
+            if(workout.workoutStatus==WorkoutStatus.InProgress){
+                workout.tiltUp()
                 binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
             }
 
         }
         binding.tiltDownButton.setOnClickListener{
-            if(trainingRunning && !trainingPaused){
-                val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-                val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workout.workoutPlan.workoutPhaseList.size)
-                workout.workoutPlan.addNewPhase(phase)
-                lastPhaseStart = Calendar.getInstance().timeInMillis
-                trainingStartTime = Calendar.getInstance().timeInMillis
-                treadmill.decreaseTilt()
+            if(workout.workoutStatus==WorkoutStatus.InProgress){
+                workout.tiltDown()
                 binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
             }
 
@@ -187,15 +151,13 @@ class TrainingTabPlaceholderFragment: Fragment() {
     }
 
 
-    private fun runTimer(binding: TrainingTabBinding, workout: Workout, treadmill: Treadmill){
+    private fun runTimer(binding: TrainingTabBinding, workout: Workout){
         val handler = Handler()
         var runnableCode = object: Runnable {
             override fun run() {
-                    if(trainingRunning && !trainingPaused ){
-                        val timeInSeconds = Calendar.getInstance().timeInMillis/1000 - trainingStartTime/1000
-                        binding.timeTextView.text = "${workout.workoutPlan.getTotalDuration() + timeInSeconds}"
-                        val lastPhaseTimeInHours = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toDouble()/3600.0
-                        binding.distanceTextView.text = "${Math.round((workout.workoutPlan.getTotalDistance()+ lastPhaseTimeInHours*treadmill.getSpeed())*100.0)/100.0} km"
+                    if(workout.workoutStatus == WorkoutStatus.InProgress){
+                        binding.timeTextView.text = "${workout.getCurrentMoment()}"
+                        binding.distanceTextView.text = "${workout.getCurrentDistance()} km"
                         handler.postDelayed(this, 250)
                     }
                 }

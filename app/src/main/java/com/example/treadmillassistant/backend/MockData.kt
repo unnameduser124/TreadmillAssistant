@@ -1,6 +1,5 @@
 package com.example.treadmillassistant.backend
 
-import androidx.core.util.rangeTo
 import com.example.treadmillassistant.backend.workout.*
 import com.example.treadmillassistant.hashMessage
 import java.util.*
@@ -20,6 +19,7 @@ fun generateMockData(){
             ThreadLocalRandom.current().nextDouble(1.0, 20.0),
             i%3,
             i,
+            false,
             i)
         workoutPhaseList.add(workoutPhase)
     }
@@ -35,8 +35,7 @@ fun generateMockData(){
             (1..500).random(),
             Treadmill(),
             "mediaLink",
-            WorkoutStatus.upcoming,
-            0,
+            WorkoutStatus.Upcoming,
             workoutPlanList[i%3],
             i))
     }
