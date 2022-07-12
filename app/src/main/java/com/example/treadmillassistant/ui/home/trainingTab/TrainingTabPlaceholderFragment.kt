@@ -42,7 +42,7 @@ class TrainingTabPlaceholderFragment: Fragment() {
         hideTrainingItems(binding)
 
         binding.startTrainingButton.setOnClickListener {
-            if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished){
+            if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished && workout.workoutStatus!=WorkoutStatus.Paused){
                 showGenericWorkoutItems(binding)
                 workout.startWorkout()
                 binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
@@ -69,7 +69,7 @@ class TrainingTabPlaceholderFragment: Fragment() {
             if(workout.workoutStatus==WorkoutStatus.Paused){
                 workout.finishWorkout()
                 user.workoutSchedule.addNewWorkout(workout)
-                workout = Workout(treadmill = treadmill)
+                workout = Workout(treadmill = treadmill, workoutStatus = WorkoutStatus.Upcoming)
                 hideTrainingItems(binding)
                 it.isGone = true
                 binding.startTrainingButton.text = "start"
