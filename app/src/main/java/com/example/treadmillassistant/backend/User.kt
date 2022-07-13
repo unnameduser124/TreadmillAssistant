@@ -3,7 +3,14 @@ package com.example.treadmillassistant.backend
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
 
-class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(), var email: String, var password: String) {
+class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
+           var email: String,
+           var password: String,
+           var firstName: String,
+           var lastName: String,
+           var username: String,
+           var age: Int,
+           var weight: Double) {
 
 
     fun getTotalDistance(): Double{

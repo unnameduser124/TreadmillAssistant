@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        generateMockData()
         if(!loggedIn){
+            generateMockData()
             val intent = Intent(this, LoginPage::class.java)
             startActivity(intent)
         }

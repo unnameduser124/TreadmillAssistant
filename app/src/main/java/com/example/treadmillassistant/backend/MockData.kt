@@ -45,5 +45,5 @@ fun generateMockData(){
     }
     workoutCalendar.workoutList.sortBy { it.workoutTime }
 
-    user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"))
+    user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"), "Jan", "Kowalski", "JanKowalski", 20, 80.0)
 }

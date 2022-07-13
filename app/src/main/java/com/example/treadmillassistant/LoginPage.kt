@@ -16,7 +16,7 @@ class LoginPage: AppCompatActivity() {
         setContentView(binding.root)
         
         binding.signInButton.setOnClickListener { 
-            val username = binding.usernameInput.text.toString()
+            val username = binding.emailInput.text.toString()
             val passwordHash = hashMessage(binding.passwordInput.text.toString())
             if((username==user.email && passwordHash == user.password) || binding.passwordInput.text.toString() == ""){
                 loggedIn = true
@@ -27,6 +27,11 @@ class LoginPage: AppCompatActivity() {
             else{
                 Toast.makeText(this, "Wrong username or password!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.register.setOnClickListener {
+            val intent = Intent(this, RegisterPage::class.java)
+            startActivity(intent)
         }
     }
 
