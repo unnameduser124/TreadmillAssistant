@@ -35,6 +35,11 @@
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".LoginPage">
         </activity>
+        <activity
+            android:name=".AddWorkout"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
     </application>
 
 </manifest>

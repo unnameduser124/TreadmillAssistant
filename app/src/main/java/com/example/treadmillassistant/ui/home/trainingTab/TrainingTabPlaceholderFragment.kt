@@ -34,7 +34,7 @@ class TrainingTabPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = TrainingTabBinding.inflate(layoutInflater)
-        val treadmill = Treadmill()
+        val treadmill = user.treadmillList.first()
         var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance().time, workoutStatus = WorkoutStatus.Upcoming)
         workout.workoutTime.year = Calendar.getInstance().get(Calendar.YEAR)
 

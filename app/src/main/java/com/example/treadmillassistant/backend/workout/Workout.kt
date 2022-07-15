@@ -13,7 +13,6 @@ enum class WorkoutStatus{
 }
 
 class Workout(var workoutTime: Date = Date(),
-              var workoutDuration: Int = 0,
               var treadmill: Treadmill = Treadmill(),
               var mediaLink: String = "",
               var workoutStatus: WorkoutStatus = WorkoutStatus.InProgress,

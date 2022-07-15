@@ -10,7 +10,9 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
            var lastName: String,
            var username: String,
            var age: Int,
-           var weight: Double) {
+           var weight: Double,
+           var treadmillList: MutableList<Treadmill> = mutableListOf<Treadmill>(),
+           var ID: Int = 0) {
 
 
     fun getTotalDistance(): Double{
@@ -49,5 +51,13 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
             }
         }
         return Math.round((longestDuration.toDouble()/3600.toDouble())*10.0)/10.0
+    }
+
+    fun getTreadmillNames(): MutableList<String>{
+        var treadmillNames = mutableListOf<String>()
+        treadmillList.forEach {
+            treadmillNames.add(it.name)
+        }
+        return treadmillNames
     }
 }

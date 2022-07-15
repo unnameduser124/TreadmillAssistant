@@ -22,6 +22,10 @@ class ProfilePage: AppCompatActivity() {
         binding.totalWorkoutNumberValue.text = "${user.workoutSchedule.workoutList.size}"
         binding.longestDistanceWorkoutValue.text = "${user.getLongestDistance()}km"
         binding.longestDurationWorkoutValue.text = "${user.getLongestDuration()}h"
+        binding.fullNameTextView.text = "${user.firstName} ${user.lastName}"
+        binding.usernameTextView.text = "${user.username}"
+        binding.weightTextView.text = "${user.weight} kg"
+        binding.ageTextView.text = "${user.age}"
 
         binding.logOutButton.setOnClickListener{
             loggedIn = false

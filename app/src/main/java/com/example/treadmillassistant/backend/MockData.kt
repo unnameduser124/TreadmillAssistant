@@ -6,12 +6,13 @@ import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 var workoutCalendar = WorkoutCalendar()
+lateinit var workoutPlanList: WorkoutPlanList
 lateinit var user: User
 
 fun generateMockData(){
     workoutCalendar = WorkoutCalendar()
     var workoutPhaseList = mutableListOf<WorkoutPhase>()
-    var workoutPlanList = mutableListOf<WorkoutPlan>()
+    var newWorkoutPlanList = WorkoutPlanList()
     var workoutList = mutableListOf<Workout>()
     for(i in 0..9){
         var workoutPhase = WorkoutPhase((50..600).random(),
@@ -24,19 +25,18 @@ fun generateMockData(){
         workoutPhaseList.add(workoutPhase)
     }
     for(i in 0..2){
-        var newWorkoutPlan = WorkoutPlan()
+        var newWorkoutPlan = WorkoutPlan("$i")
         for(i in 0..4){
             newWorkoutPlan.workoutPhaseList.add(workoutPhaseList.random())
         }
-        workoutPlanList.add(newWorkoutPlan)
+        newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
     }
     for(i in 0..200){
         workoutList.add(Workout(Date(2022, 6, i%30+1, (0..23).random(), (0..60).random(), 0),
-            (1..500).random(),
             Treadmill(),
             "mediaLink",
             WorkoutStatus.Upcoming,
-            workoutPlanList[i%3],
+            newWorkoutPlanList.workoutPlanList[i%3],
             i))
     }
 
@@ -45,5 +45,7 @@ fun generateMockData(){
     }
     workoutCalendar.workoutList.sortBy { it.workoutTime }
 
-    user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"), "Jan", "Kowalski", "JanKowalski", 20, 80.0)
+    user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"), "Jan", "Kowalski", "Janek", 20, 80.0)
+    user.treadmillList.add(Treadmill(name = "treadmill one"))
+    workoutPlanList = newWorkoutPlanList
 }

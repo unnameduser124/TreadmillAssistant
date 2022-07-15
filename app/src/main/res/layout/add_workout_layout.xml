@@ -46,6 +46,7 @@
         <TimePicker
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id = "@+id/workout_time"
             android:timePickerMode="spinner"
             app:layout_constraintDimensionRatio="1:0.4"
             android:layout_margin="10dp"/>
@@ -74,7 +75,8 @@
                 android:text = "new"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="10dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -95,5 +97,12 @@
                 android:id = "@+id/media_link"
                 android:hint="media link"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/save_new_workout_button"
+            android:layout_margin="10dp"
+            android:text = "save"/>
     </LinearLayout>
 </ScrollView>
