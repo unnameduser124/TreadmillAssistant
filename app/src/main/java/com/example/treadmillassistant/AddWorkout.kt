@@ -2,19 +2,16 @@ package com.example.treadmillassistant
 
 
 import android.content.Intent
-import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutPlan
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
-import com.example.treadmillassistant.backend.workoutPlanList
 import com.example.treadmillassistant.databinding.AddWorkoutLayoutBinding
 import java.util.*
 
@@ -37,10 +34,10 @@ class AddWorkout: AppCompatActivity() {
         binding.treadmillSelection.adapter = treadmillDropdownAdapter
         selectedTreadmill = user.treadmillList.first()
 
-        val workoutPlanDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, workoutPlanList.getWorkoutPlanNames())
+        val workoutPlanDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.workoutPlanList.getWorkoutPlanNames())
         workoutPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.workoutPlanSelection.adapter = workoutPlanDropdownAdapter
-        selectedWorkoutPlan = workoutPlanList.workoutPlanList.first()
+        selectedWorkoutPlan = user.workoutPlanList.workoutPlanList.first()
 
         binding.treadmillSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -62,7 +59,7 @@ class AddWorkout: AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                selectedWorkoutPlan = workoutPlanList.workoutPlanList[position]
+                selectedWorkoutPlan = user.workoutPlanList.workoutPlanList[position]
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
@@ -73,12 +70,12 @@ class AddWorkout: AppCompatActivity() {
             var dateCal = Calendar.getInstance()
             dateCal.set(Calendar.YEAR, binding.workoutDate.year)
             dateCal.set(Calendar.MONTH, binding.workoutDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth-1)
             dateCal.set(Calendar.HOUR, binding.workoutTime.hour)
             dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
             val date = dateCal.time
             date.year = Calendar.getInstance().get(Calendar.YEAR)
-            println(date)
+            date.hours = binding.workoutTime.hour
 
 
             var newWorkout = Workout(date, selectedTreadmill, binding.mediaLink.text.toString(), WorkoutStatus.Upcoming, selectedWorkoutPlan)

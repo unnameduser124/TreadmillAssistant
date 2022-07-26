@@ -31,14 +31,29 @@
             android:parentActivityName = ".MainActivity">
         </activity>
         <activity
-            android:name=".RegisterPage"
+            android:name=".ui.registration.RegisterNamesPage"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".LoginPage">
+        </activity>
+        <activity
+            android:name=".ui.addworkoutplan.AddWorkoutPlan"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
         </activity>
         <activity
             android:name=".AddWorkout"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity">
+        </activity>
+        <activity
+            android:name=".ui.registration.RegisterCredentialsPage"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".ui.registration.RegisterNamesPage">
+        </activity>
+        <activity
+            android:name=".ui.registration.RegisterHealthPage"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".ui.registration.RegisterCredentialsPage">
         </activity>
     </application>
 

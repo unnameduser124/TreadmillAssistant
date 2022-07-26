@@ -15,12 +15,14 @@
         android:id = "@+id/phase_duration_layout"
         >
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/phase_duration_input"
             android:maxWidth="200dp"
-            android:hint="duration"
-            android:textSize = "20sp"/>
+            android:hint="seconds"
+            android:textSize = "20sp"
+            android:inputType="number"
+            android:maxLength="4"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -33,12 +35,14 @@
         app:layout_constraintEnd_toStartOf="@id/phase_tilt_layout"
         android:id = "@+id/phase_speed_layout">
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/phase_speed_input"
             android:maxWidth="200dp"
-            android:hint="speed"
-            android:textSize = "20sp"/>
+            android:hint="km/h"
+            android:inputType="numberDecimal"
+            android:textSize = "20sp"
+            android:maxLength="4"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -51,12 +55,14 @@
         app:layout_constraintEnd_toStartOf="@id/phase_remove_button"
         android:id = "@+id/phase_tilt_layout">
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/phase_tilt_input"
+            android:inputType="numberSigned|numberDecimal"
             android:maxWidth="200dp"
-            android:hint="tilt"
-            android:textSize = "20sp"/>
+            android:hint="degrees"
+            android:textSize = "20sp"
+            android:maxLength="5"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
         android:layout_width="wrap_content"

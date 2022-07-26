@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.backend.loggedIn
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.LoginPageLayoutBinding
+import com.example.treadmillassistant.ui.registration.RegisterNamesPage
 import java.security.MessageDigest
 
 class LoginPage: AppCompatActivity() {
@@ -30,7 +31,7 @@ class LoginPage: AppCompatActivity() {
         }
 
         binding.register.setOnClickListener {
-            val intent = Intent(this, RegisterPage::class.java)
+            val intent = Intent(this, RegisterNamesPage::class.java)
             startActivity(intent)
         }
     }

@@ -6,7 +6,7 @@ import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 var workoutCalendar = WorkoutCalendar()
-lateinit var workoutPlanList: WorkoutPlanList
+var workoutPlanList = WorkoutPlanList()
 lateinit var user: User
 
 fun generateMockData(){
@@ -31,7 +31,7 @@ fun generateMockData(){
         }
         newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
     }
-    for(i in 0..200){
+    /*for(i in 0..200){
         workoutList.add(Workout(Date(2022, 6, i%30+1, (0..23).random(), (0..60).random(), 0),
             Treadmill(),
             "mediaLink",
@@ -42,10 +42,10 @@ fun generateMockData(){
 
     workoutList.forEach {
         workoutCalendar.addNewWorkout(it)
-    }
+    }*/
     workoutCalendar.workoutList.sortBy { it.workoutTime }
-
+    workoutPlanList = newWorkoutPlanList
     user = User(workoutCalendar,"defaultUser@email.com", hashMessage("easyPassword"), "Jan", "Kowalski", "Janek", 20, 80.0)
     user.treadmillList.add(Treadmill(name = "treadmill one"))
-    workoutPlanList = newWorkoutPlanList
+    user.workoutPlanList = newWorkoutPlanList
 }

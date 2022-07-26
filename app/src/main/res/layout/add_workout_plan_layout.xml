@@ -3,12 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id = "@+id/plan_name_input_layout">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/plan_name_input"
+            android:hint="Plan name"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id = "@+id/add_workout_plan_phase_list"
-        app:layout_constraintTop_toTopOf = "parent"
         app:layout_constraintBottom_toTopOf="@id/add_new_phase"
+        app:layout_constraintTop_toBottomOf="@id/plan_name_input_layout"
         android:layout_margin="10dp"/>
     <Button
         android:layout_width="match_parent"
@@ -18,29 +34,30 @@
         app:layout_constraintTop_toBottomOf="@id/add_workout_plan_phase_list"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id = "@+id/save_as_preset"
-        app:layout_constraintTop_toBottomOf="@id/add_new_phase"
-        android:layout_margin = "10dp"
-        android:text = "Save as present"
-        android:textSize = "20dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/total_duration_workout_plan_label"
-        app:layout_constraintTop_toBottomOf="@id/save_as_preset"
+        app:layout_constraintTop_toBottomOf="@id/add_new_phase"
         android:layout_marginStart = "10dp"
         android:layout_marginEnd = "10dp"
-        android:text = "Total duration: 69 minutes"
+        android:text = "Total duration: 0 min"
+        android:textSize = "20dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/total_distance_workout_plan_label"
+        app:layout_constraintTop_toBottomOf="@id/total_duration_workout_plan_label"
+        android:layout_marginStart = "10dp"
+        android:layout_marginEnd = "10dp"
+        android:text = "Total distance: 0 km"
         android:textSize = "20dp"/>
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id = "@+id/workout_plan_save_button"
         android:text = "save"
-        app:layout_constraintTop_toBottomOf="@id/total_duration_workout_plan_label"
+        app:layout_constraintTop_toBottomOf="@id/total_distance_workout_plan_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf = "@id/cancel_button"

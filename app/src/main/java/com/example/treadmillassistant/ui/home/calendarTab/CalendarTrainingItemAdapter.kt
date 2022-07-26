@@ -5,12 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.google.android.material.button.MaterialButton
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.coroutineContext
 
@@ -29,18 +31,9 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = dataset[position]
 
-        if(item.workoutTime.minutes<10 && item.workoutTime.hours<10){
-            holder.timeView.text = "0${item.workoutTime.hours}:0${item.workoutTime.minutes}"
-        }
-        else if(item.workoutTime.minutes<10 && item.workoutTime.hours>=10){
-            holder.timeView.text = "${item.workoutTime.hours}:0${item.workoutTime.minutes}"
-        }
-        else if(item.workoutTime.minutes>10 && item.workoutTime.hours<10){
-            holder.timeView.text = "0${item.workoutTime.hours}:${item.workoutTime.minutes}"
-        }
-        else{
-            holder.timeView.text = "${item.workoutTime.hours}:${item.workoutTime.minutes}"
-        }
+        val dateFormat = SimpleDateFormat("kk:mm")
+        val workoutTime = dateFormat.format(item.workoutTime.time)
+        holder.timeView.text = "$workoutTime"
         holder.durationView.text = "Duration: ${item.getTotalDuration()/60} minutes"
 
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)

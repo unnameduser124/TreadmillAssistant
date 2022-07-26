@@ -2,6 +2,8 @@ package com.example.treadmillassistant.backend
 
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
+import com.example.treadmillassistant.backend.workout.WorkoutPlan
+import com.example.treadmillassistant.backend.workout.WorkoutPlanList
 
 class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
            var email: String,
@@ -11,7 +13,8 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
            var username: String,
            var age: Int,
            var weight: Double,
-           var treadmillList: MutableList<Treadmill> = mutableListOf<Treadmill>(),
+           var treadmillList: MutableList<Treadmill> = mutableListOf(),
+           var workoutPlanList: WorkoutPlanList = WorkoutPlanList(),
            var ID: Int = 0) {
 
 

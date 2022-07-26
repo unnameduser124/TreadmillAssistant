@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -17,6 +16,7 @@ import com.example.treadmillassistant.backend.generateMockData
 import com.example.treadmillassistant.backend.loggedIn
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ActivityMainBinding
+import com.example.treadmillassistant.ui.addworkoutplan.AddWorkoutPlan
 import com.google.android.material.navigation.NavigationView
 
 
@@ -78,8 +78,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddWorkout::class.java)
             startActivity(intent)
         }
+        else if(id == R.id.add_new_workout_plan_menu_item){
+            val intent = Intent(this, AddWorkoutPlan::class.java)
+            startActivity(intent)
+        }
         else{
-            Toast.makeText(this, "Add new workout plan", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Add new workout plan", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }
