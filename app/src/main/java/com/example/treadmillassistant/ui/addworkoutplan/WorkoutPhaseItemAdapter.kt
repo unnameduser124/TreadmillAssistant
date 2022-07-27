@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
+import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.google.android.material.textfield.TextInputEditText
 
@@ -45,10 +46,10 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
 
         holder.durationInput.addTextChangedListener {
             if(it.toString()!=""){
-                item.duration = it.toString().toInt()
+                item.duration = minutesToSeconds(it.toString().toDouble())
             }
             else{
-                item.duration = 0
+                item.duration = minutesToSeconds(DEFAULT_PHASE_DURATION)
             }
             setDuration()
             setDistance()
@@ -58,7 +59,7 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
                 item.speed = it.toString().toDouble()
             }
             else{
-                item.speed = 0.0
+                item.speed = DEFAULT_PHASE_SPEED
             }
             setDistance()
         }
@@ -67,7 +68,7 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
                 item.tilt = it.toString().toDouble()
             }
             else{
-                item.tilt = 0.0
+                item.tilt = DEFAULT_PHASE_TILT
             }
         }
     }
@@ -78,10 +79,9 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
     private fun setDistance(){
         var distance = 0.0
         phaseList.forEach {
-            distance += (it.duration.toDouble()/3600.0)*it.speed
+            distance += (it.duration.toDouble() / SECONDS_IN_HOUR.toDouble())*it.speed
         }
-        println(distance)
-        totalDistance.text = "Total duration: ${Math.round(distance*100.0)/100.0} km"
+        totalDistance.text = "Total distance: ${round(distance, DISTANCE_ROUND_MULTIPLIER)} km"
     }
 
     private fun setDuration(){
@@ -89,6 +89,6 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
         phaseList.forEach{
             duration += it.duration
         }
-        totalDuration.text = "Total duration: ${Math.round((duration.toDouble()/60.toDouble())*10.0)/10.0} min"
+        totalDuration.text = "Total duration: ${secondsToMinutes(duration)} min"
     }
 }

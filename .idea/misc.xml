@@ -3,19 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/activity_main.xml" value="0.3151041666666667" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/add_workout_layout.xml" value="0.6069958847736625" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/add_workout_plan_layout.xml" value="0.6545454318464303" />
-        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/app_bar_main.xml" value="0.2935185185185185" />
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/app_bar_main.xml" value="0.5847272524494778" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/calendar_tab.xml" value="0.3151041666666667" />
-        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/calendar_tab_training_list_item.xml" value="0.3151041666666667" />
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/calendar_tab_training_list_item.xml" value="0.6545454318464303" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/content_main.xml" value="0.2935185185185185" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/fragment_gallery.xml" value="0.3151041666666667" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/fragment_home.xml" value="0.15364583333333334" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/fragment_settings.xml" value="0.15364583333333334" />
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/fragment_training_history.xml" value="0.7084309133489461" />
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/history_item.xml" value="0.7060889929742389" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/login_page_layout.xml" value="0.7084309133489461" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/nav_header_main.xml" value="0.6545454318464303" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/phase_item.xml" value="0.7084309133489461" />

@@ -23,7 +23,7 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
         workoutSchedule.workoutList.forEach {
             totalDistance+=it.getTotalDistance()
         }
-        return Math.round(totalDistance*10.0)/10.0
+        return round(totalDistance, DISTANCE_ROUND_MULTIPLIER)
     }
 
     fun getTotalDuration(): Double{
@@ -31,7 +31,15 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
         workoutSchedule.workoutList.forEach {
             totalDuration+=it.getTotalDuration()
         }
-        return Math.round((totalDuration.toDouble()/3600.toDouble())*10.0)/10.0
+        return secondsToHours(totalDuration.toDouble())
+    }
+
+    fun getTotalCalories(): Int{
+        var totalCalories = 0
+        workoutSchedule.workoutList.forEach {
+            totalCalories+= calculateCaloriesForWorkout(it)
+        }
+        return totalCalories
     }
 
     fun getLongestDistance(): Double {
@@ -43,7 +51,7 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
                 longestDistance = it.getTotalDistance()
             }
         }
-        return Math.round((longestDistance)*10.0)/10.0
+        return round(longestDistance, DISTANCE_ROUND_MULTIPLIER)
     }
 
     fun getLongestDuration(): Double{
@@ -53,7 +61,7 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
                 longestDuration = it.getTotalDuration()
             }
         }
-        return Math.round((longestDuration.toDouble()/3600.toDouble())*10.0)/10.0
+        return secondsToHours(longestDuration.toDouble())
     }
 
     fun getTreadmillNames(): MutableList<String>{

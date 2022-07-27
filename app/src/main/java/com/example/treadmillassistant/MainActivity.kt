@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
+
         header.findViewById<TextView>(R.id.email_header).text = "${user.email}"
 
         header.setOnClickListener {
@@ -68,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         // R.menu.mymenu is a reference to an xml file named mymenu.xml which should be inside your res/menu directory.
         // If you don't have res/menu, just create a directory named "menu" inside res
         menuInflater.inflate(R.menu.appbar_menu, menu)
+
         return super.onCreateOptionsMenu(menu)
     }
 

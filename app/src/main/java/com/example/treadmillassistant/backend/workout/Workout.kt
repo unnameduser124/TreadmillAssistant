@@ -1,7 +1,6 @@
 package com.example.treadmillassistant.backend.workout
 
-import com.example.treadmillassistant.backend.Treadmill
-import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.backend.*
 import java.util.*
 
 enum class WorkoutStatus{
@@ -36,14 +35,14 @@ class Workout(var workoutTime: Date = Date(),
     fun startWorkout(){
         workoutStatus = WorkoutStatus.InProgress
         lastPhaseStart = Calendar.getInstance().timeInMillis
-        treadmill.setSpeed(10.0)
-        treadmill.setTilt(0.0)
+        treadmill.setSpeed(DEFAULT_WORKOUT_START_SPEED)
+        treadmill.setTilt(DEFAULT_WORKOUT_START_TILT)
         trainingStartTime = Calendar.getInstance().timeInMillis
     }
 
     fun pauseWorkout(){
         workoutStatus = WorkoutStatus.Paused
-        val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
+        val lastPhaseTimeInSeconds = (millisecondsToSeconds(Calendar.getInstance().timeInMillis) - millisecondsToSeconds(lastPhaseStart)).toInt()
         val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
         workoutPlan.addNewPhase(phase)
     }
@@ -52,8 +51,8 @@ class Workout(var workoutTime: Date = Date(),
         workoutStatus = WorkoutStatus.InProgress
         lastPhaseStart = Calendar.getInstance().timeInMillis
         trainingStartTime = Calendar.getInstance().timeInMillis
-        treadmill.setSpeed(10.0)
-        treadmill.setTilt(0.0)
+        treadmill.setSpeed(DEFAULT_WORKOUT_START_SPEED)
+        treadmill.setTilt(DEFAULT_WORKOUT_START_TILT)
     }
 
     fun finishWorkout(){
@@ -61,45 +60,29 @@ class Workout(var workoutTime: Date = Date(),
     }
 
     fun speedUp(){
-        val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
-        workoutPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
-        trainingStartTime = Calendar.getInstance().timeInMillis
+        addNewPhase()
         treadmill.increaseSpeed()
     }
 
     fun speedDown() {
-        val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
-        workoutPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
-        trainingStartTime = Calendar.getInstance().timeInMillis
+        addNewPhase()
         treadmill.decreaseSpeed()
     }
 
     fun tiltUp(){
-        val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
-        workoutPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
-        trainingStartTime = Calendar.getInstance().timeInMillis
+        addNewPhase()
         treadmill.increaseTilt()
     }
 
     fun tiltDown(){
-        val lastPhaseTimeInSeconds = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toInt()
-        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
-        workoutPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
-        trainingStartTime = Calendar.getInstance().timeInMillis
+        addNewPhase()
         treadmill.decreaseTilt()
     }
 
     fun getTotalDistance(): Double{
         var distance = 0.0
         workoutPlan.workoutPhaseList.forEach {
-            distance += (it.duration.toDouble()/3600.0)*it.speed
+            distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
         }
         return distance
     }
@@ -119,22 +102,32 @@ class Workout(var workoutTime: Date = Date(),
                 duration += it.duration
             }
         }
-        val timeInSeconds = Calendar.getInstance().timeInMillis/1000 - trainingStartTime/1000
-        return duration + timeInSeconds.toInt()
+        val timeInSeconds = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis, trainingStartTime)
+        return duration + timeInSeconds
     }
 
     fun getCurrentDistance(): Double{
         var distance = 0.0
         workoutPlan.workoutPhaseList.forEach {
             if(it.isFinished){
-                distance += (it.duration.toDouble()/3600.0)*it.speed
+                distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
             }
         }
 
-        val lastPhaseTimeInHours = (Calendar.getInstance().timeInMillis/1000 - lastPhaseStart/1000).toDouble()/3600.0
-        return Math.round((distance + lastPhaseTimeInHours*treadmill.getSpeed())*100.0)/100.0
+        val lastPhaseTimeInHours = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis,lastPhaseStart).toDouble()/ SECONDS_IN_HOUR.toDouble()
+        return round(distance + lastPhaseTimeInHours*treadmill.getSpeed(), DISTANCE_ROUND_MULTIPLIER)
 
     }
 
+    private fun addNewPhase(){
+        val lastPhaseTimeInSeconds = (millisecondsToSeconds(Calendar.getInstance().timeInMillis) - millisecondsToSeconds(lastPhaseStart)).toInt()
+        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
+        workoutPlan.addNewPhase(phase)
+        lastPhaseStart = Calendar.getInstance().timeInMillis
+        trainingStartTime = Calendar.getInstance().timeInMillis
+    }
 
+    fun getAverageSpeed(): Double {
+        return getTotalDistance() / secondsToHoursNotRounded(getTotalDuration())
+    }
 }

@@ -7,20 +7,20 @@ class Treadmill(private var speed: Double = 0.0,
                 private var mode: String = "",
                 var name: String = "empty name",
                 val id: Int = 0,
-                val maxSpeed: Double = 20.0,
-                val minSpeed: Double = 0.1,
-                val maxTilt: Double = 15.0,
-                val minTilt: Double = -5.0) {
+                val maxSpeed: Double = DEFAULT_MAX_SPEED,
+                val minSpeed: Double = DEFAULT_MIN_SPEED,
+                val maxTilt: Double = DEFAULT_MAX_TILT,
+                val minTilt: Double = DEFAULT_MIN_TILT) {
 
     fun increaseSpeed(){
         if(speed<maxSpeed) {
-            speed += 0.1
+            speed += SPEED_TILT_INCREMENT
         }
     }
 
     fun decreaseSpeed(){
         if(speed>minSpeed){
-            speed-=0.1
+            speed -= SPEED_TILT_INCREMENT
         }
     }
 
@@ -34,13 +34,13 @@ class Treadmill(private var speed: Double = 0.0,
 
     fun increaseTilt(){
         if(tilt<maxTilt){
-            tilt+=0.1
+            tilt+=SPEED_TILT_INCREMENT
         }
     }
 
     fun decreaseTilt(){
         if(tilt>minTilt){
-            tilt-=0.1
+            tilt-=SPEED_TILT_INCREMENT
             if(tilt<minTilt){
                 tilt = minTilt
             }

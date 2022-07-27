@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
-import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.example.treadmillassistant.backend.workout.WorkoutPlan
 import com.example.treadmillassistant.databinding.AddWorkoutPlanLayoutBinding
@@ -32,11 +32,11 @@ class AddWorkoutPlan: AppCompatActivity() {
 
         binding.addNewPhase.setOnClickListener{
             if(phaseList.size>0){
-                phaseList.add(WorkoutPhase(orderNumber = phaseList.last().orderNumber+1, speed = 5.0, duration = 60))
-                println(phaseList.last().orderNumber)
+                phaseList.add(WorkoutPhase(orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
+                    duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
             }
             else{
-                phaseList.add(WorkoutPhase(orderNumber = 0, speed = 5.0, duration = 60))
+                phaseList.add(WorkoutPhase(orderNumber = 0, speed = DEFAULT_PHASE_SPEED, duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
             }
             binding.addWorkoutPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
             binding.addWorkoutPlanPhaseList.setItemViewCacheSize(phaseList.size)
@@ -45,12 +45,12 @@ class AddWorkoutPlan: AppCompatActivity() {
             phaseList.forEach{
                 duration += it.duration
             }
-            binding.totalDurationWorkoutPlanLabel.text = "Total duration: ${Math.round((duration.toDouble()/60.toDouble())*10.0)/10.0} min"
+            binding.totalDurationWorkoutPlanLabel.text = "Total duration: ${round(secondsToMinutes(duration), DURATION_ROUND_MULTIPLIER)} min"
             var distance = 0.0
             phaseList.forEach {
                 distance += (it.duration.toDouble()/3600.0)*it.speed
             }
-            binding.totalDistanceWorkoutPlanLabel.text = "Total duration: ${Math.round(distance*100.0)/100.0} km"
+            binding.totalDistanceWorkoutPlanLabel.text = "Total distance: ${round(distance, DISTANCE_ROUND_MULTIPLIER)} km"
         }
 
         binding.workoutPlanSaveButton.setOnClickListener {

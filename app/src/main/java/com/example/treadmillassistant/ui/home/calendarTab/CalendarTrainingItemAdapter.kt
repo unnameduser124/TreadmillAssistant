@@ -9,6 +9,9 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
+import com.example.treadmillassistant.backend.DURATION_ROUND_MULTIPLIER
+import com.example.treadmillassistant.backend.round
+import com.example.treadmillassistant.backend.secondsToMinutes
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.google.android.material.button.MaterialButton
@@ -34,7 +37,7 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         val dateFormat = SimpleDateFormat("kk:mm")
         val workoutTime = dateFormat.format(item.workoutTime.time)
         holder.timeView.text = "$workoutTime"
-        holder.durationView.text = "Duration: ${item.getTotalDuration()/60} minutes"
+        holder.durationView.text = "Duration: ${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} minutes"
 
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
         if(item.workoutTime.before(date) || item.workoutStatus!=WorkoutStatus.Upcoming){

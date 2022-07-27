@@ -159,6 +159,24 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id = "@+id/calories_label"
+        android:text = "calories"
+        app:layout_constraintBottom_toTopOf="@id/calories_text_view"
+        android:gravity="center"
+        android:textSize="17dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/calories_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="50dp"
+        android:text = "100 kcal"
+        android:textSize = "40dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id = "@+id/progress_label"
         android:text = "progress"
         app:layout_constraintBottom_toTopOf="@id/progress_text_view"
@@ -169,7 +187,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/progress_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time_text_view"
+        app:layout_constraintTop_toBottomOf="@id/calories_text_view"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="50dp"
         android:text = "98%"

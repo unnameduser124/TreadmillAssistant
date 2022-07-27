@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.example.treadmillassistant.databinding.TrainingTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
@@ -45,9 +44,9 @@ class TrainingTabPlaceholderFragment: Fragment() {
             if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished && workout.workoutStatus!=WorkoutStatus.Paused){
                 showGenericWorkoutItems(binding)
                 workout.startWorkout()
-                binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
-                binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
-                binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
+                binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
+                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
+                binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
                 (it as MaterialButton).text = "stop"
                 runTimer(binding, workout)
             }
@@ -79,15 +78,15 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.speedUpButton.setOnClickListener{
             if(workout.workoutStatus==WorkoutStatus.InProgress){
                 workout.speedUp()
-                binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
-                binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
+                binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
+                binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
             }
         }
         binding.speedDownButton.setOnClickListener{
             if(workout.workoutStatus==WorkoutStatus.InProgress){
                 workout.speedDown()
-                binding.speedDisplay.text = "${Math.round(treadmill.getSpeed()*10.0)/10.0}"
-                binding.paceTextView.text = "${Math.round((60.0/treadmill.getSpeed())*10.0)/10.0}'"
+                binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
+                binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
             }
 
         }
@@ -95,14 +94,14 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.tiltUpButton.setOnClickListener{
             if(workout.workoutStatus==WorkoutStatus.InProgress){
                 workout.tiltUp()
-                binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
+                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
             }
 
         }
         binding.tiltDownButton.setOnClickListener{
             if(workout.workoutStatus==WorkoutStatus.InProgress){
                 workout.tiltDown()
-                binding.tiltDisplay.text = "${Math.round(treadmill.getTilt()*10.0)/10.0}"
+                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
             }
 
         }
@@ -120,6 +119,8 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.paceLabel.isGone = true
         binding.timeLabel.isGone = true
         binding.progressLabel.isGone = true
+        binding.caloriesLabel.isGone = true
+        binding.caloriesTextView.isGone = true
 
     }
     private fun showTrainingItems(binding: TrainingTabBinding){
@@ -131,6 +132,8 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.paceLabel.isGone = false
         binding.timeLabel.isGone = false
         binding.progressLabel.isGone = false
+        binding.caloriesLabel.isGone = false
+        binding.caloriesTextView.isGone = false
     }
 
     private fun hideGenericWorkoutItems(binding: TrainingTabBinding){
@@ -140,6 +143,8 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.distanceLabel.isGone = true
         binding.paceLabel.isGone = true
         binding.timeLabel.isGone = true
+        binding.caloriesLabel.isGone = true
+        binding.caloriesTextView.isGone = true
     }
     private fun showGenericWorkoutItems(binding: TrainingTabBinding){
         binding.distanceTextView.isGone = false
@@ -148,6 +153,8 @@ class TrainingTabPlaceholderFragment: Fragment() {
         binding.distanceLabel.isGone = false
         binding.paceLabel.isGone = false
         binding.timeLabel.isGone = false
+        binding.caloriesLabel.isGone = false
+        binding.caloriesTextView.isGone = false
     }
 
 
@@ -156,8 +163,9 @@ class TrainingTabPlaceholderFragment: Fragment() {
         var runnableCode = object: Runnable {
             override fun run() {
                     if(workout.workoutStatus == WorkoutStatus.InProgress){
-                        binding.timeTextView.text = "${workout.getCurrentMoment()}"
+                        binding.timeTextView.text = "${workout.getCurrentMoment()} s"
                         binding.distanceTextView.text = "${workout.getCurrentDistance()} km"
+                        binding.caloriesTextView.text = "${calculateCaloriesForOngoingWorkout(workout.getCurrentMoment())} kcal"
                         handler.postDelayed(this, 250)
                     }
                 }

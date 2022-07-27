@@ -26,6 +26,7 @@ class ProfilePage: AppCompatActivity() {
         binding.usernameTextView.text = "${user.username}"
         binding.weightTextView.text = "${user.weight} kg"
         binding.ageTextView.text = "${user.age}"
+        binding.totalCaloriesWorkoutValue.text = "${user.getTotalCalories()} kcal"
 
         binding.logOutButton.setOnClickListener{
             loggedIn = false

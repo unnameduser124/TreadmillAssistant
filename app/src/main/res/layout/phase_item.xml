@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:id = "@+id/phase_duration_input"
             android:maxWidth="200dp"
-            android:hint="seconds"
+            android:hint="minutes"
             android:textSize = "20sp"
             android:inputType="number"
             android:maxLength="4"/>

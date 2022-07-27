@@ -6,17 +6,69 @@
     android:layout_height="match_parent"
     tools:context=".ui.trainingHistory.TrainingHistoryFragment">
 
-    <TextView
-        android:id="@+id/text_training_history"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:id = "@+id/training_history_header">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/history_item_duration_header"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/history_item_avg_speed_header"
+            android:layout_margin="10dp"
+            android:text = "duration"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/history_item_avg_speed_header"
+            app:layout_constraintStart_toEndOf = "@id/history_item_duration_header"
+            app:layout_constraintTop_toTopOf="@id/history_item_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/history_item_duration_header"
+            app:layout_constraintEnd_toStartOf="@id/history_item_calories_header"
+            android:text = "average speed"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/history_item_calories_header"
+            app:layout_constraintStart_toEndOf = "@id/history_item_avg_speed_header"
+            app:layout_constraintTop_toTopOf="@id/history_item_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/history_item_duration_header"
+            app:layout_constraintEnd_toStartOf="@id/history_item_date_header"
+            android:text = "calories"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/history_item_date_header"
+            app:layout_constraintStart_toEndOf = "@id/history_item_calories_header"
+            app:layout_constraintTop_toTopOf="@id/history_item_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/history_item_duration_header"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="10dp"
+            android:text = "date"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id = "@+id/training_history_training_list"
+        app:layout_constraintTop_toBottomOf="@id/training_history_header"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="10dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
