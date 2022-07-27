@@ -6,13 +6,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.AddWorkout
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
 import com.example.treadmillassistant.backend.workout.WorkoutPlan
 import com.example.treadmillassistant.databinding.AddWorkoutPlanLayoutBinding
+import java.util.*
 
 class AddWorkoutPlan: AppCompatActivity() {
+
+    var fromWorkout: Boolean = false
+    var date: Date = Date()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +26,10 @@ class AddWorkoutPlan: AppCompatActivity() {
 
         setContentView(binding.root)
 
+        fromWorkout = intent.getBooleanExtra("fromWorkout", false)
+        if(fromWorkout){
+            date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
+        }
         val phaseList = mutableListOf<WorkoutPhase>()
 
         val phaseListItemAdater = WorkoutPhaseItemAdapter(phaseList, binding.totalDurationWorkoutPlanLabel, binding.totalDistanceWorkoutPlanLabel)
@@ -56,10 +65,19 @@ class AddWorkoutPlan: AppCompatActivity() {
         binding.workoutPlanSaveButton.setOnClickListener {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
+                var intent: Intent
                 user.workoutPlanList.addWorkoutPlan(WorkoutPlan(name, phaseList, user.ID))
-                val intent = Intent(this, MainActivity::class.java)
-                finishAffinity()
-                startActivity(intent)
+                if(fromWorkout){
+                    intent = Intent(this, AddWorkout::class.java)
+                    intent.putExtra("date", date.time)
+                    finish()
+                    startActivity(intent)
+                }
+                else{
+                    intent = Intent(this, MainActivity::class.java)
+                    finishAffinity()
+                    startActivity(intent)
+                }
             }
             else{
                 Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
@@ -67,7 +85,30 @@ class AddWorkoutPlan: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            if(fromWorkout){
+                intent = Intent(this, AddWorkout::class.java)
+                intent.putExtra("date", date.time)
+                finish()
+                startActivity(intent)
+            }
+            else{
+                intent = Intent(this, MainActivity::class.java)
+                finishAffinity()
+                startActivity(intent)
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(fromWorkout){
+            intent = Intent(this, AddWorkout::class.java)
+            intent.putExtra("date", date.time)
+            finish()
+            startActivity(intent)
+        }
+        else{
+            intent = Intent(this, MainActivity::class.java)
             finishAffinity()
             startActivity(intent)
         }
