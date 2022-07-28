@@ -34,7 +34,10 @@ class TrainingTabPlaceholderFragment: Fragment() {
     ): View? {
         val binding = TrainingTabBinding.inflate(layoutInflater)
         val treadmill = user.treadmillList.first()
-        var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance().time, workoutStatus = WorkoutStatus.Upcoming)
+        user.workoutSchedule.workoutList.sortBy { it.ID }
+        var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance().time,
+            workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
+        user.workoutSchedule.sortCalendar()
         workout.workoutTime.year = Calendar.getInstance().get(Calendar.YEAR)
 
         binding.finishTrainingButton.isGone = true
@@ -68,7 +71,9 @@ class TrainingTabPlaceholderFragment: Fragment() {
             if(workout.workoutStatus==WorkoutStatus.Paused){
                 workout.finishWorkout()
                 user.workoutSchedule.addNewWorkout(workout)
-                workout = Workout(treadmill = treadmill, workoutStatus = WorkoutStatus.Upcoming)
+                user.workoutSchedule.workoutList.sortBy { it.ID }
+                workout = Workout(treadmill = treadmill, workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
+                user.workoutSchedule.sortCalendar()
                 hideTrainingItems(binding)
                 it.isGone = true
                 binding.startTrainingButton.text = "start"

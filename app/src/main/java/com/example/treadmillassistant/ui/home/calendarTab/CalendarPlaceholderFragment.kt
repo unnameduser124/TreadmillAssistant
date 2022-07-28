@@ -15,6 +15,7 @@ import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workoutCalendar
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
+import kotlinx.coroutines.runBlocking
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.util.*
@@ -36,6 +37,7 @@ class CalendarPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = CalendarTabBinding.inflate(layoutInflater)
+
         val calendar = Calendar.getInstance()
 
         var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.date == calendar.get(Calendar.DAY_OF_MONTH)

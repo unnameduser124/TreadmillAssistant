@@ -130,4 +130,14 @@ class Workout(var workoutTime: Date = Date(),
     fun getAverageSpeed(): Double {
         return getTotalDistance() / secondsToHoursNotRounded(getTotalDuration())
     }
+
+    fun getAverageTilt(): Double{
+        var tiltSum = 0.0
+
+        workoutPlan.workoutPhaseList.forEach {
+            tiltSum += it.tilt*it.duration.toDouble()
+        }
+
+        return tiltSum/getTotalDuration().toDouble()
+    }
 }

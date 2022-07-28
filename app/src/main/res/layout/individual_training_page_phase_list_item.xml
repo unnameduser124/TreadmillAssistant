@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_phase_duration"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintEnd_toStartOf="@id/training_details_phase_speed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text = "130 min"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_phase_speed"
+            app:layout_constraintStart_toEndOf="@id/training_details_phase_duration"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/training_details_phase_tilt"
+            android:text = "10 km/h"
+            android:textSize="20sp"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_phase_tilt"
+            app:layout_constraintStart_toEndOf="@id/training_details_phase_speed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/training_details_phase_distance"
+            android:text = "10 km/h"
+            android:textSize="20sp"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_phase_distance"
+            app:layout_constraintStart_toEndOf="@id/training_details_phase_tilt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text = "20 km"
+            android:textSize="20sp"
+            android:gravity="center"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

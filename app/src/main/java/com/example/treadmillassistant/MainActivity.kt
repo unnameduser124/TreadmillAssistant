@@ -2,13 +2,18 @@ package com.example.treadmillassistant
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -35,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val navViewPosition = intent.getIntExtra("navViewPosition", 0)
+
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val header = binding.navView.getHeaderView(0)
@@ -50,9 +57,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
-
         header.findViewById<TextView>(R.id.email_header).text = "${user.email}"
+
+        navView.menu.getItem(navViewPosition).isChecked = true
+        navController.navigate(navView.menu.getItem(navViewPosition).itemId)
 
         header.setOnClickListener {
             val intent = Intent(this, ProfilePage::class.java)
@@ -65,10 +73,9 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+
     // create an action bar button
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // R.menu.mymenu is a reference to an xml file named mymenu.xml which should be inside your res/menu directory.
-        // If you don't have res/menu, just create a directory named "menu" inside res
         menuInflater.inflate(R.menu.appbar_menu, menu)
 
         return super.onCreateOptionsMenu(menu)
@@ -76,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id: Int = item.getItemId()
+        val id: Int = item.itemId
         if (id == R.id.add_new_workout_menu_item) {
             val intent = Intent(this, AddWorkout::class.java)
             startActivity(intent)
@@ -86,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         else{
-            //Toast.makeText(this, "Add new workout plan", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, " ", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }

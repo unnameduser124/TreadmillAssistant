@@ -5,4 +5,226 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_date_text"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="10dp"
+        android:text = "28.07.2022"
+        android:gravity="center"
+        android:textSize="25sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_duration_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_duration_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_duration_text"
+        android:text = "duration"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_duration_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_date_text"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="75dp"
+        android:text = "130 min"
+        android:textSize="25dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_calories_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_calories_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_calories_text"
+        android:text = "calories"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_calories_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_duration_text"
+        app:layout_constraintStart_toStartOf="@id/training_details_duration_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_duration_text"
+        android:layout_marginTop="50dp"
+        android:text = "576 kcal"
+        android:textSize="25dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_avg_pace_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_avg_pace_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_avg_pace_text"
+        android:text = "average pace"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_avg_pace_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_calories_text"
+        app:layout_constraintStart_toStartOf="@id/training_details_duration_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_duration_text"
+        android:layout_marginTop="50dp"
+        android:text = "5'"
+        android:textSize="25dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_distance_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_distance_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_distance_text"
+        android:text = "distance"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_distance_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_date_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="75dp"
+        android:text = "10 km"
+        android:textSize="25dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_avg_speed_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_avg_speed_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_avg_speed_text"
+        android:text = "average speed"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_avg_speed_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_distance_text"
+        app:layout_constraintStart_toStartOf="@id/training_details_distance_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_distance_text"
+        android:layout_marginTop="50dp"
+        android:text = "9 km/h"
+        android:textSize="25dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/training_details_avg_tilt_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_avg_tilt_text"
+        app:layout_constraintBottom_toTopOf="@id/training_details_avg_tilt_text"
+        android:text = "average tilt"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_avg_tilt_text"
+        app:layout_constraintTop_toBottomOf="@id/training_details_avg_speed_text"
+        app:layout_constraintStart_toStartOf="@id/training_details_distance_text"
+        app:layout_constraintEnd_toEndOf="@id/training_details_distance_text"
+        android:layout_marginTop="50dp"
+        android:text = "0.0"
+        android:textSize="25dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_phase_list_label"
+        app:layout_constraintTop_toBottomOf="@id/training_details_avg_pace_text"
+        android:text = "Training phases"
+        android:textSize = "20dp"
+        android:gravity="center"
+        android:layout_marginTop = "25dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/training_details_phase_list_label"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:id = "@+id/training_details_phase_list_header">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_duration_header"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/training_details_speed_header"
+            android:layout_margin="5dp"
+            android:text = "duration"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_speed_header"
+            app:layout_constraintStart_toEndOf = "@id/training_details_duration_header"
+            app:layout_constraintTop_toTopOf="@id/training_details_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/training_details_duration_header"
+            app:layout_constraintEnd_toStartOf="@id/training_details_tilt_header"
+            android:text = "speed"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_tilt_header"
+            app:layout_constraintStart_toEndOf = "@id/training_details_speed_header"
+            app:layout_constraintTop_toTopOf="@id/training_details_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/training_details_duration_header"
+            app:layout_constraintEnd_toStartOf="@id/training_details_distance_header"
+            android:text = "tilt"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id = "@+id/training_details_distance_header"
+            app:layout_constraintStart_toEndOf = "@id/training_details_tilt_header"
+            app:layout_constraintTop_toTopOf="@id/training_details_duration_header"
+            app:layout_constraintBottom_toBottomOf="@id/training_details_duration_header"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text = "distance"
+            android:layout_margin="5dp"
+            android:textSize = "15sp"
+            android:gravity="center"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id = "@+id/training_details_phase_list"
+        app:layout_constraintTop_toBottomOf="@id/training_details_phase_list_header"
+        app:layout_constraintBottom_toTopOf="@id/training_detail_edit_button"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_detail_edit_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/training_details_remove_button"
+        android:layout_margin="20dp"
+        android:text = "Edit"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id = "@+id/training_details_remove_button"
+        app:layout_constraintStart_toEndOf="@id/training_detail_edit_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"
+        android:text = "Remove"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

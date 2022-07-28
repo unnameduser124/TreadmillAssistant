@@ -32,10 +32,10 @@ class AddWorkoutPlan: AppCompatActivity() {
         }
         val phaseList = mutableListOf<WorkoutPhase>()
 
-        val phaseListItemAdater = WorkoutPhaseItemAdapter(phaseList, binding.totalDurationWorkoutPlanLabel, binding.totalDistanceWorkoutPlanLabel)
+        val phaseListItemAdapter = WorkoutPhaseItemAdapter(phaseList, binding.totalDurationWorkoutPlanLabel, binding.totalDistanceWorkoutPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.addWorkoutPlanPhaseList.layoutManager = linearLayoutManager
-        binding.addWorkoutPlanPhaseList.adapter = phaseListItemAdater
+        binding.addWorkoutPlanPhaseList.adapter = phaseListItemAdapter
         binding.addWorkoutPlanPhaseList.setItemViewCacheSize(phaseList.size)
 
 

@@ -55,6 +55,11 @@
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".ui.registration.RegisterCredentialsPage">
         </activity>
+        <activity
+            android:name=".ui.trainingDetails.TrainingDetailsPage"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
     </application>
 
 </manifest>
