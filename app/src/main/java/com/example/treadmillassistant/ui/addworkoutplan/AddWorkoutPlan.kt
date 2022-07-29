@@ -30,8 +30,8 @@ class AddWorkoutPlan: AppCompatActivity() {
         if(fromWorkout){
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
-        val phaseList = mutableListOf<WorkoutPhase>()
 
+        val phaseList = mutableListOf<WorkoutPhase>()
         val phaseListItemAdapter = WorkoutPhaseItemAdapter(phaseList, binding.totalDurationWorkoutPlanLabel, binding.totalDistanceWorkoutPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.addWorkoutPlanPhaseList.layoutManager = linearLayoutManager
@@ -55,6 +55,7 @@ class AddWorkoutPlan: AppCompatActivity() {
                 duration += it.duration
             }
             binding.totalDurationWorkoutPlanLabel.text = "Total duration: ${round(secondsToMinutes(duration), DURATION_ROUND_MULTIPLIER)} min"
+
             var distance = 0.0
             phaseList.forEach {
                 distance += (it.duration.toDouble()/3600.0)*it.speed

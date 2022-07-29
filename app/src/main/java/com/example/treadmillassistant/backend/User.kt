@@ -1,8 +1,6 @@
 package com.example.treadmillassistant.backend
 
-import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
-import com.example.treadmillassistant.backend.workout.WorkoutPlan
 import com.example.treadmillassistant.backend.workout.WorkoutPlanList
 
 class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
@@ -37,7 +35,7 @@ class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
     fun getTotalCalories(): Int{
         var totalCalories = 0
         workoutSchedule.workoutList.forEach {
-            totalCalories+= calculateCaloriesForWorkout(it)
+            totalCalories+= it.calculateCalories()
         }
         return totalCalories
     }

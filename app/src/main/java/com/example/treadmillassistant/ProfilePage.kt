@@ -31,6 +31,7 @@ class ProfilePage: AppCompatActivity() {
         binding.logOutButton.setOnClickListener{
             loggedIn = false
             val intent = Intent(this, LoginPage::class.java)
+            finishAffinity()
             startActivity(intent)
         }
     }

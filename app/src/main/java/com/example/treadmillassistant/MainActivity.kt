@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
     // create an action bar button
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.appbar_menu, menu)
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -91,9 +90,6 @@ class MainActivity : AppCompatActivity() {
         else if(id == R.id.add_new_workout_plan_menu_item){
             val intent = Intent(this, AddWorkoutPlan::class.java)
             startActivity(intent)
-        }
-        else{
-            //Toast.makeText(this, " ", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }

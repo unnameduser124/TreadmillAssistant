@@ -140,4 +140,45 @@ class Workout(var workoutTime: Calendar = Calendar.getInstance(),
 
         return tiltSum/getTotalDuration().toDouble()
     }
+
+    fun calculateCalories(): Int{
+        val MET = getMETvalue(getTotalDistance() / secondsToHoursNotRounded(getTotalDuration()))
+        return (((MET * 3.5 * user.weight)/200).toInt() * secondsToMinutes(getTotalDuration())).toInt()
+    }
+
+    private fun getMETvalue(speed: Double): Double{
+        if(speed<6.43){
+            return 6.0
+        }
+        else if(speed<8.0){
+            return 8.3
+        }
+        else if(speed<9.6){
+            return 9.8
+        }
+        else if(speed<11.27){
+            return 11.0
+        }
+        else if(speed<12.87){
+            return 11.8
+        }
+        else if(speed<14.48){
+            return 12.8
+        }
+        else if(speed<16.09){
+            return 14.5
+        }
+        else if(speed<17.7){
+            return 16.0
+        }
+        else if(speed<19.31){
+            return 19.0
+        }
+        else if(speed<20.92){
+            return 19.8
+        }
+        else{
+            return 23.0
+        }
+    }
 }

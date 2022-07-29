@@ -97,23 +97,20 @@ class AddWorkout: AppCompatActivity() {
             dateCal.set(Calendar.YEAR, binding.workoutDate.year)
             dateCal.set(Calendar.MONTH, binding.workoutDate.month)
             dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
-            dateCal.set(Calendar.HOUR, binding.workoutTime.hour)
+            dateCal.set(Calendar.HOUR_OF_DAY, binding.workoutTime.hour)
             dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
-            val date = dateCal.time
-            date.year = Calendar.getInstance().get(Calendar.YEAR)
-            date.hours = binding.workoutTime.hour
-            intent.putExtra("date", date.time)
+            intent.putExtra("date", dateCal.time)
             startActivity(intent)
         }
     }
 
-    fun setUpDatePicker(datePicker: DatePicker, date: Date){
+    private fun setUpDatePicker(datePicker: DatePicker, date: Date){
         if(date.year<2000)
             datePicker.updateDate(date.year+1900, date.month, date.date)
         else
             datePicker.updateDate(date.year, date.month, date.date)
     }
-    fun setUpTimePicker(timePicker: TimePicker, date: Date){
+    private fun setUpTimePicker(timePicker: TimePicker, date: Date){
         timePicker.hour = date.hours
         timePicker.minute = date.minutes
     }

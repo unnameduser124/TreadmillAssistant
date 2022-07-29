@@ -43,6 +43,7 @@ class CalendarPlaceholderFragment: Fragment() {
         var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
                 && it.workoutTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
                 && it.workoutTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
+
         binding.trainingScheduleCalendar.setOnDateChangeListener { calendarView, year, month, day ->
             dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == day
                     && it.workoutTime.get(Calendar.MONTH) == month

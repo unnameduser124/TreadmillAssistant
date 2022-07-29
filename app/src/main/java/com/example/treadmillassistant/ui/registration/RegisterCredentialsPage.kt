@@ -40,7 +40,7 @@ class RegisterCredentialsPage: AppCompatActivity() {
             else if(binding.confirmPasswordInput.text.toString()!=binding.passwordInput.text.toString()){
                 Toast.makeText(this, "Passwords don't match!", Toast.LENGTH_SHORT).show()
             }
-            else if(binding.passwordInput.text.toString().length< PASSWORD_LENGTH_MIN){
+            else if(binding.passwordInput.text.toString().length < PASSWORD_LENGTH_MIN){
                 Toast.makeText(this, "Password has to be between $PASSWORD_LENGTH_MIN to 20 characters long", Toast.LENGTH_SHORT).show()
             }
             else{

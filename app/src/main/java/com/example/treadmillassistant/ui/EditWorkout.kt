@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.workout.Workout
@@ -19,7 +18,7 @@ import java.util.*
 
 class EditWorkout: AppCompatActivity() {
 
-    var item: Workout = Workout()
+    var item: Workout? = Workout()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,27 +33,32 @@ class EditWorkout: AppCompatActivity() {
         val chosenDate = Date()
 
         val treadmillDropdownAdapter =
-            ArrayAdapter(this, R.layout.simple_spinner_item, user.getTreadmillNames())
-        treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            ArrayAdapter(
+                this,
+                R.layout.simple_spinner_item,
+                user.getTreadmillNames()
+            )
+        treadmillDropdownAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         binding.treadmillSelection.adapter = treadmillDropdownAdapter
 
-        val workoutPlanDropdownAdapter = ArrayAdapter(
+        val workoutPlanDropdownAdapter =
+            ArrayAdapter(
             this,
             R.layout.simple_spinner_item,
             user.workoutPlanList.getWorkoutPlanNames()
         )
-        workoutPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        workoutPlanDropdownAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         binding.workoutPlanSelection.adapter = workoutPlanDropdownAdapter
 
-        item = user.workoutSchedule.workoutList.find { it.ID == intent.getIntExtra("id", -1) } ?: Workout()
+        item = user.workoutSchedule.getWorkout(intent.getIntExtra("id", -1))
 
-        if (item == Workout()) {
+        if (item == null) {
             onBackPressed()
         } else {
-            chosenDate.time = item.workoutTime.timeInMillis
-            binding.mediaLink.setText(item.mediaLink)
-            selectedTreadmill = item.treadmill
-            selectedWorkoutPlan = item.workoutPlan
+            chosenDate.time = item!!.workoutTime.timeInMillis
+            binding.mediaLink.setText(item!!.mediaLink)
+            selectedTreadmill = item!!.treadmill
+            selectedWorkoutPlan = item!!.workoutPlan
             binding.workoutPlanSelection.setSelection(
                 user.workoutPlanList.workoutPlanList.indexOf(
                     selectedWorkoutPlan
@@ -117,7 +121,7 @@ class EditWorkout: AppCompatActivity() {
             user.workoutSchedule.sortCalendar()
 
             val intent = Intent(this, TrainingDetailsPage::class.java)
-            intent.putExtra("id", item.ID)
+            intent.putExtra("id", item!!.ID)
             finish()
             startActivity(intent)
         }
@@ -153,7 +157,9 @@ class EditWorkout: AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         val intent = Intent(this, TrainingDetailsPage::class.java)
-        intent.putExtra("id", item.ID)
+        if(item!=null){
+            intent.putExtra("id", item!!.ID)
+        }
         finish()
         startActivity(intent)
     }

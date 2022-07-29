@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.AddWorkout
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
@@ -33,7 +32,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             startActivity(intent)
         }
 
-        val item = user.workoutSchedule.workoutList.firstOrNull { it.ID == itemID }
+        val item = user.workoutSchedule.getWorkout(itemID)
 
         if(item==null){
             val intent = Intent(this, MainActivity::class.java)
@@ -52,7 +51,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             binding.trainingDetailsDateText.text = simpleDateFormat.format(date.time)
             binding.trainingDetailsDurationText.text = "${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} min"
             binding.trainingDetailsDistanceText.text = "${round(item.getTotalDistance(), DISTANCE_ROUND_MULTIPLIER)} km"
-            binding.trainingDetailsCaloriesText.text = "${calculateCaloriesForWorkout(item)} kcal"
+            binding.trainingDetailsCaloriesText.text = "${item.calculateCalories()} kcal"
             binding.trainingDetailsAvgSpeedText.text = "${round(item.getAverageSpeed(), SPEED_ROUND_MULTIPLIER)} km/h"
             binding.trainingDetailsAvgPaceText.text = "${round((SECONDS_IN_MINUTE.toDouble()/item.getAverageSpeed()), PACE_ROUND_MULTIPLIER)}'"
             binding.trainingDetailsAvgTiltText.text = "${round(item.getAverageTilt(), TILT_ROUND_MULTIPLIER)}"
@@ -67,14 +66,14 @@ class TrainingDetailsPage: AppCompatActivity() {
                 if(!fromCalendarPage){
                     val intent = Intent(this, MainActivity::class.java)
                     user.workoutSchedule.removeWorkout(item)
-                    intent.putExtra("navViewPosition", 1)
+                    intent.putExtra("navViewPosition", TRAINING_HISTORY_NAV_VIEW_POSITION)
                     finish()
                     startActivity(intent)
                 }
                 else{
                     val intent = Intent(this, MainActivity::class.java)
                     user.workoutSchedule.removeWorkout(item)
-                    intent.putExtra("navViewPosition", 0)
+                    intent.putExtra("navViewPosition", HOME_TAB_NAV_VIEW_POSITION)
                     finish()
                     startActivity(intent)
                 }
