@@ -40,11 +40,13 @@ class CalendarPlaceholderFragment: Fragment() {
 
         val calendar = Calendar.getInstance()
 
-        var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.date == calendar.get(Calendar.DAY_OF_MONTH)
-                && it.workoutTime.month == calendar.get(Calendar.MONTH)
-                && it.workoutTime.year == calendar.get(Calendar.YEAR)}
+        var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
+                && it.workoutTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
+                && it.workoutTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
         binding.trainingScheduleCalendar.setOnDateChangeListener { calendarView, year, month, day ->
-            dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.date == day && it.workoutTime.month == month && it.workoutTime.year == year}
+            dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == day
+                    && it.workoutTime.get(Calendar.MONTH) == month
+                    && it.workoutTime.get(Calendar.YEAR) == year}
             val itemAdapter = CalendarTrainingItemAdapter(dataset)
             binding.dayWorkoutsList.adapter = itemAdapter
         }

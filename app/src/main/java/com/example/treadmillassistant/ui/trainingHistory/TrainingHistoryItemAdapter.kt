@@ -13,6 +13,7 @@ import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.text.SimpleDateFormat
+import java.util.*
 
 class TrainingHistoryItemAdapter(private val dataset: List<Workout>): RecyclerView.Adapter<TrainingHistoryItemAdapter.ItemViewHolder>(){
 
@@ -31,7 +32,7 @@ class TrainingHistoryItemAdapter(private val dataset: List<Workout>): RecyclerVi
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = dataset[position]
 
-        val dateFormat = SimpleDateFormat("dd.MM.${item.workoutTime.year}")
+        val dateFormat = SimpleDateFormat("dd.MM.${item.workoutTime.get(Calendar.YEAR)}")
         val workoutTime = dateFormat.format(item.workoutTime.time)
 
         holder.duration.text = "${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} min"

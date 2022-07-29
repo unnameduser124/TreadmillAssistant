@@ -74,16 +74,17 @@ class AddWorkout: AppCompatActivity() {
             var dateCal = Calendar.getInstance()
             dateCal.set(Calendar.YEAR, binding.workoutDate.year)
             dateCal.set(Calendar.MONTH, binding.workoutDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth-1)
-            dateCal.set(Calendar.HOUR, binding.workoutTime.hour)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
+            dateCal.set(Calendar.HOUR_OF_DAY, binding.workoutTime.hour)
             dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
-            val date = dateCal.time
-            date.year = Calendar.getInstance().get(Calendar.YEAR)
-            date.hours = binding.workoutTime.hour
 
 
-            var newWorkout = Workout(date, selectedTreadmill, binding.mediaLink.text.toString(), WorkoutStatus.Upcoming, selectedWorkoutPlan)
+            user.workoutSchedule.workoutList.sortBy{it.ID}
+            var newWorkout = Workout(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), WorkoutStatus.Upcoming,
+                selectedWorkoutPlan, ID=user.workoutSchedule.workoutList.last().ID+1)
             user.workoutSchedule.addNewWorkout(newWorkout)
+            user.workoutSchedule.sortCalendar()
+
             val intent = Intent(this, MainActivity::class.java)
             finishAffinity()
             startActivity(intent)
@@ -95,7 +96,7 @@ class AddWorkout: AppCompatActivity() {
             var dateCal = Calendar.getInstance()
             dateCal.set(Calendar.YEAR, binding.workoutDate.year)
             dateCal.set(Calendar.MONTH, binding.workoutDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth-1)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
             dateCal.set(Calendar.HOUR, binding.workoutTime.hour)
             dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
             val date = dateCal.time

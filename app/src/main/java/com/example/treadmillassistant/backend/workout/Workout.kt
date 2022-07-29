@@ -11,7 +11,7 @@ enum class WorkoutStatus{
     Abandoned
 }
 
-class Workout(var workoutTime: Date = Date(),
+class Workout(var workoutTime: Calendar = Calendar.getInstance(),
               var treadmill: Treadmill = Treadmill(),
               var mediaLink: String = "",
               var workoutStatus: WorkoutStatus = WorkoutStatus.InProgress,

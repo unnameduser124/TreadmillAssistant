@@ -31,8 +31,14 @@ fun generateMockData(){
         }
         newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
     }
-    for(i in 0..200){
-        workoutList.add(Workout(Date(2022, 6, i%27+1, (0..23).random(), (0..60).random(), 0),
+    for(i in 0..100){
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, 2022)
+        calendar.set(Calendar.MONTH, 6)
+        calendar.set(Calendar.DAY_OF_MONTH, i%28+1)
+        calendar.set(Calendar.HOUR, (0..23).random())
+        calendar.set(Calendar.MINUTE, (0..60).random())
+        workoutList.add(Workout(calendar,
             Treadmill(),
             "mediaLink",
             WorkoutStatus.Finished,
