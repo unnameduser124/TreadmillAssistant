@@ -16,7 +16,7 @@ class Workout(var workoutTime: Calendar = Calendar.getInstance(),
               var mediaLink: String = "",
               var workoutStatus: WorkoutStatus = WorkoutStatus.InProgress,
               var workoutPlan: WorkoutPlan = WorkoutPlan(),
-              val ID: Int = 0,
+              var ID: Int = 0,
               var trainingStartTime: Long = 0L,
               var lastPhaseStart: Long = 0L) {
 

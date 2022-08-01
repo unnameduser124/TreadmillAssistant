@@ -17,9 +17,9 @@ import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.treadmillassistant.backend.generateMockData
-import com.example.treadmillassistant.backend.loggedIn
-import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.database.TrainingDatabaseService
+import com.example.treadmillassistant.backend.database.UserService
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addworkoutplan.AddWorkoutPlan
 import com.google.android.material.navigation.NavigationView
@@ -33,12 +33,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!loggedIn){
-            generateMockData()
+            generateMockData(this)
             val intent = Intent(this, LoginPage::class.java)
             startActivity(intent)
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val userService = UserService(this)
 
         val navViewPosition = intent.getIntExtra("navViewPosition", 0)
 
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfilePage::class.java)
             startActivity(intent)
         }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

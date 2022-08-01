@@ -1,6 +1,6 @@
 package com.example.treadmillassistant.backend.workout
 
-class WorkoutPlan(var name: String = "default name", var workoutPhaseList: MutableList<WorkoutPhase> = mutableListOf<WorkoutPhase>(), var userID: Int = 0) {
+class WorkoutPlan(var name: String = "default name", var workoutPhaseList: MutableList<WorkoutPhase> = mutableListOf<WorkoutPhase>(), var userID: Int = 0, var ID: Int = -1) {
 
     fun addWorkoutPhaseList(workoutPhaseList: MutableList<WorkoutPhase>){
         this.workoutPhaseList = workoutPhaseList
