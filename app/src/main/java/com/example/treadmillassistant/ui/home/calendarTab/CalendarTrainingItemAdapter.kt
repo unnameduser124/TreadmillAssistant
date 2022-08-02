@@ -38,7 +38,7 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = dataset[position]
 
-        val dateFormat = SimpleDateFormat("kk:mm")
+        val dateFormat = SimpleDateFormat("HH:mm")
         val workoutTime = dateFormat.format(item.workoutTime.time)
         holder.timeView.text = "$workoutTime"
         holder.durationView.text = "Duration: ${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} minutes"

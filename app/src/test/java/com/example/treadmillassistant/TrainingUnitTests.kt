@@ -4,8 +4,6 @@ import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
-import org.junit.Assert
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -103,18 +101,18 @@ class Training {
         assertTrue(workout.getTotalDistance() == 1.0)
     }
     @Test fun getCurrentPhase() {
-        TODO("Implement later")
+        TODO("Not implemented yet")
     }
     @Test fun startWorkout() {
-        TODO("Implement later")
+        TODO("Not implemented yet")
     }
     @Test fun pauseWorkout() {
-        TODO("Implement later")
+        TODO("Not implemented yet")
     }
     @Test fun resumeWorkout() {
-        TODO("Implement later")
+        TODO("Not implemented yet")
     }
     @Test fun finishWorkout() {
-        TODO("Implement later")
+        TODO("Not implemented yet")
     }
 }

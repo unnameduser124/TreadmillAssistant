@@ -1,4 +1,4 @@
-package com.example.treadmillassistant.backend.database
+package com.example.treadmillassistant.backend.localDatabase
 
 import android.provider.BaseColumns
 
@@ -22,7 +22,9 @@ object TrainingDatabaseConstants {
             "${TrainingPhaseTable.DURATION} INTEGER NOT NULL, " +
             "${TrainingPhaseTable.SPEED} REAL NOT NULL, " +
             "${TrainingPhaseTable.TILT} REAL NOT NULL, " +
-            "${TrainingPhaseTable.ORDER_NUMBER} INTEGER NOT NULL)"
+            "${TrainingPhaseTable.ORDER_NUMBER} INTEGER NOT NULL, " +
+            "${TrainingPhaseTable.TRAINING_PLAN_ID} INTEGER NOT NULL," +
+            "FOREIGN KEY (${TrainingPhaseTable.TRAINING_PLAN_ID}) REFERENCES ${TrainingPlanTable.TABLE_NAME}(${BaseColumns._ID}))"
 
     const val SQL_CREATE_TRAINING_PLAN_TABLE = "CREATE TABLE ${TrainingPlanTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -70,6 +72,7 @@ object TrainingDatabaseConstants {
         const val TILT = "Tilt"
         const val DURATION = "Duration"
         const val ORDER_NUMBER = "OrderNumber"
+        const val TRAINING_PLAN_ID = "TrainingPlanID"
     }
 
     object TrainingPlanTable: BaseColumns{
@@ -90,7 +93,7 @@ object TrainingDatabaseConstants {
 
     object UserTable: BaseColumns{
         const val TABLE_NAME = "User"
-        const val EMAIL = "Email"
+        const val EMAIL = "email"
         const val PASSWORD = "Password"
         const val FIRST_NAME = "FirstName"
         const val LAST_NAME = "LastName"

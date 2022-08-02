@@ -25,7 +25,7 @@ class WorkoutCalendar(var currentDate: Date = Date(), var workoutList: MutableLi
         workout!!.mediaLink = newWorkout.mediaLink
     }
 
-    fun getWorkout(workoutID: Int): Workout? {
+    fun getWorkout(workoutID: Long): Workout? {
         return workoutList.find{ it.ID == workoutID}
     }
 

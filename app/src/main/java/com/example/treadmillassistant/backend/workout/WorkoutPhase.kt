@@ -6,5 +6,5 @@ class WorkoutPhase(var duration: Int = 0,
                    var workoutPlanID: Int = -1,
                    var orderNumber: Int = -1,
                    val isFinished: Boolean = false,
-                   var ID: Int=-1) {
+                   var ID: Long =-1) {
 }

@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workoutCalendar
@@ -17,6 +19,7 @@ import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
 import kotlinx.coroutines.runBlocking
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 import java.util.Calendar.DATE
@@ -38,16 +41,15 @@ class CalendarPlaceholderFragment: Fragment() {
     ): View? {
         val binding = CalendarTabBinding.inflate(layoutInflater)
 
-        val calendar = Calendar.getInstance()
-
-        var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
-                && it.workoutTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
-                && it.workoutTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
+        val trainingService = TrainingService(binding.trainingScheduleCalendar.context)
+        var dataset = trainingService.getTrainingForDate(Calendar.getInstance())
 
         binding.trainingScheduleCalendar.setOnDateChangeListener { calendarView, year, month, day ->
-            dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == day
-                    && it.workoutTime.get(Calendar.MONTH) == month
-                    && it.workoutTime.get(Calendar.YEAR) == year}
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            dataset = trainingService.getTrainingForDate(Calendar.getInstance())
             val itemAdapter = CalendarTrainingItemAdapter(dataset)
             binding.dayWorkoutsList.adapter = itemAdapter
         }

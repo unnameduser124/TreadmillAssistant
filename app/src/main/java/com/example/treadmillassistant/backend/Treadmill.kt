@@ -6,11 +6,12 @@ class Treadmill(private var speed: Double = 0.0,
                 private var tilt: Double = 0.0,
                 private var mode: String = "",
                 var name: String = "empty name",
-                val ID: Int = 0,
+                val ID: Long = 0,
                 val maxSpeed: Double = DEFAULT_MAX_SPEED,
                 val minSpeed: Double = DEFAULT_MIN_SPEED,
                 val maxTilt: Double = DEFAULT_MAX_TILT,
-                val minTilt: Double = DEFAULT_MIN_TILT) {
+                val minTilt: Double = DEFAULT_MIN_TILT,
+                val userID: Long = user.ID) {
 
     fun increaseSpeed(){
         if(speed<maxSpeed) {

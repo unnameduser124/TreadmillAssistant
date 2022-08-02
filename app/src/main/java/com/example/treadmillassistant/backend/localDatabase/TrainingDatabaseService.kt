@@ -1,15 +1,15 @@
-package com.example.treadmillassistant.backend.database
+package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.treadmillassistant.backend.User
-import com.example.treadmillassistant.backend.database.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PHASE_TABLE
-import com.example.treadmillassistant.backend.database.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PLAN_TABLE
-import com.example.treadmillassistant.backend.database.TrainingDatabaseConstants.SQL_CREATE_TRAINING_TABLE
-import com.example.treadmillassistant.backend.database.TrainingDatabaseConstants.SQL_CREATE_TREADMILL_TABLE
-import com.example.treadmillassistant.backend.database.TrainingDatabaseConstants.SQL_CREATE_USER_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PHASE_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PLAN_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TREADMILL_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_USER_TABLE
 
 open class TrainingDatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -25,7 +25,6 @@ open class TrainingDatabaseService(context: Context) : SQLiteOpenHelper(context,
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
     }
-
 
     companion object {
         // If you change the database schema, you must increment the database version.

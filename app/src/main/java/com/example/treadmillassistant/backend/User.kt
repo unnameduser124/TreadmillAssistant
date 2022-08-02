@@ -3,17 +3,18 @@ package com.example.treadmillassistant.backend
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
 import com.example.treadmillassistant.backend.workout.WorkoutPlanList
 
-class User(var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
-           var email: String,
-           var password: String,
-           var firstName: String,
-           var lastName: String,
-           var username: String,
-           var age: Int,
-           var weight: Double,
-           var treadmillList: MutableList<Treadmill> = mutableListOf(),
-           var workoutPlanList: WorkoutPlanList = WorkoutPlanList(),
-           var ID: Int = 0) {
+class User(
+    var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
+    var email: String,
+    var password: String = "",
+    var firstName: String,
+    var lastName: String,
+    var username: String,
+    var age: Int,
+    var weight: Double,
+    var treadmillList: MutableList<Treadmill> = mutableListOf(),
+    var workoutPlanList: WorkoutPlanList = WorkoutPlanList(),
+    var ID: Long = 0) {
 
 
     fun getTotalDistance(): Double{

@@ -32,7 +32,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             startActivity(intent)
         }
 
-        val item = user.workoutSchedule.getWorkout(itemID)
+        val item = user.workoutSchedule.getWorkout(itemID.toLong())
 
         if(item==null){
             val intent = Intent(this, MainActivity::class.java)
