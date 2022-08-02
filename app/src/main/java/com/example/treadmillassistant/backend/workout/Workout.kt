@@ -24,10 +24,10 @@ class Workout(var workoutTime: Calendar = Calendar.getInstance(),
         var counter = 0
         workoutPlan.workoutPhaseList.sortBy { it.orderNumber }
         workoutPlan.workoutPhaseList.forEach {
-            counter+=it.duration
             if(counter>getCurrentMoment()){
                 return workoutPlan.workoutPhaseList[workoutPlan.workoutPhaseList.indexOf(it)-1]
             }
+            counter+=it.duration
         }
         return workoutPlan.workoutPhaseList.first()
     }

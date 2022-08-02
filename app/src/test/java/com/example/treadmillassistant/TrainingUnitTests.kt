@@ -4,10 +4,12 @@ import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutCalendar
 import com.example.treadmillassistant.backend.workout.WorkoutPhase
+import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.*
 
-class Training {
+class TrainingUnitTests {
 
     @Test fun speedRoundTest(){
         val roundedValue = 2.03
@@ -101,18 +103,58 @@ class Training {
         assertTrue(workout.getTotalDistance() == 1.0)
     }
     @Test fun getCurrentPhase() {
-        TODO("Not implemented yet")
+        val workout = Workout()
+
+        var phaseOne = WorkoutPhase(10, orderNumber = 1)
+        var phaseTwo = WorkoutPhase(15, orderNumber = 2)
+        var phaseThree = WorkoutPhase(15, orderNumber = 3)
+
+        workout.workoutPlan.addNewPhase(phaseOne)
+        workout.workoutPlan.addNewPhase(phaseTwo)
+        workout.workoutPlan.addNewPhase(phaseThree)
+        workout.trainingStartTime = Calendar.getInstance().timeInMillis - 15000L
+
+        assertTrue(workout.getCurrentPhase() == phaseTwo)
     }
     @Test fun startWorkout() {
-        TODO("Not implemented yet")
+        val workout = Workout()
+
+        workout.startWorkout()
+
+        assertTrue(workout.workoutStatus == WorkoutStatus.InProgress
+                && workout.treadmill.getSpeed() == DEFAULT_WORKOUT_START_SPEED
+                && workout.treadmill.getTilt() == DEFAULT_WORKOUT_START_TILT)
     }
     @Test fun pauseWorkout() {
-        TODO("Not implemented yet")
+        val workout = Workout()
+
+        workout.startWorkout()
+        workout.pauseWorkout()
+        assertTrue(workout.workoutStatus == WorkoutStatus.Paused
+                && workout.workoutPlan.workoutPhaseList.size>0)
     }
     @Test fun resumeWorkout() {
-        TODO("Not implemented yet")
+        val workout = Workout()
+
+        workout.startWorkout()
+        workout.speedUp()
+        workout.tiltDown()
+        workout.pauseWorkout()
+        val workoutPhaseListSize = workout.workoutPlan.workoutPhaseList.size
+        workout.resumeWorkout()
+        assertTrue(workout.workoutStatus == WorkoutStatus.InProgress
+                && workout.workoutPlan.workoutPhaseList.size == workoutPhaseListSize
+                && workout.treadmill.getSpeed() == DEFAULT_WORKOUT_START_SPEED
+                && workout.treadmill.getTilt() == DEFAULT_WORKOUT_START_TILT)
     }
     @Test fun finishWorkout() {
-        TODO("Not implemented yet")
+        val workout = Workout()
+
+        workout.startWorkout()
+        workout.pauseWorkout()
+        workout.resumeWorkout()
+        workout.pauseWorkout()
+        workout.finishWorkout()
+        assertTrue(workout.workoutStatus == WorkoutStatus.Finished)
     }
 }
