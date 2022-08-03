@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        tempUser = UserService(this).loadUser()
         if(tempUser==null){
             generateDBdata(this)
             val intent = Intent(this, LoginPage::class.java)
@@ -35,12 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             user = tempUser as User
-            user.treadmillList = TreadmillService(this).getUserTreadmills()
-            user.workoutSchedule.workoutList = TrainingService(this).getAllTrainings()
-            binding = ActivityMainBinding.inflate(layoutInflater)
-            setContentView(binding.root)
-            val userService = UserService()
-
+            loadAllData(this)
             val navViewPosition = intent.getIntExtra("navViewPosition", 0)
 
             setSupportActionBar(binding.appBarMain.toolbar)

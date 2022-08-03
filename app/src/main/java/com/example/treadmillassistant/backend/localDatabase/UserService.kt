@@ -15,11 +15,11 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.WEIGHT
 import com.example.treadmillassistant.backend.user
 
-class UserService(){
+class UserService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewUser(user: User, db: SQLiteDatabase): Int{
-
+    fun insertNewUser(user: User): Int{
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(EMAIL, user.email)
             put(PASSWORD, user.password)
@@ -35,8 +35,8 @@ class UserService(){
     }
 
     //returns number of rows deleted
-    fun deleteUser(id: Int, db: SQLiteDatabase): Int {
-
+    fun deleteUser(id: Int): Int {
+        val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
         val selectionArgs = arrayOf("$id")
@@ -45,8 +45,8 @@ class UserService(){
     }
 
     //returns number of rows updated
-    fun updateUser(newUser: User, userID: Int, db: SQLiteDatabase): Int{
-
+    fun updateUser(newUser: User, userID: Int): Int{
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(FIRST_NAME, newUser.firstName)
             put(LAST_NAME, newUser.lastName)
@@ -63,8 +63,8 @@ class UserService(){
     }
 
     //loads user without treadmill list, workout plan list or workout calendar
-    fun loadUser(db: SQLiteDatabase): User?{
-
+    fun loadUser(): User?{
+        val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             EMAIL,
             FIRST_NAME,

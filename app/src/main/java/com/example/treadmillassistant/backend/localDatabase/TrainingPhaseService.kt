@@ -59,7 +59,7 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
         val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID, SPEED, TILT, DURATION, ORDER_NUMBER, TRAINING_PLAN_ID)
 
-        val selection = "${BaseColumns._ID} = ?"
+        val selection = "$TRAINING_PLAN_ID = ?"
         val selectionArgs = arrayOf("$workoutPlanID")
 
         val sortOrder = "$ORDER_NUMBER"
@@ -83,6 +83,7 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
                 val phaseDuration = getInt(getColumnIndexOrThrow(DURATION))
                 val orderNumber = getInt(getColumnIndexOrThrow(ORDER_NUMBER))
                 val trainingPlanID = getInt(getColumnIndexOrThrow(TRAINING_PLAN_ID))
+                println("|$count|")
                 phaseList.add(WorkoutPhase(phaseDuration, phaseSpeed, phaseTilt, trainingPlanID, orderNumber, ID = phaseID))
             }
         }

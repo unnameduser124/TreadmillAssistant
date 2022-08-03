@@ -14,7 +14,6 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 open class TrainingDatabaseService(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        println("DATABASE CREATED")
         db.execSQL(SQL_CREATE_USER_TABLE)
         db.execSQL(SQL_CREATE_TRAINING_PHASE_TABLE)
         db.execSQL(SQL_CREATE_TRAINING_PLAN_TABLE)

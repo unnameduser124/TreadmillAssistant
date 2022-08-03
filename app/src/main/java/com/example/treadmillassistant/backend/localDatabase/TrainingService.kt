@@ -26,7 +26,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     fun insertNewTraining(workout: Workout, db: SQLiteDatabase): Long {
         var simpleDateFormat = SimpleDateFormat("dd.MM.${workout.workoutTime.get(Calendar.YEAR)}")
         val date = simpleDateFormat.format(workout.workoutTime.time)
-        simpleDateFormat = SimpleDateFormat("kk:mm")
+        simpleDateFormat = SimpleDateFormat("HH:mm")
         val time = simpleDateFormat.format(workout.workoutTime.time)
 
         val contentValues = ContentValues().apply {
@@ -34,8 +34,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TRAINING_TIME, time)
             put(MEDIA_LINK, workout.mediaLink)
             put(TRAINING_STATUS, "${workout.workoutStatus}")
-            put(TREADMILL_ID, workout.treadmill.ID)
-            put(TRAINING_PLAN_ID, workout.workoutPlan.ID)
+            put(TREADMILL_ID, workout.treadmill?.ID)
+            put(TRAINING_PLAN_ID, workout.workoutPlan?.ID)
             put(USER_ID, user.ID)
         }
 
@@ -64,8 +64,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TRAINING_TIME, time)
             put(MEDIA_LINK, newWorkout.mediaLink)
             put(TRAINING_STATUS, "${newWorkout.workoutStatus}")
-            put(TREADMILL_ID, newWorkout.treadmill.ID)
-            put(TRAINING_PLAN_ID, newWorkout.workoutPlan.ID)
+            put(TREADMILL_ID, newWorkout.treadmill?.ID)
+            put(TRAINING_PLAN_ID, newWorkout.workoutPlan?.ID)
             put(USER_ID, user.ID)
         }
         val selection = "${BaseColumns._ID} = ?"
@@ -155,9 +155,9 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
         val selection = "$TRAINING_DATE = ?"
 
         val sdf = SimpleDateFormat("dd.MM.yyyy")
-        val date = sdf.format(date.time)
+        val dateFormatted = sdf.format(date.time)
 
-        val selectionArgs = arrayOf(date)
+        val selectionArgs = arrayOf(dateFormatted)
 
         val cursor = db.query(
             TABLE_NAME,
@@ -214,8 +214,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
         return trainingList
     }
 
-    fun getTrainingByID(ID: Int, db: SQLiteDatabase): Workout?{
-
+    fun getTrainingByID(ID: Long): Workout?{
+        val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             TRAINING_DATE,
             TRAINING_TIME,
@@ -273,12 +273,27 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     WorkoutStatus.Abandoned
                 }
 
-                training = Workout(calendar,
-                    Treadmill(ID = treadmillID),
-                    mediaLink,
-                    trainingStatus,
-                    WorkoutPlan(ID = trainingPlanID),
-                    ID = trainingID)
+                val treadmill = TreadmillService(context).getTreadmillByID(treadmillID)
+                val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(trainingPlanID)
+
+
+                if(treadmill!=null && workoutPlan!=null){
+                    training = Workout(calendar,
+                        treadmill!!,
+                        mediaLink,
+                        trainingStatus,
+                        workoutPlan!!,
+                        ID = trainingID)
+                }
+                else{
+                    println("$treadmillID | $trainingPlanID")
+                    training = Workout(calendar,
+                        Treadmill(ID=treadmillID),
+                        mediaLink,
+                        trainingStatus,
+                        WorkoutPlan(ID=trainingPlanID),
+                        ID = trainingID)
+                }
             }
         }
 

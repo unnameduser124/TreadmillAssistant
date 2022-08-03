@@ -11,14 +11,15 @@ enum class WorkoutStatus{
     Abandoned
 }
 
-class Workout(var workoutTime: Calendar = Calendar.getInstance(),
-              var treadmill: Treadmill = Treadmill(),
-              var mediaLink: String = "",
-              var workoutStatus: WorkoutStatus = WorkoutStatus.InProgress,
-              var workoutPlan: WorkoutPlan = WorkoutPlan(),
-              var ID: Long = 0,
-              var trainingStartTime: Long = 0L,
-              var lastPhaseStart: Long = 0L) {
+class Workout(
+    var workoutTime: Calendar = Calendar.getInstance(),
+    var treadmill: Treadmill = Treadmill(),
+    var mediaLink: String = "",
+    var workoutStatus: WorkoutStatus = WorkoutStatus.InProgress,
+    var workoutPlan: WorkoutPlan = WorkoutPlan(),
+    var ID: Long = 0,
+    var trainingStartTime: Long = 0L,
+    var lastPhaseStart: Long = 0L) {
 
     fun getCurrentPhase(): WorkoutPhase{
         var counter = 0

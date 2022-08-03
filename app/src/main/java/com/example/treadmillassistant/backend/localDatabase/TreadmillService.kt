@@ -17,7 +17,8 @@ import com.example.treadmillassistant.backend.user
 class TreadmillService(context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTreadmill(treadmill: Treadmill, db: SQLiteDatabase): Long {
+    fun insertNewTreadmill(treadmill: Treadmill): Long {
+        val db = this.writableDatabase
 
         val contentValues = ContentValues().apply {
             put(TREADMILL_NAME, treadmill.name)
@@ -106,7 +107,8 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
         return treadmillList
     }
 
-    fun getTreadmillByID(ID: Int, db: SQLiteDatabase): Treadmill? {
+    fun getTreadmillByID(ID: Long): Treadmill? {
+        val db = this.readableDatabase
 
         val projection = arrayOf(BaseColumns._ID,
             TREADMILL_NAME,
@@ -123,7 +125,7 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
         val selectionArgs = arrayOf("$ID")
 
         val cursor = db.query(
-            TrainingDatabaseConstants.TrainingPlanTable.TABLE_NAME,
+            TABLE_NAME,
             projection,
             selection,
             selectionArgs,

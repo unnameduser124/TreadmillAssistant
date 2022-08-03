@@ -88,7 +88,7 @@ fun generateMockData(context: Context){
 
 fun generateDBdata(context: Context){
     val db = TrainingDatabaseService(context).writableDatabase
-    val userService = UserService()
+    val userService = UserService(context)
 
     val newUser = User(email = "defaultEmail@email.com",
         password = hashMessage("easypassword"),
@@ -98,56 +98,75 @@ fun generateDBdata(context: Context){
         age = 20,
         weight = 80.0
     )
-    userService.insertNewUser(newUser, db)
-    tempUser = userService.loadUser(db)
+
+    tempUser = userService.loadUser()
     if(tempUser!=null){
         user = tempUser as User
         return
     }
-
+    userService.insertNewUser(newUser)
     val workoutPhaseList = mutableListOf<WorkoutPhase>()
     val trainingPhaseService = TrainingPhaseService(context)
-    val trainingPlanService = TrainingPlanService()
+    val trainingPlanService = TrainingPlanService(context)
     val newWorkoutPlanList = WorkoutPlanList()
 
     for(i in 0..4){
         val newWorkoutPlan = WorkoutPlan("Plan $i", userID = user.ID)
-        val newID = trainingPlanService.insertNewTrainingPlan(newWorkoutPlan,db)
+        val newID = trainingPlanService.insertNewTrainingPlan(newWorkoutPlan)
         newWorkoutPlan.ID = newID
-        for(i in 0..4){
+        for(i in 0..5){
             val workoutPhase = WorkoutPhase((50..600).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
-                i%3,
+                (1..5).random(),
                 i,
                 false,
                 i.toLong())
             val newID = trainingPhaseService.insertNewTrainingPhase(workoutPhase,db)
             workoutPhase.ID = newID
             workoutPhaseList.add(workoutPhase)
-            newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
         }
+        newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
     }
     val treadmillService = TreadmillService(context)
     val treadmillOne = Treadmill(name = "TreadmillOne")
     val treadmillTwo = Treadmill(name = "TreadmillTwo")
 
-    treadmillService.insertNewTreadmill(treadmillOne,db)
-    treadmillService.insertNewTreadmill(treadmillTwo,db)
+    treadmillOne.ID = treadmillService.insertNewTreadmill(treadmillOne)
+    treadmillTwo.ID = treadmillService.insertNewTreadmill(treadmillTwo)
 
     val trainingService = TrainingService(context)
     for(i in 0..100){
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, 2022)
-        calendar.set(Calendar.MONTH, 7)
-        calendar.set(Calendar.DAY_OF_MONTH, i%30+1)
+        calendar.set(Calendar.MONTH, if(i%2==0) 7 else 6)
+        calendar.set(Calendar.DAY_OF_MONTH, if(i%2==0) i%30+1 else i%31+1)
         calendar.set(Calendar.HOUR, (0..23).random())
         calendar.set(Calendar.MINUTE, (0..60).random())
         val newWorkout = Workout(calendar,
             if(i%2==0) treadmillOne else treadmillTwo,
             "mediaLink$i",
-            WorkoutStatus.Upcoming,
-            newWorkoutPlanList.workoutPlanList[i%5])
+            if(calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) WorkoutStatus.Finished else WorkoutStatus.Upcoming,
+            newWorkoutPlanList.workoutPlanList.random())
         trainingService.insertNewTraining(newWorkout,db)
     }
+}
+
+fun loadAllData(context: Context){
+    val userService = UserService(context)
+    user = userService.loadUser()!!
+
+    val trainingService = TrainingService(context)
+
+    val workoutIDs = trainingService.getAllTrainings()
+    workoutIDs.forEach {
+        val workout = trainingService.getTrainingByID(it.ID)
+        user.workoutSchedule.addNewWorkout(workout!!)
+    }
+    val workoutPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
+    workoutPlanIDs.forEach {
+        val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(it.ID)
+        user.workoutPlanList.addWorkoutPlan(workoutPlan!!)
+    }
+    user.treadmillList = TreadmillService(context).getUserTreadmills()
 }

@@ -33,12 +33,29 @@ class TrainingTabPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = TrainingTabBinding.inflate(layoutInflater)
-        val treadmill = user.treadmillList.first()
 
-        user.workoutSchedule.workoutList.sortBy { it.ID }
-        var workout = Workout(treadmill = treadmill, workoutTime = Calendar.getInstance(),
-            workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
-        user.workoutSchedule.sortCalendar()
+        val treadmill: Treadmill
+        if(user.treadmillList.isEmpty()){
+            treadmill=Treadmill()
+        }
+        else{
+            treadmill = user.treadmillList.first()
+        }
+
+        var workout: Workout
+        if(user.workoutSchedule.workoutList.isEmpty()){
+            workout = Workout()
+        }
+        else{
+            user.workoutSchedule.workoutList.sortBy { it.ID }
+            workout = Workout(
+                treadmill = treadmill, workoutTime = Calendar.getInstance(),
+                workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
+            user.workoutSchedule.sortCalendar()
+        }
+
+
+
 
         binding.finishTrainingButton.isGone = true
         hideTrainingItems(binding)

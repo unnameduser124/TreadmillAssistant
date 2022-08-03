@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
 import com.example.treadmillassistant.databinding.IndividualWorkoutPageBinding
 import com.example.treadmillassistant.ui.EditWorkout
@@ -23,16 +24,16 @@ class TrainingDetailsPage: AppCompatActivity() {
         setContentView(binding.root)
 
         binding.trainingDetailsEditButton.isGone = true
-        val itemID = intent.getIntExtra("id", -1)
+        val itemID = intent.getLongExtra("id", -1)
         val fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", false)
 
-        if(itemID == -1){
+        if(itemID == -1L){
             val intent = Intent(this, MainActivity::class.java)
             finishAffinity()
             startActivity(intent)
         }
 
-        val item = user.workoutSchedule.getWorkout(itemID.toLong())
+        val item = user.workoutSchedule.getWorkout(itemID)
 
         if(item==null){
             val intent = Intent(this, MainActivity::class.java)

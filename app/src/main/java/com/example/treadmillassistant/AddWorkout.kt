@@ -81,7 +81,7 @@ class AddWorkout: AppCompatActivity() {
 
             user.workoutSchedule.workoutList.sortBy{it.ID}
             var newWorkout = Workout(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), WorkoutStatus.Upcoming,
-                selectedWorkoutPlan, ID=user.workoutSchedule.workoutList.last().ID+1)
+                selectedWorkoutPlan, ID =user.workoutSchedule.workoutList.last().ID+1)
             user.workoutSchedule.addNewWorkout(newWorkout)
             user.workoutSchedule.sortCalendar()
 

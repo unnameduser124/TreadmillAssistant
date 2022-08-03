@@ -10,11 +10,11 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.workout.WorkoutPlan
 
-class TrainingPlanService(){
+class TrainingPlanService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTrainingPlan(trainingPlan: WorkoutPlan, db: SQLiteDatabase): Long {
-
+    fun insertNewTrainingPlan(trainingPlan: WorkoutPlan): Long {
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(PLAN_NAME, trainingPlan.name)
             put(USER_ID, user.ID)
@@ -49,8 +49,8 @@ class TrainingPlanService(){
     }
 
     //returns training plan list without phases
-    fun getAllTrainingPlans(db: SQLiteDatabase): MutableList<WorkoutPlan>{
-
+    fun getAllTrainingPlans(): MutableList<WorkoutPlan>{
+        val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             PLAN_NAME,
             USER_ID
@@ -74,8 +74,6 @@ class TrainingPlanService(){
                 val planID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
                 val planName = getString(getColumnIndexOrThrow(PLAN_NAME))
                 val userID = getLong(getColumnIndexOrThrow(USER_ID))
-
-
                 planList.add(WorkoutPlan(planName, userID = userID, ID = planID))
             }
         }
@@ -85,7 +83,8 @@ class TrainingPlanService(){
     }
 
     //returns training plan with phases or null if there is no plan
-    fun getTrainingPlanForTraining(trainingID: Int, db: SQLiteDatabase): WorkoutPlan?{
+    fun getTrainingPlanForTraining(trainingPlanID: Long): WorkoutPlan?{
+        val db = this.readableDatabase
 
         val projection = arrayOf(BaseColumns._ID,
             PLAN_NAME,
@@ -96,7 +95,7 @@ class TrainingPlanService(){
 
         val selection = "${BaseColumns._ID} = ?"
 
-        val selectionArgs = arrayOf("$trainingID")
+        val selectionArgs = arrayOf("$trainingPlanID")
 
         val cursor = db.query(
             TABLE_NAME,
@@ -117,9 +116,13 @@ class TrainingPlanService(){
                 val planName = getString(getColumnIndexOrThrow(PLAN_NAME))
                 val userID = getLong(getColumnIndexOrThrow(USER_ID))
 
-
                 plan = WorkoutPlan(planName, userID = userID, ID = planID)
             }
+        }
+        if(plan!=null){
+            var phaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)
+            println("|${phaseList.size}|")
+            plan?.workoutPhaseList = phaseList
         }
         cursor.close()
 
