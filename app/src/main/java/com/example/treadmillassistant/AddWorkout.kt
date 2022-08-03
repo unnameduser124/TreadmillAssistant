@@ -36,7 +36,12 @@ class AddWorkout: AppCompatActivity() {
         val treadmillDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.getTreadmillNames())
         treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.treadmillSelection.adapter = treadmillDropdownAdapter
-        selectedTreadmill = user.treadmillList.first()
+        if(user.treadmillList.isEmpty()){
+            selectedTreadmill=Treadmill()
+        }
+        else{
+            selectedTreadmill = user.treadmillList.first()
+        }
 
         val workoutPlanDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.workoutPlanList.getWorkoutPlanNames())
         workoutPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

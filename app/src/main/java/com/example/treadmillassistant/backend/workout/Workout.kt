@@ -30,7 +30,7 @@ class Workout(
             }
             counter+=it.duration
         }
-        return workoutPlan.workoutPhaseList.first()
+        return workoutPlan.workoutPhaseList.last()
     }
 
     fun startWorkout(){
@@ -122,7 +122,7 @@ class Workout(
 
     private fun addNewPhase(){
         val lastPhaseTimeInSeconds = (millisecondsToSeconds(Calendar.getInstance().timeInMillis) - millisecondsToSeconds(lastPhaseStart)).toInt()
-        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), 0, workoutPlan.workoutPhaseList.size, true)
+        val phase = WorkoutPhase(lastPhaseTimeInSeconds, treadmill.getSpeed(), treadmill.getTilt(), workoutPlan.ID, workoutPlan.workoutPhaseList.size, true)
         workoutPlan.addNewPhase(phase)
         lastPhaseStart = Calendar.getInstance().timeInMillis
         trainingStartTime = Calendar.getInstance().timeInMillis

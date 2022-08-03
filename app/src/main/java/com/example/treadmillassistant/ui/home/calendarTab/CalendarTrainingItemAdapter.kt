@@ -11,13 +11,16 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
-import com.example.treadmillassistant.backend.DURATION_ROUND_MULTIPLIER
-import com.example.treadmillassistant.backend.round
-import com.example.treadmillassistant.backend.secondsToMinutes
+import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.workout.Workout
 import com.example.treadmillassistant.backend.workout.WorkoutStatus
+import com.example.treadmillassistant.databinding.FragmentHomeBinding
+import com.example.treadmillassistant.databinding.TrainingTabBinding
+import com.example.treadmillassistant.ui.home.OnStartClickedListener
+import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.coroutineContext
@@ -36,6 +39,8 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         return ItemViewHolder(adapterLayout)
     }
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
+
+
         val item = dataset[position]
 
         val dateFormat = SimpleDateFormat("HH:mm")
@@ -53,6 +58,13 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
             intent.putExtra("id", item.ID)
             intent.putExtra("fromCalendarPage", true)
             startActivity(holder.parent.context, intent, null)
+        }
+
+        holder.startButton.setOnClickListener {
+            if(tabLayout!=null){
+                tabLayout?.selectTab(tabLayout?.getTabAt(1))
+                startClicked?.onStartClicked(item.ID)
+            }
         }
 
     }

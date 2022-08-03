@@ -41,7 +41,8 @@ class AddWorkoutPlan: AppCompatActivity() {
 
         binding.addNewPhase.setOnClickListener{
             if(phaseList.size>0){
-                phaseList.add(WorkoutPhase(orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
+                phaseList.add(WorkoutPhase(
+                    orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
                     duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
             }
             else{

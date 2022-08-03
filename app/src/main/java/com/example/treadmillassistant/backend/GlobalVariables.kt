@@ -1,5 +1,8 @@
 package com.example.treadmillassistant.backend
 
+import com.example.treadmillassistant.ui.home.OnStartClickedListener
+import com.google.android.material.tabs.TabLayout
+
 var loggedIn = false
 
 const val SECONDS_IN_MINUTE = 60
@@ -10,6 +13,7 @@ const val DURATION_ROUND_MULTIPLIER = 10.0
 const val SPEED_ROUND_MULTIPLIER = 10.0
 const val TILT_ROUND_MULTIPLIER = 10.0
 const val PACE_ROUND_MULTIPLIER = 10.0
+const val PERCENTAGE_ROUND_MULTIPLIER = 100.0
 const val DEFAULT_WORKOUT_START_SPEED = 15.0
 const val DEFAULT_WORKOUT_START_TILT = 0.0
 const val DEFAULT_MAX_SPEED = 20.0
@@ -22,3 +26,6 @@ const val DEFAULT_PHASE_DURATION = 0.0
 const val DEFAULT_PHASE_TILT = 0.0
 const val HOME_TAB_NAV_VIEW_POSITION = 0
 const val TRAINING_HISTORY_NAV_VIEW_POSITION = 1
+
+var tabLayout: TabLayout? = null
+var startClicked: OnStartClickedListener? = null

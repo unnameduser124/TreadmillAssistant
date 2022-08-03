@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        tempUser = UserService(this).loadUser()
         if(tempUser==null){
             generateDBdata(this)
             val intent = Intent(this, LoginPage::class.java)

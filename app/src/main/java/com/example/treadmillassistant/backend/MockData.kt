@@ -118,7 +118,7 @@ fun generateDBdata(context: Context){
             val workoutPhase = WorkoutPhase((50..600).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
-                (1..5).random(),
+                (1L..5L).random(),
                 i,
                 false,
                 i.toLong())
