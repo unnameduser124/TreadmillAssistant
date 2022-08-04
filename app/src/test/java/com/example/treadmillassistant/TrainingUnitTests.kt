@@ -112,7 +112,7 @@ class TrainingUnitTests {
         workout.workoutPlan.addNewPhase(phaseOne)
         workout.workoutPlan.addNewPhase(phaseTwo)
         workout.workoutPlan.addNewPhase(phaseThree)
-        workout.trainingStartTime = Calendar.getInstance().timeInMillis - 15000L
+        workout.lastPhaseStart = Calendar.getInstance().timeInMillis - 15000L
 
         assertTrue(workout.getCurrentPhase() == phaseTwo)
     }

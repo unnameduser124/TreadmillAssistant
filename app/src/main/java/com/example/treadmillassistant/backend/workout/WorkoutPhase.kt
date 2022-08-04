@@ -6,6 +6,6 @@ class WorkoutPhase(
     var tilt: Double = 0.0,
     var workoutPlanID: Long = -1,
     var orderNumber: Int = -1,
-    val isFinished: Boolean = false,
+    var isFinished: Boolean = false,
     var ID: Long =-1) {
 }

@@ -115,7 +115,7 @@ fun generateDBdata(context: Context){
         val newID = trainingPlanService.insertNewTrainingPlan(newWorkoutPlan)
         newWorkoutPlan.ID = newID
         for(i in 0..5){
-            val workoutPhase = WorkoutPhase((50..600).random(),
+            val workoutPhase = WorkoutPhase((10..20).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 (1L..5L).random(),
@@ -153,20 +153,24 @@ fun generateDBdata(context: Context){
 }
 
 fun loadAllData(context: Context){
-    val userService = UserService(context)
-    user = userService.loadUser()!!
+    if(user.treadmillList.isEmpty() && user.workoutSchedule.workoutList.isEmpty() && user.workoutPlanList.workoutPlanList.isEmpty()){
+        val userService = UserService(context)
+        user = userService.loadUser()!!
 
-    val trainingService = TrainingService(context)
 
-    val workoutIDs = trainingService.getAllTrainings()
-    workoutIDs.forEach {
-        val workout = trainingService.getTrainingByID(it.ID)
-        user.workoutSchedule.addNewWorkout(workout!!)
+        val trainingService = TrainingService(context)
+
+        user.workoutSchedule.workoutList = trainingService.getAllTrainings()
+
+        for (workout in user.workoutSchedule.workoutList) {
+            val workout = trainingService.getTrainingByID(workout.ID)
+        }
+
+        val workoutPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
+        workoutPlanIDs.forEach {
+            val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(it.ID)
+            user.workoutPlanList.addWorkoutPlan(workoutPlan!!)
+        }
+        user.treadmillList = TreadmillService(context).getUserTreadmills()
     }
-    val workoutPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
-    workoutPlanIDs.forEach {
-        val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(it.ID)
-        user.workoutPlanList.addWorkoutPlan(workoutPlan!!)
-    }
-    user.treadmillList = TreadmillService(context).getUserTreadmills()
 }

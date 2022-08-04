@@ -50,7 +50,7 @@ class EditWorkout: AppCompatActivity() {
         workoutPlanDropdownAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         binding.workoutPlanSelection.adapter = workoutPlanDropdownAdapter
 
-        item = user.workoutSchedule.getWorkout(intent.getIntExtra("id", -1).toLong())
+        item = user.workoutSchedule.getWorkout(intent.getLongExtra("id", -1))
 
         if (item == null) {
             onBackPressed()

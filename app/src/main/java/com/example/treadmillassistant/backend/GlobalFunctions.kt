@@ -34,3 +34,14 @@ fun calculateCaloriesForOngoingWorkout(durationInSeconds: Int): Int{
     val MET = 8
     return (((MET * 3.5 * user.weight)/200).toInt() * secondsToMinutes(durationInSeconds)).toInt()
 }
+
+fun finishPhases(workout: Workout){
+    workout.workoutPlan.workoutPhaseList.forEach {
+        it.isFinished = true
+    }
+}
+fun unfinishPhases(workout: Workout){
+    workout.workoutPlan.workoutPhaseList.forEach {
+        it.isFinished = false
+    }
+}

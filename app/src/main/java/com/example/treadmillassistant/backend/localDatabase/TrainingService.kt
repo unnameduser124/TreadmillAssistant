@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.Treadmill
+import com.example.treadmillassistant.backend.finishPhases
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.MEDIA_LINK
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TRAINING_DATE
@@ -130,7 +131,19 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     WorkoutStatus.Abandoned
                 }
 
-                trainingList.add(Workout(calendar, Treadmill(ID = treadmillID), mediaLink, trainingStatus, WorkoutPlan(ID = trainingPlanID), ID = trainingID))
+                val training = Workout(calendar,
+                    Treadmill(ID = treadmillID),
+                    mediaLink,
+                    trainingStatus,
+                    WorkoutPlan(ID = trainingPlanID,
+                        workoutPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
+                    ID = trainingID,
+                    planned = true)
+
+                trainingList.add(training)
+                if(training!!.workoutStatus == WorkoutStatus.Finished){
+                    finishPhases(training!!)
+                }
             }
         }
         cursor.close()
@@ -200,13 +213,19 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     WorkoutStatus.Abandoned
                 }
 
-                trainingList.add(Workout(calendar,
+                val training = Workout(calendar,
                     Treadmill(ID = treadmillID),
                     mediaLink,
                     trainingStatus,
                     WorkoutPlan(ID = trainingPlanID,
                         workoutPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
-                    ID = trainingID))
+                    ID = trainingID,
+                    planned = true)
+
+                trainingList.add(training)
+                if(training!!.workoutStatus == WorkoutStatus.Finished){
+                    finishPhases(training!!)
+                }
             }
         }
         cursor.close()
@@ -257,11 +276,17 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val date = simpleDateFormat.parse("$trainingDate $trainingTime")
 
                 val calendar = Calendar.getInstance()
+                val currentDate = Calendar.getInstance()
+                currentDate.set(Calendar.HOUR_OF_DAY, 0)
+                currentDate.set(Calendar.MINUTE, 0)
                 calendar.time = date
 
                 var trainingStatus: WorkoutStatus
 
-                trainingStatus = if(status=="Upcoming"){
+                trainingStatus = if(calendar.time < currentDate.time){
+                    WorkoutStatus.Finished
+                }
+                else if(status=="Upcoming"){
                     WorkoutStatus.Upcoming
                 } else if(status=="Finished"){
                     WorkoutStatus.Finished
@@ -273,6 +298,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     WorkoutStatus.Abandoned
                 }
 
+
+
                 val treadmill = TreadmillService(context).getTreadmillByID(treadmillID)
                 val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(trainingPlanID)
 
@@ -283,16 +310,20 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                         mediaLink,
                         trainingStatus,
                         workoutPlan!!,
-                        ID = trainingID)
+                        ID = trainingID,
+                        planned = true)
+                    if(training!!.workoutStatus == WorkoutStatus.Finished){
+                        finishPhases(training!!)
+                    }
                 }
                 else{
-                    println("$treadmillID | $trainingPlanID")
                     training = Workout(calendar,
                         Treadmill(ID=treadmillID),
                         mediaLink,
                         trainingStatus,
                         WorkoutPlan(ID=trainingPlanID),
-                        ID = trainingID)
+                        ID = trainingID,
+                        planned = true)
                 }
             }
         }
@@ -369,7 +400,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     mediaLink,
                     trainingStatus,
                     WorkoutPlan(ID = trainingPlanID),
-                    ID = trainingID))
+                    ID = trainingID,
+                    planned = true))
             }
         }
         cursor.close()

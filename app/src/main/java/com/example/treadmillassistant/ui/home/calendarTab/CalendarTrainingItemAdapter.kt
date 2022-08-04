@@ -49,7 +49,7 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         holder.durationView.text = "Duration: ${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} minutes"
 
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
-        if(item.workoutTime.before(date) || item.workoutStatus!=WorkoutStatus.Upcoming){
+        if(item.workoutTime.before(date) || item.workoutStatus==WorkoutStatus.Finished || item.workoutStatus==WorkoutStatus.Abandoned){
             holder.startButton.isGone = true
         }
 

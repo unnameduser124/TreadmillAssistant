@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         else{
-            user = tempUser as User
             loadAllData(this)
             val navViewPosition = intent.getIntExtra("navViewPosition", 0)
 

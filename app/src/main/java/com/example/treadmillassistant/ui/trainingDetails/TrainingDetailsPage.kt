@@ -2,6 +2,7 @@ package com.example.treadmillassistant.ui.trainingDetails
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             startActivity(intent)
         }
         else{
+
             if(item.workoutStatus != WorkoutStatus.Finished){
                 binding.trainingDetailsEditButton.isGone = false
             }
