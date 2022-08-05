@@ -9,10 +9,12 @@ import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workout.WorkoutPhase
-import com.example.treadmillassistant.backend.workout.WorkoutStatus
+import com.example.treadmillassistant.backend.training.GenericTraining
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.TrainingTabBinding
 import com.example.treadmillassistant.ui.home.OnStartClickedListener
 import com.example.treadmillassistant.ui.home.PageViewModel
@@ -23,7 +25,7 @@ import java.util.*
 class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
 
-    private var workout: Workout = Workout()
+    private var training: Training = GenericTraining()
     private var treadmill: Treadmill = Treadmill()
     private lateinit var binding: TrainingTabBinding
 
@@ -38,152 +40,118 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = TrainingTabBinding.inflate(layoutInflater)
         startClicked = this
-        if(user.treadmillList.isEmpty()){
-            treadmill=Treadmill()
-        }
-        else{
-            treadmill = user.treadmillList.first()
-        }
 
-        if(workout.ID!=0L){
-
-        }
-        else{
-            if(user.workoutSchedule.workoutList.isEmpty()){
-                user.workoutSchedule.workoutList.sortBy { it.ID }
-                workout = Workout(
-                    treadmill = treadmill, workoutTime = Calendar.getInstance(),
-                    workoutStatus = WorkoutStatus.Upcoming, ID = 1)
-                user.workoutSchedule.sortCalendar()
+        if(treadmill.ID==0L){
+            treadmill = if(user.treadmillList.isEmpty()){
+                Treadmill()
+            } else{
+                user.treadmillList.first()
             }
-            else{
-                user.workoutSchedule.workoutList.sortBy { it.ID }
-                workout = Workout(
-                    treadmill = treadmill, workoutTime = Calendar.getInstance(),
-                    workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
-                user.workoutSchedule.sortCalendar()
-
-            }
-
         }
 
-
+        newGenericTraining()
 
         binding.finishTrainingButton.isGone = true
-        hideTrainingItems(binding)
+        hideTrainingItems()
 
         binding.startTrainingButton.setOnClickListener {
-            if(!workout.planned){
-                if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished && workout.workoutStatus!=WorkoutStatus.Paused){
-                    showGenericWorkoutItems(binding)
-                    workout.startWorkout()
-                    binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-                    binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-                    binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
-                    (it as MaterialButton).text = "stop"
-                    runTimer(binding, workout)
+            if(training is GenericTraining){
+                if(training.trainingStatus != TrainingStatus.InProgress && training.trainingStatus!=TrainingStatus.Paused){
+                    showGenericTrainingItems()
+                    training.startTraining()
+                    updateSteeringDisplays()
+                    (it as MaterialButton).text = getString(R.string.stop)
+                    runTimer(training)
                 }
-                else if(workout.workoutStatus == WorkoutStatus.InProgress){
-                    (it as MaterialButton).text = "resume"
+                else if(training.trainingStatus == TrainingStatus.InProgress){
+                    (it as MaterialButton).text = getString(R.string.resume)
                     binding.finishTrainingButton.isGone = false
-                    workout.pauseWorkout()
+                    training.pauseTraining()
                 }
                 else{
-                    (it as MaterialButton).text = "stop"
+                    (it as MaterialButton).text = getString(R.string.stop)
                     binding.finishTrainingButton.isGone = true
-                    workout.resumeWorkout()
-                    runTimer(binding, workout)
+                    training.resumeTraining()
+                    runTimer(training)
                 }
             }
             else{
-                if(workout.workoutStatus != WorkoutStatus.InProgress && workout.workoutStatus != WorkoutStatus.Finished && workout.workoutStatus!=WorkoutStatus.Paused){
-                    showTrainingItems(binding)
-                    workout.startWorkout()
-                    binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-                    binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-                    binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
-                    binding.progressTextView.text = "${round(
-                        workout.getCurrentMoment().toDouble()/workout.getTotalDuration().toDouble(),
-                        PERCENTAGE_ROUND_MULTIPLIER)}%"
-                    (it as MaterialButton).text = "stop"
-                    runTimer(binding, workout)
+                if(training.trainingStatus != TrainingStatus.InProgress && training.trainingStatus != TrainingStatus.Finished && training.trainingStatus!=TrainingStatus.Paused){
+                    showTrainingItems()
+                    training.startTraining()
+                    updateSteeringDisplays()
+                    updateStatusDisplays()
+                    (it as MaterialButton).text = getString(R.string.stop)
+                    runTimer(training)
                 }
-                else if(workout.workoutStatus == WorkoutStatus.InProgress){
-                    (it as MaterialButton).text = "resume"
+                else if(training.trainingStatus == TrainingStatus.InProgress){
+                    (it as MaterialButton).text = getString(R.string.resume)
                     binding.finishTrainingButton.isGone = false
-                    workout.pauseWorkout()
+                    training.pauseTraining()
                 }
                 else{
-                    (it as MaterialButton).text = "stop"
+                    (it as MaterialButton).text = getString(R.string.stop)
                     binding.finishTrainingButton.isGone = true
-                    workout.resumeWorkout()
-                    runTimer(binding, workout)
+                    training.resumeTraining()
+                    runTimer(training)
                 }
 
             }
         }
 
-        binding.finishTrainingButton.setOnClickListener{
-            if(workout.workoutStatus==WorkoutStatus.Paused){
-                workout.finishWorkout()
-                if(!workout.planned){
-                    user.workoutSchedule.addNewWorkout(workout)
-                    workout.workoutPlan.workoutPhaseList.last().isFinished = true
+        binding.finishTrainingButton.setOnClickListener{ finishTrainingButton ->
+            if(training.trainingStatus==TrainingStatus.Paused){
+                training.finishTraining()
+                if(training is PlannedTraining){
+                    unfinishPhases(training)
+                    training.trainingStatus = TrainingStatus.Upcoming
                 }
-                else{
-                    unfinishPhases(workout)
-                    workout.workoutStatus = WorkoutStatus.Upcoming
-                }
-                user.workoutSchedule.workoutList.sortBy { it.ID }
-                workout = Workout(treadmill = treadmill, workoutStatus = WorkoutStatus.Upcoming, ID = user.workoutSchedule.workoutList.last().ID+1)
-                user.workoutSchedule.sortCalendar()
-                hideTrainingItems(binding)
-                it.isGone = true
-                binding.startTrainingButton.text = "start"
+                newGenericTraining()
+                hideTrainingItems()
+                finishTrainingButton.isGone = true
+                binding.startTrainingButton.text = getString(R.string.start)
             }
         }
 
         binding.speedUpButton.setOnClickListener{
-            if(workout.planned){
-                Toast.makeText(this.context, "Can't change in planned workout!", Toast.LENGTH_SHORT).show()
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
             }
-            else if(workout.workoutStatus==WorkoutStatus.InProgress){
-                workout.speedUp()
-                binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-                binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.speedUp()
+                updateSteeringDisplays()
             }
         }
         binding.speedDownButton.setOnClickListener{
-            if(workout.planned){
-                Toast.makeText(this.context, "Can't change in planned workout!", Toast.LENGTH_SHORT).show()
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
             }
-            else if(workout.workoutStatus==WorkoutStatus.InProgress){
-                workout.speedDown()
-                binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-                binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.speedDown()
+                updateSteeringDisplays()
             }
 
         }
 
         binding.tiltUpButton.setOnClickListener{
-            if(workout.planned){
-                Toast.makeText(this.context, "Can't change in planned workout!", Toast.LENGTH_SHORT).show()
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
             }
-            else if(workout.workoutStatus==WorkoutStatus.InProgress){
-                workout.tiltUp()
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.tiltUp()
                 binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
             }
 
         }
         binding.tiltDownButton.setOnClickListener{
-            if(workout.planned){
-                Toast.makeText(this.context, "Can't change in planned workout!", Toast.LENGTH_SHORT).show()
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
             }
-            else if(workout.workoutStatus==WorkoutStatus.InProgress){
-                workout.tiltDown()
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.tiltDown()
                 binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
             }
 
@@ -193,7 +161,29 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         return binding.root
     }
 
-    private fun hideTrainingItems(binding: TrainingTabBinding){
+    private fun newGenericTraining() {
+        if (training.ID == 0L) {
+            if (user.trainingSchedule.trainingLists.isEmpty()) {
+                user.trainingSchedule.trainingLists.sortBy { it.ID }
+                training = GenericTraining(
+                    treadmill = treadmill, trainingTime = Calendar.getInstance(),
+                    trainingStatus = TrainingStatus.Upcoming, ID = 1
+                )
+                user.trainingSchedule.sortCalendar()
+            } else {
+                user.trainingSchedule.trainingLists.sortBy { it.ID }
+                training = GenericTraining(
+                    treadmill = treadmill,
+                    trainingTime = Calendar.getInstance(),
+                    trainingStatus = TrainingStatus.Upcoming,
+                    ID = user.trainingSchedule.trainingLists.last().ID + 1
+                )
+                user.trainingSchedule.sortCalendar()
+
+            }
+        }
+    }
+    private fun hideTrainingItems(){
         binding.distanceTextView.isGone = true
         binding.paceTextView.isGone = true
         binding.timeTextView.isGone = true
@@ -206,7 +196,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         binding.caloriesTextView.isGone = true
 
     }
-    fun showTrainingItems(binding: TrainingTabBinding){
+    private fun showTrainingItems(){
         binding.distanceTextView.isGone = false
         binding.paceTextView.isGone = false
         binding.timeTextView.isGone = false
@@ -219,17 +209,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         binding.caloriesTextView.isGone = false
     }
 
-    private fun hideGenericWorkoutItems(binding: TrainingTabBinding){
-        binding.distanceTextView.isGone = true
-        binding.paceTextView.isGone = true
-        binding.timeTextView.isGone = true
-        binding.distanceLabel.isGone = true
-        binding.paceLabel.isGone = true
-        binding.timeLabel.isGone = true
-        binding.caloriesLabel.isGone = true
-        binding.caloriesTextView.isGone = true
-    }
-    private fun showGenericWorkoutItems(binding: TrainingTabBinding){
+    private fun showGenericTrainingItems(){
         binding.distanceTextView.isGone = false
         binding.paceTextView.isGone = false
         binding.timeTextView.isGone = false
@@ -241,36 +221,23 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     }
 
 
-    private fun runTimer(binding: TrainingTabBinding, workout: Workout){
-        if(workout.planned){
+    private fun runTimer(currentTraining: Training){
+        if(currentTraining is PlannedTraining){
             val handler = Handler()
             var runnableCode = object: Runnable {
                 override fun run() {
-                    if(workout.workoutStatus == WorkoutStatus.InProgress){
-                        binding.timeTextView.text = "${workout.getCurrentMoment()} s"
-                        binding.distanceTextView.text = "${workout.getCurrentDistance()} km"
-                        binding.caloriesTextView.text = "${calculateCaloriesForOngoingWorkout(workout.getCurrentMoment())} kcal"
-                        binding.progressTextView.text = "${round(
-                            (workout.getCurrentMoment().toDouble()/workout.getTotalDuration().toDouble())*100.0, 
-                            PERCENTAGE_ROUND_MULTIPLIER)}%"
-                        if(workout.getCurrentPhase().speed!=treadmill.getSpeed() || workout.getCurrentPhase().tilt!=treadmill.getTilt()){
-                            treadmill.setSpeed(workout.getCurrentPhase().speed)
-                            treadmill.setTilt(workout.getCurrentPhase().tilt)
-                            if(workout.workoutPlan.workoutPhaseList.indexOf(workout.getCurrentPhase())>0){
-                                workout.workoutPlan.workoutPhaseList[workout.workoutPlan.workoutPhaseList.indexOf(workout.getCurrentPhase()
-                                )-1].isFinished = true
-                            }
-                            workout.lastPhaseStart = Calendar.getInstance().timeInMillis
-                            binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-                            binding.paceTextView.text = "${round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER)}'"
-                            binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-                        }
-                        if(workout.getCurrentMoment()>=workout.getTotalDuration()){
-                            workout.finishWorkout()
-                            workout.workoutPlan.workoutPhaseList.last().isFinished = true
-                            binding.startTrainingButton.text = "workout finished,\n start new?"
+                    if(currentTraining.trainingStatus == TrainingStatus.InProgress){
+                        updateStatusDisplays()
+
+                        if(currentTraining.getCurrentPhase().speed!=treadmill.getSpeed() || currentTraining.getCurrentPhase().tilt!=treadmill.getTilt()){
+                            changePhases()
                         }
 
+                        if(currentTraining.getCurrentMoment()>=currentTraining.getTotalDuration()){
+                            currentTraining.finishTraining()
+                            binding.startTrainingButton.text = getString(R.string.training_finished)
+                            newGenericTraining()
+                        }
                         handler.postDelayed(this, 250)
                     }
                 }
@@ -281,10 +248,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             val handler = Handler()
             var runnableCode = object: Runnable {
                 override fun run() {
-                    if(workout.workoutStatus == WorkoutStatus.InProgress){
-                        binding.timeTextView.text = "${workout.getCurrentMoment()} s"
-                        binding.distanceTextView.text = "${workout.getCurrentDistance()} km"
-                        binding.caloriesTextView.text = "${calculateCaloriesForOngoingWorkout(workout.getCurrentMoment())} kcal"
+                    if(currentTraining.trainingStatus == TrainingStatus.InProgress){
+                        updateStatusDisplays()
                         handler.postDelayed(this, 250)
                     }
                 }
@@ -292,6 +257,36 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             handler.post(runnableCode)
         }
 
+    }
+
+    private fun updateSteeringDisplays(){
+        binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
+        binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
+        binding.paceTextView.text = String.format(getString(R.string.pace),
+            round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER))
+    }
+
+    fun updateStatusDisplays(){
+        binding.timeTextView.text = String.format(getString(R.string.duration_seconds), training.getCurrentMoment())
+        binding.distanceTextView.text = String.format(getString(R.string.distance), training.getCurrentDistance())
+        binding.caloriesTextView.text = String.format(getString(R.string.calories),
+            calculateCaloriesForOngoingTraining(training.getCurrentMoment()))
+        if(training is PlannedTraining){
+            binding.progressTextView.text = String.format(getString(R.string.percentage), round(
+                (training.getCurrentMoment().toDouble()/training.getTotalDuration().toDouble())*100.0,
+                PERCENTAGE_ROUND_MULTIPLIER))
+        }
+    }
+
+    fun changePhases(){
+        treadmill.setSpeed((training as PlannedTraining).getCurrentPhase().speed)
+        treadmill.setTilt((training as PlannedTraining).getCurrentPhase().tilt)
+        if(training.trainingPlan.trainingPhaseList.indexOf((training as PlannedTraining).getCurrentPhase())>0){
+            training.trainingPlan.trainingPhaseList[training.trainingPlan.trainingPhaseList.indexOf((training as PlannedTraining).getCurrentPhase()
+            )-1].isFinished = true
+        }
+        training.lastPhaseStart = Calendar.getInstance().timeInMillis
+        updateSteeringDisplays()
     }
 
 
@@ -311,12 +306,12 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     }
 
     override fun onStartClicked(trainingID: Long) {
-        val workoutFound = user.workoutSchedule.getWorkout(trainingID)
-        if(workoutFound!=null){
-            workout = workoutFound
-            treadmill = workout.treadmill
-            if(workout.workoutStatus == WorkoutStatus.InProgress){
-                workout.workoutStatus = WorkoutStatus.Upcoming
+        val trainingFound = user.trainingSchedule.getTraining(trainingID)
+        if(trainingFound!=null){
+            training = trainingFound
+            treadmill = training.treadmill
+            if(training.trainingStatus == TrainingStatus.InProgress){
+                training.trainingStatus = TrainingStatus.Upcoming
             }
             binding.startTrainingButton.callOnClick()
         }

@@ -8,14 +8,14 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workout.WorkoutPlan
-import com.example.treadmillassistant.backend.workout.WorkoutStatus
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.TrainingPlan
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.AddWorkoutLayoutBinding
-import com.example.treadmillassistant.ui.addworkoutplan.AddWorkoutPlan
+import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import java.util.*
 
-class AddWorkout: AppCompatActivity() {
+class AddTraining: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +24,14 @@ class AddWorkout: AppCompatActivity() {
 
         setContentView(binding.root)
 
-        binding.workoutTime.setIs24HourView(true)
+        binding.trainingTime.setIs24HourView(true)
 
         var selectedTreadmill: Treadmill
-        var selectedWorkoutPlan: WorkoutPlan
+        var selectedTrainingPlan: TrainingPlan
         val chosenDate = Date()
         chosenDate.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
-        setUpDatePicker(binding.workoutDate, chosenDate)
-        setUpTimePicker(binding.workoutTime, chosenDate)
+        setUpDatePicker(binding.trainingDate, chosenDate)
+        setUpTimePicker(binding.trainingTime, chosenDate)
 
         val treadmillDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.getTreadmillNames())
         treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -43,10 +43,10 @@ class AddWorkout: AppCompatActivity() {
             selectedTreadmill = user.treadmillList.first()
         }
 
-        val workoutPlanDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.workoutPlanList.getWorkoutPlanNames())
+        val workoutPlanDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.trainingPlanList.getTrainingPlanNames())
         workoutPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.workoutPlanSelection.adapter = workoutPlanDropdownAdapter
-        selectedWorkoutPlan = user.workoutPlanList.workoutPlanList.first()
+        binding.trainingPlanSelection.adapter = workoutPlanDropdownAdapter
+        selectedTrainingPlan = user.trainingPlanList.trainingPlanLists.first()
 
         binding.treadmillSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -61,49 +61,49 @@ class AddWorkout: AppCompatActivity() {
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
         }
 
-        binding.workoutPlanSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.trainingPlanSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parentView: AdapterView<*>?,
                 selectedItemView: View,
                 position: Int,
                 id: Long
             ) {
-                selectedWorkoutPlan = user.workoutPlanList.workoutPlanList[position]
+                selectedTrainingPlan = user.trainingPlanList.trainingPlanLists[position]
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
         }
 
 
-        binding.saveNewWorkoutButton.setOnClickListener{
+        binding.saveNewTrainingButton.setOnClickListener{
             var dateCal = Calendar.getInstance()
-            dateCal.set(Calendar.YEAR, binding.workoutDate.year)
-            dateCal.set(Calendar.MONTH, binding.workoutDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
-            dateCal.set(Calendar.HOUR_OF_DAY, binding.workoutTime.hour)
-            dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
+            dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+            dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+            dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+            dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
 
-            user.workoutSchedule.workoutList.sortBy{it.ID}
-            var newWorkout = Workout(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), WorkoutStatus.Upcoming,
-                selectedWorkoutPlan, ID =user.workoutSchedule.workoutList.last().ID+1)
-            user.workoutSchedule.addNewWorkout(newWorkout)
-            user.workoutSchedule.sortCalendar()
+            user.trainingSchedule.trainingLists.sortBy{it.ID}
+            var newTraining = PlannedTraining(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), TrainingStatus.Upcoming,
+                selectedTrainingPlan, ID =user.trainingSchedule.trainingLists.last().ID+1)
+            user.trainingSchedule.addNewTraining(newTraining)
+            user.trainingSchedule.sortCalendar()
 
             val intent = Intent(this, MainActivity::class.java)
             finishAffinity()
             startActivity(intent)
         }
 
-        binding.addWorkoutPlanButton.setOnClickListener {
-            val intent = Intent(this, AddWorkoutPlan::class.java)
+        binding.addTrainingPlanButton.setOnClickListener {
+            val intent = Intent(this, AddTrainingPlan::class.java)
             intent.putExtra("fromWorkout", true)
             var dateCal = Calendar.getInstance()
-            dateCal.set(Calendar.YEAR, binding.workoutDate.year)
-            dateCal.set(Calendar.MONTH, binding.workoutDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.workoutDate.dayOfMonth)
-            dateCal.set(Calendar.HOUR_OF_DAY, binding.workoutTime.hour)
-            dateCal.set(Calendar.MINUTE, binding.workoutTime.minute)
+            dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+            dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+            dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+            dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
             intent.putExtra("date", dateCal.time)
             startActivity(intent)
         }

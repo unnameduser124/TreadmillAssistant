@@ -1,10 +1,10 @@
 package com.example.treadmillassistant.backend
 
-import com.example.treadmillassistant.backend.workout.WorkoutCalendar
-import com.example.treadmillassistant.backend.workout.WorkoutPlanList
+import com.example.treadmillassistant.backend.training.TrainingCalendar
+import com.example.treadmillassistant.backend.training.TrainingPlanList
 
 class User(
-    var workoutSchedule: WorkoutCalendar = WorkoutCalendar(),
+    var trainingSchedule: TrainingCalendar = TrainingCalendar(),
     var email: String,
     var password: String = "",
     var firstName: String,
@@ -13,13 +13,13 @@ class User(
     var age: Int,
     var weight: Double,
     var treadmillList: MutableList<Treadmill> = mutableListOf(),
-    var workoutPlanList: WorkoutPlanList = WorkoutPlanList(),
+    var trainingPlanList: TrainingPlanList = TrainingPlanList(),
     var ID: Long = 0) {
 
 
     fun getTotalDistance(): Double{
         var totalDistance = 0.0
-        workoutSchedule.workoutList.forEach {
+        trainingSchedule.trainingLists.forEach {
             totalDistance+=it.getTotalDistance()
         }
         return round(totalDistance, DISTANCE_ROUND_MULTIPLIER)
@@ -27,7 +27,7 @@ class User(
 
     fun getTotalDuration(): Double{
         var totalDuration = 0
-        workoutSchedule.workoutList.forEach {
+        trainingSchedule.trainingLists.forEach {
             totalDuration+=it.getTotalDuration()
         }
         return secondsToHours(totalDuration.toDouble())
@@ -35,7 +35,7 @@ class User(
 
     fun getTotalCalories(): Int{
         var totalCalories = 0
-        workoutSchedule.workoutList.forEach {
+        trainingSchedule.trainingLists.forEach {
             totalCalories+= it.calculateCalories()
         }
         return totalCalories
@@ -44,7 +44,7 @@ class User(
     fun getLongestDistance(): Double {
         var longestDistance = 0.0
 
-        workoutSchedule.workoutList.forEach {
+        trainingSchedule.trainingLists.forEach {
             if(it.getTotalDistance()>longestDistance){
 
                 longestDistance = it.getTotalDistance()
@@ -55,7 +55,7 @@ class User(
 
     fun getLongestDuration(): Double{
         var longestDuration = 0
-        workoutSchedule.workoutList.forEach {
+        trainingSchedule.trainingLists.forEach {
             if(it.getTotalDuration()>longestDuration){
                 longestDuration = it.getTotalDuration()
             }

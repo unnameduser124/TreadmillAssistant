@@ -1,6 +1,7 @@
 package com.example.treadmillassistant.backend
 
-import com.example.treadmillassistant.backend.workout.Workout
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
 
 fun round(variableRounded: Double, multiplier: Double): Double{
     return Math.round(variableRounded * multiplier) / multiplier
@@ -30,18 +31,18 @@ fun durationBetweenMillisToSeconds(start: Long, end: Long): Int{
     return (millisecondsToSeconds(start)- millisecondsToSeconds(end)).toInt()
 }
 
-fun calculateCaloriesForOngoingWorkout(durationInSeconds: Int): Int{
+fun calculateCaloriesForOngoingTraining(durationInSeconds: Int): Int{
     val MET = 8
     return (((MET * 3.5 * user.weight)/200).toInt() * secondsToMinutes(durationInSeconds)).toInt()
 }
 
-fun finishPhases(workout: Workout){
-    workout.workoutPlan.workoutPhaseList.forEach {
+fun finishPhases(training: PlannedTraining){
+    training.trainingPlan.trainingPhaseList.forEach {
         it.isFinished = true
     }
 }
-fun unfinishPhases(workout: Workout){
-    workout.workoutPlan.workoutPhaseList.forEach {
+fun unfinishPhases(training: Training){
+    training.trainingPlan.trainingPhaseList.forEach {
         it.isFinished = false
     }
 }

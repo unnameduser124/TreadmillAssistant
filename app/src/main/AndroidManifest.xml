@@ -36,12 +36,12 @@
             android:parentActivityName = ".LoginPage">
         </activity>
         <activity
-            android:name=".ui.addworkoutplan.AddWorkoutPlan"
+            android:name=".ui.addTrainingPlan.AddTrainingPlan"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity">
         </activity>
         <activity
-            android:name=".AddWorkout"
+            android:name=".AddTraining"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity">
         </activity>
@@ -61,7 +61,7 @@
             android:parentActivityName = ".MainActivity">
         </activity>
         <activity
-            android:name=".ui.EditWorkout"
+            android:name=".ui.EditTraining"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".ui.trainingDetails.TrainingDetailsPage"/>
     </application>

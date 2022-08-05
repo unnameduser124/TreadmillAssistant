@@ -2,13 +2,13 @@ package com.example.treadmillassistant.backend
 
 import android.content.Context
 import com.example.treadmillassistant.backend.localDatabase.*
-import com.example.treadmillassistant.backend.workout.*
+import com.example.treadmillassistant.backend.training.*
 import com.example.treadmillassistant.hashMessage
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
-var workoutCalendar = WorkoutCalendar()
-var workoutPlanList = WorkoutPlanList()
+var trainingCalendar = TrainingCalendar()
+var trainingPlanList = TrainingPlanList()
 var tempUser: User? = null
 var user = User(email = "defaultEmail@email.com",
     password = hashMessage("easypassword"),
@@ -105,28 +105,28 @@ fun generateDBdata(context: Context){
         return
     }
     userService.insertNewUser(newUser)
-    val workoutPhaseList = mutableListOf<WorkoutPhase>()
+    val trainingPhaseList = mutableListOf<TrainingPhase>()
     val trainingPhaseService = TrainingPhaseService(context)
     val trainingPlanService = TrainingPlanService(context)
-    val newWorkoutPlanList = WorkoutPlanList()
+    val newTrainingPlanList = TrainingPlanList()
 
     for(i in 0..4){
-        val newWorkoutPlan = WorkoutPlan("Plan $i", userID = user.ID)
-        val newID = trainingPlanService.insertNewTrainingPlan(newWorkoutPlan)
-        newWorkoutPlan.ID = newID
+        val newTrainingPlan = TrainingPlan("Plan $i", userID = user.ID)
+        val newID = trainingPlanService.insertNewTrainingPlan(newTrainingPlan)
+        newTrainingPlan.ID = newID
         for(i in 0..5){
-            val workoutPhase = WorkoutPhase((10..20).random(),
+            val trainingPhase = TrainingPhase((10..20).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 (1L..5L).random(),
                 i,
                 false,
                 i.toLong())
-            val newID = trainingPhaseService.insertNewTrainingPhase(workoutPhase,db)
-            workoutPhase.ID = newID
-            workoutPhaseList.add(workoutPhase)
+            val newID = trainingPhaseService.insertNewTrainingPhase(trainingPhase,db)
+            trainingPhase.ID = newID
+            trainingPhaseList.add(trainingPhase)
         }
-        newWorkoutPlanList.addWorkoutPlan(newWorkoutPlan)
+        newTrainingPlanList.addTrainingPlan(newTrainingPlan)
     }
     val treadmillService = TreadmillService(context)
     val treadmillOne = Treadmill(name = "TreadmillOne")
@@ -143,33 +143,33 @@ fun generateDBdata(context: Context){
         calendar.set(Calendar.DAY_OF_MONTH, if(i%2==0) i%30+1 else i%31+1)
         calendar.set(Calendar.HOUR, (0..23).random())
         calendar.set(Calendar.MINUTE, (0..60).random())
-        val newWorkout = Workout(calendar,
+        val newTraining = PlannedTraining(calendar,
             if(i%2==0) treadmillOne else treadmillTwo,
             "mediaLink$i",
-            if(calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) WorkoutStatus.Finished else WorkoutStatus.Upcoming,
-            newWorkoutPlanList.workoutPlanList.random())
-        trainingService.insertNewTraining(newWorkout,db)
+            if(calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) TrainingStatus.Finished else TrainingStatus.Upcoming,
+            newTrainingPlanList.trainingPlanLists.random())
+        trainingService.insertNewTraining(newTraining)
     }
 }
 
 fun loadAllData(context: Context){
-    if(user.treadmillList.isEmpty() && user.workoutSchedule.workoutList.isEmpty() && user.workoutPlanList.workoutPlanList.isEmpty()){
+    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingLists.isEmpty() && user.trainingPlanList.trainingPlanLists.isEmpty()){
         val userService = UserService(context)
         user = userService.loadUser()!!
 
 
         val trainingService = TrainingService(context)
 
-        user.workoutSchedule.workoutList = trainingService.getAllTrainings()
+        user.trainingSchedule.trainingLists = trainingService.getAllTrainings()
 
-        for (workout in user.workoutSchedule.workoutList) {
+        for (workout in user.trainingSchedule.trainingLists) {
             val workout = trainingService.getTrainingByID(workout.ID)
         }
 
-        val workoutPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
-        workoutPlanIDs.forEach {
-            val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(it.ID)
-            user.workoutPlanList.addWorkoutPlan(workoutPlan!!)
+        val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
+        trainingPlanIDs.forEach {
+            val trainingPlan = TrainingPlanService(context).getTrainingPlanByID(it.ID)
+            user.trainingPlanList.addTrainingPlan(trainingPlan!!)
         }
         user.treadmillList = TreadmillService(context).getUserTreadmills()
     }

@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.treadmillassistant.backend.tabLayout
 import com.example.treadmillassistant.databinding.FragmentHomeBinding
-import com.example.treadmillassistant.databinding.TrainingTabBinding
-import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 
@@ -28,7 +26,7 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-         val sectionPageAdapter = SectionAdapter(requireContext(), childFragmentManager)
+         val sectionPageAdapter = SectionAdapter(childFragmentManager)
         val viewPager: ViewPager = binding.homeViewPager
         viewPager.adapter = sectionPageAdapter
         val tabs: TabLayout = binding.homeTabs

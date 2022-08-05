@@ -4,25 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workoutCalendar
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
-import kotlinx.coroutines.runBlocking
-import java.security.MessageDigest
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
-import java.util.Calendar.DATE
 
 class CalendarPlaceholderFragment: Fragment() {
     private lateinit var pageViewModel: PageViewModel
@@ -38,31 +27,30 @@ class CalendarPlaceholderFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = CalendarTabBinding.inflate(layoutInflater)
         val calendar = Calendar.getInstance()
-        val trainingService = TrainingService(binding.trainingScheduleCalendar.context)
-        var dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
-                && it.workoutTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
-                && it.workoutTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
+        var dataset = user.trainingSchedule.trainingLists.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
+                && it.trainingTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
+                && it.trainingTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
 
-        binding.trainingScheduleCalendar.setOnDateChangeListener { calendarView, year, month, day ->
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, day)
-            dataset = user.workoutSchedule.workoutList.filter{ it.workoutTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
-                    && it.workoutTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
-                    && it.workoutTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
+        binding.trainingScheduleCalendar.setOnDateChangeListener { _, year, month, day ->
+            val newCalendar = Calendar.getInstance()
+            newCalendar.set(Calendar.YEAR, year)
+            newCalendar.set(Calendar.MONTH, month)
+            newCalendar.set(Calendar.DAY_OF_MONTH, day)
+            dataset = user.trainingSchedule.trainingLists.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == newCalendar.get(Calendar.DAY_OF_MONTH)
+                    && it.trainingTime.get(Calendar.MONTH) == newCalendar.get(Calendar.MONTH)
+                    && it.trainingTime.get(Calendar.YEAR) == newCalendar.get(Calendar.YEAR)}
             val itemAdapter = CalendarTrainingItemAdapter(dataset)
-            binding.dayWorkoutsList.adapter = itemAdapter
+            binding.dayTrainingsList.adapter = itemAdapter
         }
 
         val itemAdapter = CalendarTrainingItemAdapter(dataset)
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        binding.dayWorkoutsList.layoutManager = linearLayoutManager
-        binding.dayWorkoutsList.adapter = itemAdapter
-        binding.dayWorkoutsList.setHasFixedSize(true)
+        binding.dayTrainingsList.layoutManager = linearLayoutManager
+        binding.dayTrainingsList.adapter = itemAdapter
+        binding.dayTrainingsList.setHasFixedSize(true)
 
         return binding.root
     }

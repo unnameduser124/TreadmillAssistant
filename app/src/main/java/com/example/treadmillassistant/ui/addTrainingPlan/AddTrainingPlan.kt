@@ -1,4 +1,4 @@
-package com.example.treadmillassistant.ui.addworkoutplan
+package com.example.treadmillassistant.ui.addTrainingPlan
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,17 +6,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.AddWorkout
+import com.example.treadmillassistant.AddTraining
 import com.example.treadmillassistant.MainActivity
+import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.workout.WorkoutPhase
-import com.example.treadmillassistant.backend.workout.WorkoutPlan
+import com.example.treadmillassistant.backend.training.TrainingPhase
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddWorkoutPlanLayoutBinding
 import java.util.*
 
-class AddWorkoutPlan: AppCompatActivity() {
+class AddTrainingPlan: AppCompatActivity() {
 
-    var fromWorkout: Boolean = false
+    private var fromTraining: Boolean = false
     var date: Date = Date()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,51 +27,52 @@ class AddWorkoutPlan: AppCompatActivity() {
 
         setContentView(binding.root)
 
-        fromWorkout = intent.getBooleanExtra("fromWorkout", false)
-        if(fromWorkout){
+        fromTraining = intent.getBooleanExtra("fromTraining", false)
+        if(fromTraining){
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
 
-        val phaseList = mutableListOf<WorkoutPhase>()
-        val phaseListItemAdapter = WorkoutPhaseItemAdapter(phaseList, binding.totalDurationWorkoutPlanLabel, binding.totalDistanceWorkoutPlanLabel)
+        val phaseList = mutableListOf<TrainingPhase>()
+        val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        binding.addWorkoutPlanPhaseList.layoutManager = linearLayoutManager
-        binding.addWorkoutPlanPhaseList.adapter = phaseListItemAdapter
-        binding.addWorkoutPlanPhaseList.setItemViewCacheSize(phaseList.size)
+        binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
+        binding.addTrainingPlanPhaseList.adapter = phaseListItemAdapter
+        binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
 
 
         binding.addNewPhase.setOnClickListener{
             if(phaseList.size>0){
-                phaseList.add(WorkoutPhase(
+                phaseList.add(TrainingPhase(
                     orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
                     duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
             }
             else{
-                phaseList.add(WorkoutPhase(orderNumber = 0, speed = DEFAULT_PHASE_SPEED, duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
+                phaseList.add(TrainingPhase(orderNumber = 0, speed = DEFAULT_PHASE_SPEED, duration = minutesToSeconds(DEFAULT_PHASE_DURATION)))
             }
-            binding.addWorkoutPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
-            binding.addWorkoutPlanPhaseList.setItemViewCacheSize(phaseList.size)
+            binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
+            binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
 
             var duration = 0
             phaseList.forEach{
                 duration += it.duration
             }
-            binding.totalDurationWorkoutPlanLabel.text = "Total duration: ${round(secondsToMinutes(duration), DURATION_ROUND_MULTIPLIER)} min"
+            binding.totalDurationTrainingPlanLabel.text = String.format(this.getString(R.string.total_duration_minutes), duration)
 
             var distance = 0.0
             phaseList.forEach {
                 distance += (it.duration.toDouble()/3600.0)*it.speed
             }
-            binding.totalDistanceWorkoutPlanLabel.text = "Total distance: ${round(distance, DISTANCE_ROUND_MULTIPLIER)} km"
+            distance = round(distance, DISTANCE_ROUND_MULTIPLIER)
+            binding.totalDistanceTrainingPlanLabel.text = String.format(this.getString(R.string.total_distance), distance)
         }
 
-        binding.workoutPlanSaveButton.setOnClickListener {
+        binding.trainingPlanSaveButton.setOnClickListener {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
-                var intent: Intent
-                user.workoutPlanList.addWorkoutPlan(WorkoutPlan(name, phaseList, user.ID))
-                if(fromWorkout){
-                    intent = Intent(this, AddWorkout::class.java)
+                val intent: Intent
+                user.trainingPlanList.addTrainingPlan(TrainingPlan(name, phaseList, user.ID))
+                if(fromTraining){
+                    intent = Intent(this, AddTraining::class.java)
                     intent.putExtra("date", date.time)
                     finish()
                     startActivity(intent)
@@ -87,8 +89,8 @@ class AddWorkoutPlan: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            if(fromWorkout){
-                intent = Intent(this, AddWorkout::class.java)
+            if(fromTraining){
+                intent = Intent(this, AddTraining::class.java)
                 intent.putExtra("date", date.time)
                 finish()
                 startActivity(intent)
@@ -103,8 +105,8 @@ class AddWorkoutPlan: AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if(fromWorkout){
-            intent = Intent(this, AddWorkout::class.java)
+        if(fromTraining){
+            intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.time)
             finish()
             startActivity(intent)

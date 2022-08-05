@@ -2,7 +2,6 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.finishPhases
@@ -15,28 +14,30 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TREADMILL_ID
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.USER_ID
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workout.WorkoutPlan
-import com.example.treadmillassistant.backend.workout.WorkoutStatus
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingPlan
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TrainingService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTraining(workout: Workout, db: SQLiteDatabase): Long {
-        var simpleDateFormat = SimpleDateFormat("dd.MM.${workout.workoutTime.get(Calendar.YEAR)}")
-        val date = simpleDateFormat.format(workout.workoutTime.time)
+    fun insertNewTraining(training: PlannedTraining): Long {
+        val db = this.writableDatabase
+        var simpleDateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}")
+        val date = simpleDateFormat.format(training.trainingTime.time)
         simpleDateFormat = SimpleDateFormat("HH:mm")
-        val time = simpleDateFormat.format(workout.workoutTime.time)
+        val time = simpleDateFormat.format(training.trainingTime.time)
 
         val contentValues = ContentValues().apply {
             put(TRAINING_DATE, date)
             put(TRAINING_TIME, time)
-            put(MEDIA_LINK, workout.mediaLink)
-            put(TRAINING_STATUS, "${workout.workoutStatus}")
-            put(TREADMILL_ID, workout.treadmill?.ID)
-            put(TRAINING_PLAN_ID, workout.workoutPlan?.ID)
+            put(MEDIA_LINK, training.mediaLink)
+            put(TRAINING_STATUS, "${training.trainingStatus}")
+            put(TREADMILL_ID, training.treadmill?.ID)
+            put(TRAINING_PLAN_ID, training.trainingPlan?.ID)
             put(USER_ID, user.ID)
         }
 
@@ -44,8 +45,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows deleted
-    fun deleteTraining(id: Int, db: SQLiteDatabase): Int{
-
+    fun deleteTraining(id: Int): Int{
+        val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
         val selectionArgs = arrayOf("$id")
@@ -54,19 +55,19 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows updated
-    fun updateTraining(newWorkout: Workout, trainingID: Int, db: SQLiteDatabase): Int{
-
-        var simpleDateFormat = SimpleDateFormat("dd.MM.${newWorkout.workoutTime.get(Calendar.YEAR)}")
-        val date = simpleDateFormat.format(newWorkout.workoutTime.time)
+    fun updateTraining(newTraining: PlannedTraining, trainingID: Int): Int{
+        val db = this.writableDatabase
+        var simpleDateFormat = SimpleDateFormat("dd.MM.${newTraining.trainingTime.get(Calendar.YEAR)}")
+        val date = simpleDateFormat.format(newTraining.trainingTime.time)
         simpleDateFormat = SimpleDateFormat("kk:mm")
-        val time = simpleDateFormat.format(newWorkout.workoutTime.time)
+        val time = simpleDateFormat.format(newTraining.trainingTime.time)
         val contentValues = ContentValues().apply {
             put(TRAINING_DATE, date)
             put(TRAINING_TIME, time)
-            put(MEDIA_LINK, newWorkout.mediaLink)
-            put(TRAINING_STATUS, "${newWorkout.workoutStatus}")
-            put(TREADMILL_ID, newWorkout.treadmill?.ID)
-            put(TRAINING_PLAN_ID, newWorkout.workoutPlan?.ID)
+            put(MEDIA_LINK, newTraining.mediaLink)
+            put(TRAINING_STATUS, "${newTraining.trainingStatus}")
+            put(TREADMILL_ID, newTraining.treadmill?.ID)
+            put(TRAINING_PLAN_ID, newTraining.trainingPlan?.ID)
             put(USER_ID, user.ID)
         }
         val selection = "${BaseColumns._ID} = ?"
@@ -77,7 +78,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     }
 
     //return all trainings without treadmill or workout plan (just their IDs) sorted by ID
-    fun getAllTrainings(): MutableList<Workout>{
+    fun getAllTrainings(): MutableList<Training>{
         val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             TRAINING_DATE,
@@ -100,7 +101,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             sortOrder
         )
 
-        val trainingList = mutableListOf<Workout>()
+        val trainingList = mutableListOf<Training>()
         with(cursor) {
             while (moveToNext()) {
                 val trainingID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
@@ -117,31 +118,30 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val calendar = Calendar.getInstance()
                 calendar.time = date
 
-                var trainingStatus: WorkoutStatus
+                var trainingStatus: TrainingStatus
 
                 trainingStatus = if(status=="Upcoming"){
-                    WorkoutStatus.Upcoming
+                    TrainingStatus.Upcoming
                 } else if(status=="Finished"){
-                    WorkoutStatus.Finished
+                    TrainingStatus.Finished
                 } else if(status=="InProgress"){
-                    WorkoutStatus.InProgress
+                    TrainingStatus.InProgress
                 } else if(status=="Paused"){
-                    WorkoutStatus.Paused
+                    TrainingStatus.Paused
                 } else {
-                    WorkoutStatus.Abandoned
+                    TrainingStatus.Abandoned
                 }
 
-                val training = Workout(calendar,
+                val training = PlannedTraining(calendar,
                     Treadmill(ID = treadmillID),
                     mediaLink,
                     trainingStatus,
-                    WorkoutPlan(ID = trainingPlanID,
-                        workoutPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
-                    ID = trainingID,
-                    planned = true)
+                    TrainingPlan(ID = trainingPlanID,
+                        trainingPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
+                    ID = trainingID)
 
                 trainingList.add(training)
-                if(training!!.workoutStatus == WorkoutStatus.Finished){
+                if(training!!.trainingStatus == TrainingStatus.Finished){
                     finishPhases(training!!)
                 }
             }
@@ -152,7 +152,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     }
 
     //return trainings for date without treadmill or workout plan (just their IDs) sorted by ID
-    fun getTrainingForDate(date: Calendar): MutableList<Workout>{
+    fun getTrainingForDate(date: Calendar): MutableList<PlannedTraining>{
         val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             TRAINING_DATE,
@@ -182,7 +182,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             sortOrder
         )
 
-        val trainingList = mutableListOf<Workout>()
+        val trainingList = mutableListOf<PlannedTraining>()
         with(cursor) {
             while (moveToNext()) {
                 val trainingID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
@@ -199,31 +199,30 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val calendar = Calendar.getInstance()
                 calendar.time = date
 
-                var trainingStatus: WorkoutStatus
+                var trainingStatus: TrainingStatus
 
                 trainingStatus = if(status=="Upcoming"){
-                    WorkoutStatus.Upcoming
+                    TrainingStatus.Upcoming
                 } else if(status=="Finished"){
-                    WorkoutStatus.Finished
+                    TrainingStatus.Finished
                 } else if(status=="InProgress"){
-                    WorkoutStatus.InProgress
+                    TrainingStatus.InProgress
                 } else if(status=="Paused"){
-                    WorkoutStatus.Paused
+                    TrainingStatus.Paused
                 } else {
-                    WorkoutStatus.Abandoned
+                    TrainingStatus.Abandoned
                 }
 
-                val training = Workout(calendar,
+                val training = PlannedTraining(calendar,
                     Treadmill(ID = treadmillID),
                     mediaLink,
                     trainingStatus,
-                    WorkoutPlan(ID = trainingPlanID,
-                        workoutPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
-                    ID = trainingID,
-                    planned = true)
+                    TrainingPlan(ID = trainingPlanID,
+                        trainingPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
+                    ID = trainingID)
 
                 trainingList.add(training)
-                if(training!!.workoutStatus == WorkoutStatus.Finished){
+                if(training!!.trainingStatus == TrainingStatus.Finished){
                     finishPhases(training!!)
                 }
             }
@@ -233,7 +232,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
         return trainingList
     }
 
-    fun getTrainingByID(ID: Long): Workout?{
+    fun getTrainingByID(ID: Long): PlannedTraining?{
         val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             TRAINING_DATE,
@@ -260,7 +259,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             sortOrder
         )
 
-        var training: Workout? = null
+        var training: PlannedTraining? = null
         if((cursor != null) && (cursor.count > 0)){
             with(cursor) {
                 moveToFirst()
@@ -281,49 +280,47 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 currentDate.set(Calendar.MINUTE, 0)
                 calendar.time = date
 
-                var trainingStatus: WorkoutStatus
+                var trainingStatus: TrainingStatus
 
                 trainingStatus = if(calendar.time < currentDate.time){
-                    WorkoutStatus.Finished
+                    TrainingStatus.Finished
                 }
                 else if(status=="Upcoming"){
-                    WorkoutStatus.Upcoming
+                    TrainingStatus.Upcoming
                 } else if(status=="Finished"){
-                    WorkoutStatus.Finished
+                    TrainingStatus.Finished
                 } else if(status=="InProgress"){
-                    WorkoutStatus.InProgress
+                    TrainingStatus.InProgress
                 } else if(status=="Paused"){
-                    WorkoutStatus.Paused
+                    TrainingStatus.Paused
                 } else {
-                    WorkoutStatus.Abandoned
+                    TrainingStatus.Abandoned
                 }
 
 
 
                 val treadmill = TreadmillService(context).getTreadmillByID(treadmillID)
-                val workoutPlan = TrainingPlanService(context).getTrainingPlanForTraining(trainingPlanID)
+                val workoutPlan = TrainingPlanService(context).getTrainingPlanByID(trainingPlanID)
 
 
                 if(treadmill!=null && workoutPlan!=null){
-                    training = Workout(calendar,
+                    training = PlannedTraining(calendar,
                         treadmill!!,
                         mediaLink,
                         trainingStatus,
                         workoutPlan!!,
-                        ID = trainingID,
-                        planned = true)
-                    if(training!!.workoutStatus == WorkoutStatus.Finished){
+                        ID = trainingID)
+                    if(training!!.trainingStatus == TrainingStatus.Finished){
                         finishPhases(training!!)
                     }
                 }
                 else{
-                    training = Workout(calendar,
+                    training = PlannedTraining(calendar,
                         Treadmill(ID=treadmillID),
                         mediaLink,
                         trainingStatus,
-                        WorkoutPlan(ID=trainingPlanID),
-                        ID = trainingID,
-                        planned = true)
+                        TrainingPlan(ID=trainingPlanID),
+                        ID = trainingID)
                 }
             }
         }
@@ -333,7 +330,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
         return training
     }
 
-    fun getTrainingForDateRange(startDate: Calendar, endDate: Calendar, db: SQLiteDatabase): MutableList<Workout> {
+    fun getTrainingForDateRange(startDate: Calendar, endDate: Calendar): MutableList<PlannedTraining> {
+        val db = this.readableDatabase
 
         val projection = arrayOf(BaseColumns._ID,
             TRAINING_DATE,
@@ -344,7 +342,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             TRAINING_PLAN_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "$TRAINING_DATE >= ? AND $TRAINING_DATE <= ?"
 
@@ -364,7 +362,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             sortOrder
         )
 
-        val trainingList = mutableListOf<Workout>()
+        val trainingList = mutableListOf<PlannedTraining>()
         with(cursor) {
             while (moveToNext()) {
                 val trainingID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
@@ -381,27 +379,26 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val calendar = Calendar.getInstance()
                 calendar.time = date
 
-                var trainingStatus: WorkoutStatus
+                var trainingStatus: TrainingStatus
 
                 trainingStatus = if(status=="Upcoming"){
-                    WorkoutStatus.Upcoming
+                    TrainingStatus.Upcoming
                 } else if(status=="Finished"){
-                    WorkoutStatus.Finished
+                    TrainingStatus.Finished
                 } else if(status=="InProgress"){
-                    WorkoutStatus.InProgress
+                    TrainingStatus.InProgress
                 } else if(status=="Paused"){
-                    WorkoutStatus.Paused
+                    TrainingStatus.Paused
                 } else {
-                    WorkoutStatus.Abandoned
+                    TrainingStatus.Abandoned
                 }
 
-                trainingList.add(Workout(calendar,
+                trainingList.add(PlannedTraining(calendar,
                     Treadmill(ID = treadmillID),
                     mediaLink,
                     trainingStatus,
-                    WorkoutPlan(ID = trainingPlanID),
-                    ID = trainingID,
-                    planned = true))
+                    TrainingPlan(ID = trainingPlanID),
+                    ID = trainingID))
             }
         }
         cursor.close()

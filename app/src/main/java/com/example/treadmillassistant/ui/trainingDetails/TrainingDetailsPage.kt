@@ -2,17 +2,16 @@ package com.example.treadmillassistant.ui.trainingDetails
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
+import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
-import com.example.treadmillassistant.backend.workout.WorkoutStatus
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.IndividualWorkoutPageBinding
-import com.example.treadmillassistant.ui.EditWorkout
+import com.example.treadmillassistant.ui.EditTraining
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +33,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             startActivity(intent)
         }
 
-        val item = user.workoutSchedule.getWorkout(itemID)
+        val item = user.trainingSchedule.getTraining(itemID)
 
         if(item==null){
             val intent = Intent(this, MainActivity::class.java)
@@ -43,23 +42,25 @@ class TrainingDetailsPage: AppCompatActivity() {
         }
         else{
 
-            if(item.workoutStatus != WorkoutStatus.Finished){
+            if(item.trainingStatus != TrainingStatus.Finished){
                 binding.trainingDetailsEditButton.isGone = false
             }
-            var date = item.workoutTime
+            val date = item.trainingTime
             val simpleDateFormat = SimpleDateFormat("dd.MM.${date.get(Calendar.YEAR)}")
 
-            binding.trainingDetailsStatusText.text = "${item.workoutStatus}"
+            binding.trainingDetailsStatusText.text = "${item.trainingStatus}"
 
             binding.trainingDetailsDateText.text = simpleDateFormat.format(date.time)
-            binding.trainingDetailsDurationText.text = "${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} min"
-            binding.trainingDetailsDistanceText.text = "${round(item.getTotalDistance(), DISTANCE_ROUND_MULTIPLIER)} km"
-            binding.trainingDetailsCaloriesText.text = "${item.calculateCalories()} kcal"
-            binding.trainingDetailsAvgSpeedText.text = "${round(item.getAverageSpeed(), SPEED_ROUND_MULTIPLIER)} km/h"
-            binding.trainingDetailsAvgPaceText.text = "${round((SECONDS_IN_MINUTE.toDouble()/item.getAverageSpeed()), PACE_ROUND_MULTIPLIER)}'"
-            binding.trainingDetailsAvgTiltText.text = "${round(item.getAverageTilt(), TILT_ROUND_MULTIPLIER)}"
+            binding.trainingDetailsDurationText.text = String.format(getString(R.string.duration_minutes),
+                round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
+            binding.trainingDetailsDistanceText.text = String.format(getString(R.string.distance), round(item.getTotalDistance(), DISTANCE_ROUND_MULTIPLIER))
+            binding.trainingDetailsCaloriesText.text = String.format(getString(R.string.calories), item.calculateCalories())
+            binding.trainingDetailsAvgSpeedText.text = String.format(getString(R.string.speed), round(item.getAverageSpeed(), SPEED_ROUND_MULTIPLIER))
+            binding.trainingDetailsAvgPaceText.text = String.format(getString(R.string.pace),
+                round((SECONDS_IN_MINUTE.toDouble()/item.getAverageSpeed()), PACE_ROUND_MULTIPLIER))
+            binding.trainingDetailsAvgTiltText.text = round(item.getAverageTilt(), TILT_ROUND_MULTIPLIER).toString()
 
-            val itemAdapter = TrainingDetailsPhaseItemAdapter(item.workoutPlan.workoutPhaseList)
+            val itemAdapter = TrainingDetailsPhaseItemAdapter(item.trainingPlan.trainingPhaseList)
             val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.trainingDetailsPhaseList.layoutManager = linearLayoutManager
             binding.trainingDetailsPhaseList.adapter = itemAdapter
@@ -68,14 +69,14 @@ class TrainingDetailsPage: AppCompatActivity() {
             binding.trainingDetailsRemoveButton.setOnClickListener {
                 if(!fromCalendarPage){
                     val intent = Intent(this, MainActivity::class.java)
-                    user.workoutSchedule.removeWorkout(item)
+                    user.trainingSchedule.removeTraining(item)
                     intent.putExtra("navViewPosition", TRAINING_HISTORY_NAV_VIEW_POSITION)
                     finish()
                     startActivity(intent)
                 }
                 else{
                     val intent = Intent(this, MainActivity::class.java)
-                    user.workoutSchedule.removeWorkout(item)
+                    user.trainingSchedule.removeTraining(item)
                     intent.putExtra("navViewPosition", HOME_TAB_NAV_VIEW_POSITION)
                     finish()
                     startActivity(intent)
@@ -83,7 +84,7 @@ class TrainingDetailsPage: AppCompatActivity() {
             }
 
             binding.trainingDetailsEditButton.setOnClickListener {
-                val intent = Intent(this, EditWorkout::class.java)
+                val intent = Intent(this, EditTraining::class.java)
                 intent.putExtra("id", item.ID)
                 finish()
                 startActivity(intent)

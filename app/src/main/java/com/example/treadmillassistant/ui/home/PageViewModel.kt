@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class PageViewModel: ViewModel() {
-    private val indeks = MutableLiveData<Int>()
+    private val index = MutableLiveData<Int>()
 
     fun setIndex(index: Int){
-        indeks.value = index
+        this.index.value = index
     }
 }

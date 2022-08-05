@@ -31,7 +31,7 @@
         <DatePicker
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id = "@+id/workout_date"
+            android:id = "@+id/training_date"
             app:layout_constraintDimensionRatio="1:0.4"
             android:datePickerMode="spinner"
             android:calendarViewShown="false"
@@ -46,7 +46,7 @@
         <TimePicker
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id = "@+id/workout_time"
+            android:id = "@+id/training_time"
             android:timePickerMode="spinner"
             app:layout_constraintDimensionRatio="1:0.4"
             android:layout_margin="10dp"/>
@@ -62,16 +62,16 @@
             <Spinner
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id = "@+id/workout_plan_selection"
+                android:id = "@+id/training_plan_selection"
                 android:layout_margin="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/add_workout_plan_button"/>
+                app:layout_constraintEnd_toStartOf="@id/add_training_plan_button"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id = "@+id/add_workout_plan_button"
+                android:id = "@+id/add_training_plan_button"
                 android:text = "new"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -101,7 +101,7 @@
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id = "@+id/save_new_workout_button"
+            android:id = "@+id/save_new_training_button"
             android:layout_margin="10dp"
             android:text = "save"/>
     </LinearLayout>

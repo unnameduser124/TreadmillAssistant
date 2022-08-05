@@ -13,12 +13,12 @@
         android:orientation = "horizontal"
         android:id = "@+id/item">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id = "@+id/training_time"
             android:padding = "10dp"
             android:textSize = "16sp"
-            android:text = "Time: 15:30"
+            android:text = "00:00"
             app:layout_constraintStart_toStartOf = "parent"/>
         <TextView
             android:layout_width="wrap_content"

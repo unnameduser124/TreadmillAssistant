@@ -1,6 +1,6 @@
-package com.example.treadmillassistant.backend.workout
+package com.example.treadmillassistant.backend.training
 
-class WorkoutPhase(
+class TrainingPhase(
     var duration: Int = 0,
     var speed: Double = 0.0,
     var tilt: Double = 0.0,

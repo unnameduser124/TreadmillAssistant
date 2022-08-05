@@ -13,11 +13,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
-import com.example.treadmillassistant.backend.localDatabase.TreadmillService
-import com.example.treadmillassistant.backend.localDatabase.UserService
 import com.example.treadmillassistant.databinding.ActivityMainBinding
-import com.example.treadmillassistant.ui.addworkoutplan.AddWorkoutPlan
+import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
 
 
@@ -54,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             setupActionBarWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
 
-            header.findViewById<TextView>(R.id.email_header).text = "${user!!.email}"
+            header.findViewById<TextView>(R.id.email_header).text = user.email
 
             navView.menu.getItem(navViewPosition).isChecked = true
             navController.navigate(navView.menu.getItem(navViewPosition).itemId)
@@ -81,12 +78,12 @@ class MainActivity : AppCompatActivity() {
     // handle button activities
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
-        if (id == R.id.add_new_workout_menu_item) {
-            val intent = Intent(this, AddWorkout::class.java)
+        if (id == R.id.add_new_training_menu_item) {
+            val intent = Intent(this, AddTraining::class.java)
             startActivity(intent)
         }
-        else if(id == R.id.add_new_workout_plan_menu_item){
-            val intent = Intent(this, AddWorkoutPlan::class.java)
+        else if(id == R.id.add_new_training_plan_menu_item){
+            val intent = Intent(this, AddTrainingPlan::class.java)
             startActivity(intent)
         }
         return super.onOptionsItemSelected(item)

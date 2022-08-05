@@ -17,16 +17,16 @@ class ProfilePage: AppCompatActivity() {
 
         binding.emailTextView.text = user.email
 
-        binding.totalDistanceValue.text = "${user.getTotalDistance()}km"
-        binding.totalDurationValue.text = "${user.getTotalDuration()}h"
-        binding.totalWorkoutNumberValue.text = "${user.workoutSchedule.workoutList.size}"
-        binding.longestDistanceWorkoutValue.text = "${user.getLongestDistance()}km"
-        binding.longestDurationWorkoutValue.text = "${user.getLongestDuration()}h"
-        binding.fullNameTextView.text = "${user.firstName} ${user.lastName}"
-        binding.usernameTextView.text = "${user.username}"
-        binding.weightTextView.text = "${user.weight} kg"
-        binding.ageTextView.text = "${user.age}"
-        binding.totalCaloriesWorkoutValue.text = "${user.getTotalCalories()} kcal"
+        binding.totalDistanceValue.text = String.format(getString(R.string.distance), user.getTotalDistance())
+        binding.totalDurationValue.text = String.format(getString(R.string.duration_hours), user.getTotalDuration())
+        binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingLists.size}"
+        binding.longestDistanceTrainingValue.text = String.format(getString(R.string.distance), user.getLongestDistance())
+        binding.longestDurationTrainingValue.text = String.format(getString(R.string.duration_hours), user.getLongestDuration())
+        binding.fullNameTextView.text = String.format(getString(R.string.full_name), user.firstName, user.lastName)
+        binding.usernameTextView.text = user.username
+        binding.weightTextView.text = String.format(getString(R.string.weight), user.weight)
+        binding.ageTextView.text = user.age.toString()
+        binding.totalCaloriesTrainingValue.text = String.format(getString(R.string.calories), user.getTotalCalories())
 
         binding.logOutButton.setOnClickListener{
             loggedIn = false

@@ -4,7 +4,6 @@ import javax.net.ssl.SSLPeerUnverifiedException
 
 class Treadmill(private var speed: Double = 0.0,
                 private var tilt: Double = 0.0,
-                private var mode: String = "",
                 var name: String = "empty name",
                 var ID: Long = 0,
                 val maxSpeed: Double = DEFAULT_MAX_SPEED,

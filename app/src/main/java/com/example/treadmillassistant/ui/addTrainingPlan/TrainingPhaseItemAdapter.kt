@@ -1,5 +1,6 @@
-package com.example.treadmillassistant.ui.addworkoutplan
+package com.example.treadmillassistant.ui.addTrainingPlan
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +10,18 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.workout.WorkoutPhase
+import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.google.android.material.textfield.TextInputEditText
 
-class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
-                              private val totalDuration: TextView,
-                              private val totalDistance: TextView): RecyclerView.Adapter<WorkoutPhaseItemAdapter.ItemViewHolder>(){
+class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>,
+                               private val totalDuration: TextView,
+                               private val totalDistance: TextView): RecyclerView.Adapter<TrainingPhaseItemAdapter.ItemViewHolder>(){
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val durationInput = view.findViewById<TextInputEditText>(R.id.phase_duration_input)
-        val speedInput = view.findViewById<TextInputEditText>(R.id.phase_speed_input)
-        val tiltInput = view.findViewById<TextInputEditText>(R.id.phase_tilt_input)
-        val removeButton = view.findViewById<Button>(R.id.phase_remove_button)
+        val durationInput: TextInputEditText = view.findViewById(R.id.phase_duration_input)
+        val speedInput: TextInputEditText = view.findViewById(R.id.phase_speed_input)
+        val tiltInput: TextInputEditText = view.findViewById(R.id.phase_tilt_input)
+        val removeButton: Button = view.findViewById(R.id.phase_remove_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder{
@@ -39,8 +40,8 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
                 phaseList.removeAt(position)
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position, phaseList.size)
-                setDuration()
-                setDistance()
+                setDuration(holder.durationInput.context)
+                setDistance(holder.speedInput.context)
             }
         }
 
@@ -51,8 +52,8 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
             else{
                 item.duration = minutesToSeconds(DEFAULT_PHASE_DURATION)
             }
-            setDuration()
-            setDistance()
+            setDuration(holder.durationInput.context)
+            setDistance(holder.speedInput.context)
         }
         holder.speedInput.addTextChangedListener {
             if(it.toString()!=""){
@@ -61,7 +62,7 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
             else{
                 item.speed = DEFAULT_PHASE_SPEED
             }
-            setDistance()
+            setDistance(holder.speedInput.context)
         }
         holder.tiltInput.addTextChangedListener {
             if(it.toString()!="" && it.toString()!="-"){
@@ -76,19 +77,20 @@ class WorkoutPhaseItemAdapter(private val phaseList: MutableList<WorkoutPhase>,
     override fun getItemCount() = phaseList.size
 
 
-    private fun setDistance(){
+    private fun setDistance(context: Context){
         var distance = 0.0
         phaseList.forEach {
             distance += (it.duration.toDouble() / SECONDS_IN_HOUR.toDouble())*it.speed
         }
-        totalDistance.text = "Total distance: ${round(distance, DISTANCE_ROUND_MULTIPLIER)} km"
+        distance = round(distance, DISTANCE_ROUND_MULTIPLIER)
+        totalDistance.text = String.format(context.getString(R.string.total_duration_minutes), distance)
     }
 
-    private fun setDuration(){
+    private fun setDuration(context: Context){
         var duration = 0
-        phaseList.forEach{
+        phaseList.forEach {
             duration += it.duration
         }
-        totalDuration.text = "Total duration: ${secondsToMinutes(duration)} min"
+        totalDuration.text = String.format(context.getString(R.string.total_duration_minutes), secondsToMinutes(duration))
     }
 }

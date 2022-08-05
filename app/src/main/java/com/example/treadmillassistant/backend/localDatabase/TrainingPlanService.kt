@@ -2,18 +2,17 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.PLAN_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.USER_ID
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.backend.workout.WorkoutPlan
+import com.example.treadmillassistant.backend.training.TrainingPlan
 
 class TrainingPlanService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTrainingPlan(trainingPlan: WorkoutPlan): Long {
+    fun insertNewTrainingPlan(trainingPlan: TrainingPlan): Long {
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(PLAN_NAME, trainingPlan.name)
@@ -24,8 +23,8 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
     }
 
     //returns number of rows deleted
-    fun deleteTrainingPlan(id: Int, db: SQLiteDatabase): Int{
-
+    fun deleteTrainingPlan(id: Int): Int{
+        val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
         val selectionArgs = arrayOf("$id")
@@ -34,7 +33,8 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
     }
 
     //returns number of rows updated
-    fun updateTrainingPlan(newTrainingPlan: WorkoutPlan, trainingPlanID: Int, db: SQLiteDatabase): Int{
+    fun updateTrainingPlan(newTrainingPlan: TrainingPlan, trainingPlanID: Int): Int{
+        val db = this.writableDatabase
 
         val contentValues = ContentValues().apply {
             put(PLAN_NAME, newTrainingPlan.name)
@@ -49,7 +49,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
     }
 
     //returns training plan list without phases
-    fun getAllTrainingPlans(): MutableList<WorkoutPlan>{
+    fun getAllTrainingPlans(): MutableList<TrainingPlan>{
         val db = this.readableDatabase
         val projection = arrayOf(BaseColumns._ID,
             PLAN_NAME,
@@ -68,13 +68,13 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
             sortOrder
         )
 
-        val planList = mutableListOf<WorkoutPlan>()
+        val planList = mutableListOf<TrainingPlan>()
         with(cursor) {
             while (moveToNext()) {
                 val planID = getLong(getColumnIndexOrThrow(BaseColumns._ID))
                 val planName = getString(getColumnIndexOrThrow(PLAN_NAME))
                 val userID = getLong(getColumnIndexOrThrow(USER_ID))
-                planList.add(WorkoutPlan(planName, userID = userID, ID = planID))
+                planList.add(TrainingPlan(planName, userID = userID, ID = planID))
             }
         }
         cursor.close()
@@ -83,7 +83,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
     }
 
     //returns training plan with phases or null if there is no plan
-    fun getTrainingPlanForTraining(trainingPlanID: Long): WorkoutPlan?{
+    fun getTrainingPlanByID(ID: Long): TrainingPlan?{
         val db = this.readableDatabase
 
         val projection = arrayOf(BaseColumns._ID,
@@ -91,11 +91,11 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
             USER_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "${BaseColumns._ID} = ?"
 
-        val selectionArgs = arrayOf("$trainingPlanID")
+        val selectionArgs = arrayOf("$ID")
 
         val cursor = db.query(
             TABLE_NAME,
@@ -107,7 +107,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
             sortOrder
         )
 
-        var plan: WorkoutPlan? = null
+        var plan: TrainingPlan? = null
 
         if((cursor != null) && (cursor.count > 0)){
             with(cursor) {
@@ -116,13 +116,12 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
                 val planName = getString(getColumnIndexOrThrow(PLAN_NAME))
                 val userID = getLong(getColumnIndexOrThrow(USER_ID))
 
-                plan = WorkoutPlan(planName, userID = userID, ID = planID)
+                plan = TrainingPlan(planName, userID = userID, ID = planID)
             }
         }
         if(plan!=null){
-            var phaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)
-            println("|${phaseList.size}|")
-            plan?.workoutPhaseList = phaseList
+            var phaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(ID)
+            plan?.trainingPhaseList = phaseList
         }
         cursor.close()
 

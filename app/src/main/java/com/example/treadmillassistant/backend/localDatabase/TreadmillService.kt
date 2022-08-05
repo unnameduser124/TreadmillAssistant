@@ -33,7 +33,8 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows deleted
-    fun deleteTreadmill(id: Int, db: SQLiteDatabase): Int{
+    fun deleteTreadmill(id: Int): Int{
+        val db = this.writableDatabase
 
         val selection = "${BaseColumns._ID} = ?"
 
@@ -43,8 +44,8 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows updated
-    fun updateTreadmill(newTreadmill: Treadmill, treadmillID: Int, db: SQLiteDatabase): Int{
-
+    fun updateTreadmill(newTreadmill: Treadmill, treadmillID: Int): Int{
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply{
             put(TREADMILL_NAME, newTreadmill.name)
             put(MAX_SPEED, newTreadmill.maxSpeed)

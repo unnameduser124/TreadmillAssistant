@@ -5,27 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.workout.Workout
-import com.example.treadmillassistant.backend.workout.WorkoutStatus
-import com.example.treadmillassistant.databinding.FragmentHomeBinding
-import com.example.treadmillassistant.databinding.TrainingTabBinding
-import com.example.treadmillassistant.ui.home.OnStartClickedListener
-import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.tabs.TabLayout
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.coroutines.coroutineContext
 
-class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerView.Adapter<CalendarTrainingItemAdapter.ItemViewHolder>(){
+class CalendarTrainingItemAdapter(private val dataset: List<Training>): RecyclerView.Adapter<CalendarTrainingItemAdapter.ItemViewHolder>(){
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
         val timeView: TextView = view.findViewById(R.id.training_time)
@@ -44,12 +37,12 @@ class CalendarTrainingItemAdapter(private val dataset: List<Workout>): RecyclerV
         val item = dataset[position]
 
         val dateFormat = SimpleDateFormat("HH:mm")
-        val workoutTime = dateFormat.format(item.workoutTime.time)
-        holder.timeView.text = "$workoutTime"
-        holder.durationView.text = "Duration: ${round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER)} minutes"
-
+        val trainingTime = dateFormat.format(item.trainingTime.time)
+        holder.timeView.text = trainingTime
+        holder.durationView.text = String.format(holder.parent.context.getString(R.string.calendar_item_duration),
+            round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
         val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
-        if(item.workoutTime.before(date) || item.workoutStatus==WorkoutStatus.Finished || item.workoutStatus==WorkoutStatus.Abandoned){
+        if(item.trainingTime.before(date) || item.trainingStatus==TrainingStatus.Finished || item.trainingStatus==TrainingStatus.Abandoned){
             holder.startButton.isGone = true
         }
 
