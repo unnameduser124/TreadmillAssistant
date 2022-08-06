@@ -1,10 +1,7 @@
 package com.example.treadmillassistant
 
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.training.PlannedTraining
-import com.example.treadmillassistant.backend.training.TrainingCalendar
-import com.example.treadmillassistant.backend.training.TrainingPhase
-import com.example.treadmillassistant.backend.training.TrainingStatus
+import com.example.treadmillassistant.backend.training.*
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.*
@@ -126,7 +123,7 @@ class PlannedTrainingUnitTests {
                 && training.treadmill.getTilt() == DEFAULT_WORKOUT_START_TILT)
     }
     @Test fun pauseWorkout() {
-        val training = PlannedTraining()
+        val training = GenericTraining()
 
         training.startTraining()
         training.pauseTraining()
@@ -134,7 +131,7 @@ class PlannedTrainingUnitTests {
                 && training.trainingPlan.trainingPhaseList.size>0)
     }
     @Test fun resumeWorkout() {
-        val training = PlannedTraining()
+        val training = GenericTraining()
 
         training.startTraining()
         training.speedUp()
@@ -149,6 +146,7 @@ class PlannedTrainingUnitTests {
     }
     @Test fun finishWorkout() {
         val training = PlannedTraining()
+        training.trainingPlan.addNewPhase(TrainingPhase())
 
         training.startTraining()
         training.pauseTraining()

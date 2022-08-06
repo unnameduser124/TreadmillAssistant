@@ -26,7 +26,7 @@ class SectionAdapter (fm: FragmentManager): FragmentPagerAdapter(fm){
     }
 
     override fun getCount(): Int {
-        return 2
+        return TAB_TITLES.size
     }
 
 }

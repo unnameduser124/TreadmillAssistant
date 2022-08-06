@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.backend.loggedIn
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.LoginPageLayoutBinding
 import com.example.treadmillassistant.ui.registration.RegisterNamesPage
@@ -20,7 +19,6 @@ class LoginPage: AppCompatActivity() {
             val username = binding.emailInput.text.toString()
             val passwordHash = hashMessage(binding.passwordInput.text.toString())
             if((username==user.email && passwordHash == user.password) || binding.passwordInput.text.toString() == ""){
-                loggedIn = true
                 finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)

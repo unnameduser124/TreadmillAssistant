@@ -3,7 +3,6 @@ package com.example.treadmillassistant
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.backend.loggedIn
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ProfilePageLayoutBinding
 
@@ -28,8 +27,8 @@ class ProfilePage: AppCompatActivity() {
         binding.ageTextView.text = user.age.toString()
         binding.totalCaloriesTrainingValue.text = String.format(getString(R.string.calories), user.getTotalCalories())
 
+        //doesn't do anything right now TODO("Make it clear tables in database")
         binding.logOutButton.setOnClickListener{
-            loggedIn = false
             val intent = Intent(this, LoginPage::class.java)
             finishAffinity()
             startActivity(intent)

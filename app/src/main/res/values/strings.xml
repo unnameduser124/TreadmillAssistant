@@ -27,4 +27,5 @@
     <string name="training_finished">"training finished,\n start new?"</string>
     <string name="full_name">%1$s %2$s</string>
     <string name="weight">%1$s kg</string>
+    <string name="finish">finish</string>
 </resources>

@@ -23,8 +23,7 @@ class TrainingDetailsPage: AppCompatActivity() {
         val binding = IndividualWorkoutPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.trainingDetailsEditButton.isGone = true
-        val itemID = intent.getLongExtra("id", -1)
+        val itemID = intent.getLongExtra("id", -1L)
         val fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", false)
 
         if(itemID == -1L){
@@ -42,15 +41,14 @@ class TrainingDetailsPage: AppCompatActivity() {
         }
         else{
 
-            if(item.trainingStatus != TrainingStatus.Finished){
-                binding.trainingDetailsEditButton.isGone = false
+            if(item.trainingStatus == TrainingStatus.Finished){
+                binding.trainingDetailsEditButton.isGone = true
             }
-            val date = item.trainingTime
-            val simpleDateFormat = SimpleDateFormat("dd.MM.${date.get(Calendar.YEAR)}")
+            val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.ROOT)
 
+            //display all training data in text views
             binding.trainingDetailsStatusText.text = "${item.trainingStatus}"
-
-            binding.trainingDetailsDateText.text = simpleDateFormat.format(date.time)
+            binding.trainingDetailsDateText.text = simpleDateFormat.format(item.trainingTime.time)
             binding.trainingDetailsDurationText.text = String.format(getString(R.string.duration_minutes),
                 round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
             binding.trainingDetailsDistanceText.text = String.format(getString(R.string.distance), round(item.getTotalDistance(), DISTANCE_ROUND_MULTIPLIER))
@@ -60,6 +58,7 @@ class TrainingDetailsPage: AppCompatActivity() {
                 round((SECONDS_IN_MINUTE.toDouble()/item.getAverageSpeed()), PACE_ROUND_MULTIPLIER))
             binding.trainingDetailsAvgTiltText.text = round(item.getAverageTilt(), TILT_ROUND_MULTIPLIER).toString()
 
+            //set up training phase list recycler view
             val itemAdapter = TrainingDetailsPhaseItemAdapter(item.trainingPlan.trainingPhaseList)
             val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.trainingDetailsPhaseList.layoutManager = linearLayoutManager

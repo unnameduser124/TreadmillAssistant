@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
@@ -30,27 +31,23 @@ class CalendarPlaceholderFragment: Fragment() {
     ): View {
         val binding = CalendarTabBinding.inflate(layoutInflater)
         val calendar = Calendar.getInstance()
-        var dataset = user.trainingSchedule.trainingLists.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
-                && it.trainingTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
-                && it.trainingTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}
-
-        binding.trainingScheduleCalendar.setOnDateChangeListener { _, year, month, day ->
-            val newCalendar = Calendar.getInstance()
-            newCalendar.set(Calendar.YEAR, year)
-            newCalendar.set(Calendar.MONTH, month)
-            newCalendar.set(Calendar.DAY_OF_MONTH, day)
-            dataset = user.trainingSchedule.trainingLists.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == newCalendar.get(Calendar.DAY_OF_MONTH)
-                    && it.trainingTime.get(Calendar.MONTH) == newCalendar.get(Calendar.MONTH)
-                    && it.trainingTime.get(Calendar.YEAR) == newCalendar.get(Calendar.YEAR)}
-            val itemAdapter = CalendarTrainingItemAdapter(dataset)
-            binding.dayTrainingsList.adapter = itemAdapter
-        }
+        var dataset = user.trainingSchedule.getTrainingsForDate(calendar)
 
         val itemAdapter = CalendarTrainingItemAdapter(dataset)
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         binding.dayTrainingsList.layoutManager = linearLayoutManager
         binding.dayTrainingsList.adapter = itemAdapter
         binding.dayTrainingsList.setHasFixedSize(true)
+
+        binding.trainingScheduleCalendar.setOnDateChangeListener { _, year, month, day ->
+            val newCalendar = Calendar.getInstance()
+            newCalendar.set(Calendar.YEAR, year)
+            newCalendar.set(Calendar.MONTH, month)
+            newCalendar.set(Calendar.DAY_OF_MONTH, day)
+            dataset = user.trainingSchedule.getTrainingsForDate(newCalendar)
+            val itemAdapter = CalendarTrainingItemAdapter(dataset)
+            binding.dayTrainingsList.adapter = itemAdapter
+        }
 
         return binding.root
     }

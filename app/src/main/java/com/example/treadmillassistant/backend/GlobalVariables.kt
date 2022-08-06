@@ -3,7 +3,6 @@ package com.example.treadmillassistant.backend
 import com.example.treadmillassistant.ui.home.OnStartClickedListener
 import com.google.android.material.tabs.TabLayout
 
-var loggedIn = false
 
 const val SECONDS_IN_MINUTE = 60
 const val SECONDS_IN_HOUR = 3600

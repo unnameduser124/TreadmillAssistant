@@ -11,6 +11,7 @@ class RegisterCredentialsPage: AppCompatActivity() {
 
     companion object {
         const val PASSWORD_LENGTH_MIN = 8
+        const val PASSWORD_LENGTH_MAX = 20
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +41,10 @@ class RegisterCredentialsPage: AppCompatActivity() {
             else if(binding.confirmPasswordInput.text.toString()!=binding.passwordInput.text.toString()){
                 Toast.makeText(this, "Passwords don't match!", Toast.LENGTH_SHORT).show()
             }
-            else if(binding.passwordInput.text.toString().length < PASSWORD_LENGTH_MIN){
-                Toast.makeText(this, "Password has to be between $PASSWORD_LENGTH_MIN to 20 characters long", Toast.LENGTH_SHORT).show()
+            else if(binding.passwordInput.text.toString().length < PASSWORD_LENGTH_MIN
+                || binding.passwordInput.text.toString().length > PASSWORD_LENGTH_MAX){
+                Toast.makeText(this, "Password has to be between $PASSWORD_LENGTH_MIN " +
+                        "to $PASSWORD_LENGTH_MAX characters long", Toast.LENGTH_SHORT).show()
             }
             else{
                 Toast.makeText(this, "Fill in the fields!", Toast.LENGTH_SHORT).show()

@@ -34,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             loadAllData(this)
-            val navViewPosition = intent.getIntExtra("navViewPosition", 0)
-
             setSupportActionBar(binding.appBarMain.toolbar)
 
+            //navigation drawer setup
+            val navViewPosition = intent.getIntExtra("navViewPosition", 0)
             val header = binding.navView.getHeaderView(0)
             val drawerLayout: DrawerLayout = binding.drawerLayout
             val navView: NavigationView = binding.navView
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             setupActionBarWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
 
+            //profile header email setup
             header.findViewById<TextView>(R.id.email_header).text = user.email
 
             navView.menu.getItem(navViewPosition).isChecked = true

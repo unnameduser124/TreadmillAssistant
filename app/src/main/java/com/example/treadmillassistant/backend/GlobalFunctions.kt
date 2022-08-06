@@ -1,7 +1,10 @@
 package com.example.treadmillassistant.backend
 
+import android.widget.DatePicker
+import android.widget.TimePicker
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
+import java.util.*
 
 fun round(variableRounded: Double, multiplier: Double): Double{
     return Math.round(variableRounded * multiplier) / multiplier
@@ -45,4 +48,13 @@ fun unfinishPhases(training: Training){
     training.trainingPlan.trainingPhaseList.forEach {
         it.isFinished = false
     }
+}
+
+fun setUpDatePicker(datePicker: DatePicker, date: Calendar){
+    datePicker.updateDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH))
+}
+
+fun setUpTimePicker(timePicker: TimePicker, date: Calendar){
+    timePicker.hour = date.get(Calendar.HOUR_OF_DAY)
+    timePicker.minute = date.get(Calendar.MINUTE)
 }

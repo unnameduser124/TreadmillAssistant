@@ -44,6 +44,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         binding = TrainingTabBinding.inflate(layoutInflater)
         startClicked = this
 
+        //creating generic treadmill and training if none is provided
         if(treadmill.ID==0L){
             treadmill = if(user.treadmillList.isEmpty()){
                 Treadmill()
@@ -51,8 +52,9 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                 user.treadmillList.first()
             }
         }
-
-        newGenericTraining()
+        if(training.ID == 0L){
+            newGenericTraining()
+        }
 
         binding.finishTrainingButton.isGone = true
         hideTrainingItems()
@@ -162,26 +164,10 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     }
 
     private fun newGenericTraining() {
-        if (training.ID == 0L) {
-            if (user.trainingSchedule.trainingLists.isEmpty()) {
-                user.trainingSchedule.trainingLists.sortBy { it.ID }
-                training = GenericTraining(
-                    treadmill = treadmill, trainingTime = Calendar.getInstance(),
-                    trainingStatus = TrainingStatus.Upcoming, ID = 1
-                )
-                user.trainingSchedule.sortCalendar()
-            } else {
-                user.trainingSchedule.trainingLists.sortBy { it.ID }
-                training = GenericTraining(
-                    treadmill = treadmill,
-                    trainingTime = Calendar.getInstance(),
-                    trainingStatus = TrainingStatus.Upcoming,
-                    ID = user.trainingSchedule.trainingLists.last().ID + 1
-                )
-                user.trainingSchedule.sortCalendar()
-
-            }
-        }
+        training = GenericTraining(
+            treadmill = treadmill, trainingTime = Calendar.getInstance(),
+            trainingStatus = TrainingStatus.Upcoming, ID = user.trainingSchedule.getNewID()
+        )
     }
     private fun hideTrainingItems(){
         binding.distanceTextView.isGone = true

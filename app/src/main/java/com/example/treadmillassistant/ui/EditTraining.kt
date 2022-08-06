@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.backend.Treadmill
+import com.example.treadmillassistant.backend.setUpDatePicker
+import com.example.treadmillassistant.backend.setUpTimePicker
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
@@ -30,32 +32,17 @@ class EditTraining: AppCompatActivity() {
 
         var selectedTreadmill: Treadmill = user.treadmillList.first()
         var selectedTrainingPlan: TrainingPlan = user.trainingPlanList.trainingPlanLists.first()
-        val chosenDate = Date()
 
-        val treadmillDropdownAdapter =
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                user.getTreadmillNames()
-            )
-        treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.treadmillSelection.adapter = treadmillDropdownAdapter
+        val chosenDate = Calendar.getInstance()
 
-        val trainingPlanDropdownAdapter =
-            ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            user.trainingPlanList.getTrainingPlanNames()
-        )
-        trainingPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.trainingPlanSelection.adapter = trainingPlanDropdownAdapter
+
 
         item = user.trainingSchedule.getTraining(intent.getLongExtra("id", -1))
 
         if (item == null) {
             onBackPressed()
         } else {
-            chosenDate.time = item!!.trainingTime.timeInMillis
+            chosenDate.time = item!!.trainingTime.time
             binding.mediaLink.setText(item!!.mediaLink)
             selectedTreadmill = item!!.treadmill
             selectedTrainingPlan = item!!.trainingPlan
@@ -66,6 +53,26 @@ class EditTraining: AppCompatActivity() {
             )
             binding.treadmillSelection.setSelection(user.treadmillList.indexOf(selectedTreadmill))
         }
+
+        //treadmill dropdown
+        val treadmillDropdownAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                user.getTreadmillNames()
+            )
+        treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.treadmillSelection.adapter = treadmillDropdownAdapter
+
+        //training plan dropdown
+        val trainingPlanDropdownAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                user.trainingPlanList.getTrainingPlanNames()
+            )
+        trainingPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.trainingPlanSelection.adapter = trainingPlanDropdownAdapter
 
         setUpDatePicker(binding.trainingDate, chosenDate)
         setUpTimePicker(binding.trainingTime, chosenDate)
@@ -135,23 +142,10 @@ class EditTraining: AppCompatActivity() {
             dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
             dateCal.set(Calendar.HOUR, binding.trainingTime.hour)
             dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
-            val date = dateCal.time
-            date.year = Calendar.getInstance().get(Calendar.YEAR)
-            date.hours = binding.trainingTime.hour
-            intent.putExtra("date", date.time)
+
+            intent.putExtra("date", dateCal.timeInMillis)
             startActivity(intent)
         }
-    }
-
-    private fun setUpDatePicker(datePicker: DatePicker, date: Date){
-        if(date.year<2000)
-            datePicker.updateDate(date.year+1900, date.month, date.date)
-        else
-            datePicker.updateDate(date.year, date.month, date.date)
-    }
-    private fun setUpTimePicker(timePicker: TimePicker, date: Date){
-        timePicker.hour = date.hours
-        timePicker.minute = date.minutes
     }
 
     override fun onBackPressed() {

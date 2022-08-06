@@ -19,11 +19,12 @@ class AddTrainingPlan: AppCompatActivity() {
 
     private var fromTraining: Boolean = false
     var date: Date = Date()
+    private lateinit var binding: AddWorkoutPlanLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = AddWorkoutPlanLayoutBinding.inflate(layoutInflater)
+        binding = AddWorkoutPlanLayoutBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
@@ -32,6 +33,7 @@ class AddTrainingPlan: AppCompatActivity() {
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
 
+        //phase list recycler view setup
         val phaseList = mutableListOf<TrainingPhase>()
         val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -41,6 +43,7 @@ class AddTrainingPlan: AppCompatActivity() {
 
 
         binding.addNewPhase.setOnClickListener{
+            //adding new phase with locally valid ID
             if(phaseList.size>0){
                 phaseList.add(TrainingPhase(
                     orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
@@ -52,18 +55,7 @@ class AddTrainingPlan: AppCompatActivity() {
             binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
             binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
 
-            var duration = 0
-            phaseList.forEach{
-                duration += it.duration
-            }
-            binding.totalDurationTrainingPlanLabel.text = String.format(this.getString(R.string.total_duration_minutes), duration)
-
-            var distance = 0.0
-            phaseList.forEach {
-                distance += (it.duration.toDouble()/3600.0)*it.speed
-            }
-            distance = round(distance, DISTANCE_ROUND_MULTIPLIER)
-            binding.totalDistanceTrainingPlanLabel.text = String.format(this.getString(R.string.total_distance), distance)
+            updateTotalValues(phaseList)
         }
 
         binding.trainingPlanSaveButton.setOnClickListener {
@@ -101,6 +93,21 @@ class AddTrainingPlan: AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun updateTotalValues(phaseList: MutableList<TrainingPhase>) {
+        var duration = 0
+        phaseList.forEach{
+            duration += it.duration
+        }
+        binding.totalDurationTrainingPlanLabel.text = String.format(this.getString(R.string.total_duration_minutes), duration)
+
+        var distance = 0.0
+        phaseList.forEach {
+            distance += (it.duration.toDouble()/3600.0)*it.speed
+        }
+        distance = round(distance, DISTANCE_ROUND_MULTIPLIER)
+        binding.totalDistanceTrainingPlanLabel.text = String.format(this.getString(R.string.total_distance), distance)
     }
 
     override fun onBackPressed() {

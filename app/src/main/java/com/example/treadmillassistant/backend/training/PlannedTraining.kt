@@ -60,26 +60,6 @@ class PlannedTraining(
         }
     }
 
-    override fun speedUp(){
-        addNewPhase()
-        treadmill.increaseSpeed()
-    }
-
-    override fun speedDown() {
-        addNewPhase()
-        treadmill.decreaseSpeed()
-    }
-
-    override fun tiltUp(){
-        addNewPhase()
-        treadmill.increaseTilt()
-    }
-
-    override fun tiltDown(){
-        addNewPhase()
-        treadmill.decreaseTilt()
-    }
-
     override fun getTotalDistance(): Double{
         var distance = 0.0
 

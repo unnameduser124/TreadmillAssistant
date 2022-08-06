@@ -32,14 +32,6 @@ class HomeFragment : Fragment() {
         val tabs: TabLayout = binding.homeTabs
         tabs.setupWithViewPager(viewPager)
         tabLayout = tabs
-
-        tabLayout!!.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
         return root
     }
 

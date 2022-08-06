@@ -9,6 +9,10 @@ class TrainingPlanList(var trainingPlanLists: MutableList<TrainingPlan> = mutabl
         trainingPlanLists.remove(trainingPlan)
     }
 
+    fun getTrainingPlanByID(planID: Long): TrainingPlan{
+        return trainingPlanLists.first{it.ID == planID}
+    }
+
     fun getTrainingPlanNames(): MutableList<String>{
         var trainingPlanNames = mutableListOf<String>()
         trainingPlanLists.forEach {

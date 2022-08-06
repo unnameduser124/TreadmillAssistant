@@ -47,11 +47,9 @@ class RegisterHealthPage: AppCompatActivity() {
             }
 
             if(firstName!="" && lastName!="" && username!="" && email!="" && password!="" && age!=0 && weight!=0.0) {
-
                 user = User(trainingCalendar, email, password,firstName,lastName, username, age, weight)
                 user.treadmillList.add(Treadmill())
                 user.trainingPlanList = trainingPlanList
-                loggedIn = true
                 val intent = Intent(this, MainActivity::class.java)
                 finishAffinity()
                 startActivity(intent)

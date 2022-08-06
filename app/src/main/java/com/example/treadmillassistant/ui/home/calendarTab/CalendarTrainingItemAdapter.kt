@@ -10,7 +10,6 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
@@ -32,16 +31,20 @@ class CalendarTrainingItemAdapter(private val dataset: List<Training>): Recycler
         return ItemViewHolder(adapterLayout)
     }
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
-
-
         val item = dataset[position]
 
-        val dateFormat = SimpleDateFormat("HH:mm")
+        //set training time and duration
+        val dateFormat = SimpleDateFormat("HH:mm", Locale.ROOT)
         val trainingTime = dateFormat.format(item.trainingTime.time)
+
         holder.timeView.text = trainingTime
         holder.durationView.text = String.format(holder.parent.context.getString(R.string.calendar_item_duration),
             round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
-        val date = Date(Calendar.getInstance().get(Calendar.YEAR), Date().month, Date().date, 0, 0, 0)
+
+        //hide start button if training is finished, abandoned or planned one day or more in the past
+        val date = Calendar.getInstance()
+        date.set(Calendar.HOUR_OF_DAY, 0)
+        date.set(Calendar.MINUTE, 0)
         if(item.trainingTime.before(date) || item.trainingStatus==TrainingStatus.Finished || item.trainingStatus==TrainingStatus.Abandoned){
             holder.startButton.isGone = true
         }

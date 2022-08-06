@@ -27,6 +27,8 @@ class TrainingHistoryFragment : Fragment() {
 
         _binding = FragmentTrainingHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        //item adapter with training list sorted from newest to oldest as dataset
         val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingLists.filter {
             it.trainingStatus==TrainingStatus.Finished }.sortedByDescending { it.trainingTime })
 

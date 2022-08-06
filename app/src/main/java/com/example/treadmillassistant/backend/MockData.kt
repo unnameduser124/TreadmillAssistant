@@ -90,6 +90,12 @@ fun generateDBdata(context: Context){
     val db = TrainingDatabaseService(context).writableDatabase
     val userService = UserService(context)
 
+    tempUser = userService.loadUser()
+    if(tempUser!=null){
+        user = tempUser as User
+        return
+    }
+
     val newUser = User(email = "defaultEmail@email.com",
         password = hashMessage("easypassword"),
         firstName = "Jan",
@@ -98,20 +104,14 @@ fun generateDBdata(context: Context){
         age = 20,
         weight = 80.0
     )
-
-    tempUser = userService.loadUser()
-    if(tempUser!=null){
-        user = tempUser as User
-        return
-    }
     userService.insertNewUser(newUser)
-    val trainingPhaseList = mutableListOf<TrainingPhase>()
+
     val trainingPhaseService = TrainingPhaseService(context)
     val trainingPlanService = TrainingPlanService(context)
     val newTrainingPlanList = TrainingPlanList()
 
     for(i in 0..4){
-        val newTrainingPlan = TrainingPlan("Plan $i", userID = user.ID)
+        val newTrainingPlan = TrainingPlan("Plan ${i+1}", userID = user.ID)
         val newID = trainingPlanService.insertNewTrainingPlan(newTrainingPlan)
         newTrainingPlan.ID = newID
         for(i in 0..5){
@@ -120,18 +120,17 @@ fun generateDBdata(context: Context){
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 (1L..5L).random(),
                 i,
-                false,
-                i.toLong())
+                false)
             val newID = trainingPhaseService.insertNewTrainingPhase(trainingPhase,db)
             trainingPhase.ID = newID
-            trainingPhaseList.add(trainingPhase)
         }
         newTrainingPlanList.addTrainingPlan(newTrainingPlan)
     }
-    val treadmillService = TreadmillService(context)
+
     val treadmillOne = Treadmill(name = "TreadmillOne")
     val treadmillTwo = Treadmill(name = "TreadmillTwo")
 
+    val treadmillService = TreadmillService(context)
     treadmillOne.ID = treadmillService.insertNewTreadmill(treadmillOne)
     treadmillTwo.ID = treadmillService.insertNewTreadmill(treadmillTwo)
 
@@ -143,6 +142,7 @@ fun generateDBdata(context: Context){
         calendar.set(Calendar.DAY_OF_MONTH, if(i%2==0) i%30+1 else i%31+1)
         calendar.set(Calendar.HOUR, (0..23).random())
         calendar.set(Calendar.MINUTE, (0..60).random())
+
         val newTraining = PlannedTraining(calendar,
             if(i%2==0) treadmillOne else treadmillTwo,
             "mediaLink$i",
@@ -157,14 +157,8 @@ fun loadAllData(context: Context){
         val userService = UserService(context)
         user = userService.loadUser()!!
 
-
         val trainingService = TrainingService(context)
-
         user.trainingSchedule.trainingLists = trainingService.getAllTrainings()
-
-        for (workout in user.trainingSchedule.trainingLists) {
-            val workout = trainingService.getTrainingByID(workout.ID)
-        }
 
         val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
         trainingPlanIDs.forEach {

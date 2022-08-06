@@ -83,7 +83,6 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
                 val phaseDuration = getInt(getColumnIndexOrThrow(DURATION))
                 val orderNumber = getInt(getColumnIndexOrThrow(ORDER_NUMBER))
                 val trainingPlanID = getLong(getColumnIndexOrThrow(TRAINING_PLAN_ID))
-                println("|$count|")
                 phaseList.add(TrainingPhase(phaseDuration, phaseSpeed, phaseTilt, trainingPlanID, orderNumber, ID = phaseID))
             }
         }
