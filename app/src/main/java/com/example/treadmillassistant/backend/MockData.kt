@@ -145,15 +145,14 @@ fun generateDBdata(context: Context){
 
         val newTraining = PlannedTraining(calendar,
             if(i%2==0) treadmillOne else treadmillTwo,
-            "mediaLink$i",
-            if(calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) TrainingStatus.Finished else TrainingStatus.Upcoming,
-            newTrainingPlanList.trainingPlanLists.random())
+            trainingStatus = if (calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) TrainingStatus.Finished else TrainingStatus.Upcoming,
+            trainingPlan = newTrainingPlanList.trainingPlanList.random())
         trainingService.insertNewTraining(newTraining)
     }
 }
 
 fun loadAllData(context: Context){
-    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingLists.isEmpty() && user.trainingPlanList.trainingPlanLists.isEmpty()){
+    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingLists.isEmpty() && user.trainingPlanList.trainingPlanList.isEmpty()){
         val userService = UserService(context)
         user = userService.loadUser()!!
 

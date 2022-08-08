@@ -13,7 +13,7 @@ import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingStatus
-import com.example.treadmillassistant.databinding.AddWorkoutLayoutBinding
+import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.util.*
@@ -25,13 +25,13 @@ class EditTraining: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = AddWorkoutLayoutBinding.inflate(layoutInflater)
+        val binding = AddTrainingLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.trainingTime.setIs24HourView(true)
 
         var selectedTreadmill: Treadmill = user.treadmillList.first()
-        var selectedTrainingPlan: TrainingPlan = user.trainingPlanList.trainingPlanLists.first()
+        var selectedTrainingPlan: TrainingPlan = user.trainingPlanList.trainingPlanList.first()
 
         val chosenDate = Calendar.getInstance()
 
@@ -46,11 +46,7 @@ class EditTraining: AppCompatActivity() {
             binding.mediaLink.setText(item!!.mediaLink)
             selectedTreadmill = item!!.treadmill
             selectedTrainingPlan = item!!.trainingPlan
-            binding.trainingPlanSelection.setSelection(
-                user.trainingPlanList.trainingPlanLists.indexOf(
-                    selectedTrainingPlan
-                )
-            )
+            binding.selectedTrainingPlanName.text = item!!.trainingPlan.name
             binding.treadmillSelection.setSelection(user.treadmillList.indexOf(selectedTreadmill))
         }
 
@@ -63,16 +59,6 @@ class EditTraining: AppCompatActivity() {
             )
         treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.treadmillSelection.adapter = treadmillDropdownAdapter
-
-        //training plan dropdown
-        val trainingPlanDropdownAdapter =
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                user.trainingPlanList.getTrainingPlanNames()
-            )
-        trainingPlanDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.trainingPlanSelection.adapter = trainingPlanDropdownAdapter
 
         setUpDatePicker(binding.trainingDate, chosenDate)
         setUpTimePicker(binding.trainingTime, chosenDate)
@@ -92,21 +78,6 @@ class EditTraining: AppCompatActivity() {
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {}
             }
-
-        binding.trainingPlanSelection.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>?,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedTrainingPlan = user.trainingPlanList.trainingPlanLists[position]
-                }
-
-                override fun onNothingSelected(parentView: AdapterView<*>?) {}
-            }
-
 
         binding.saveNewTrainingButton.setOnClickListener {
             val dateCal = Calendar.getInstance()

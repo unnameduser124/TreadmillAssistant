@@ -14,7 +14,7 @@ enum class TrainingStatus{
 class PlannedTraining(
     override var trainingTime: Calendar = Calendar.getInstance(),
     override var treadmill: Treadmill = Treadmill(),
-    override var mediaLink: String = "",
+    override var mediaLink: String = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     override var trainingStatus: TrainingStatus = TrainingStatus.InProgress,
     override var trainingPlan: TrainingPlan = TrainingPlan(),
     override var ID: Long = 0): Training {

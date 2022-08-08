@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:text="Register"
-        android:textSize="30dp"
+        android:text="@string/register_label"
+        android:textSize="30sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -27,9 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/age_input"
-            android:hint="age"
+            android:hint="@string/age_hint"
             android:inputType="number"
-            android:textSize="25dp"/>
+            android:textSize="25sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -44,9 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/weight_input"
-            android:hint="weight"
+            android:hint="@string/weight_hint"
             android:inputType="numberDecimal"
-            android:textSize="25dp"/>
+            android:textSize="25sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -56,6 +56,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Register"
+        android:text="@string/register_label"
         android:layout_marginBottom="50dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

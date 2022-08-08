@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app = "http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,16 +40,16 @@
         app:layout_constraintStart_toStartOf="@id/speed_down_button"
         app:layout_constraintBottom_toTopOf="@id/speed_down_button"
         app:layout_constraintEnd_toEndOf="@id/speed_down_button"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:layout_marginBottom="35dp"
-        android:text = "0.0"/>
+        android:text = "@string/default_double_value"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/speed_display"
         app:layout_constraintStart_toStartOf="@id/speed_display"
         app:layout_constraintEnd_toEndOf="@id/speed_display"
-        android:text = "km/h"/>
+        android:text = "@string/speed_hint"/>
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,16 +81,16 @@
         app:layout_constraintStart_toStartOf="@id/tilt_down_button"
         app:layout_constraintBottom_toTopOf="@id/tilt_down_button"
         app:layout_constraintEnd_toEndOf="@id/tilt_down_button"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:layout_marginBottom="35dp"
-        android:text = "0.0"/>
+        android:text = "@string/default_double_value"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/tilt_display"
         app:layout_constraintStart_toStartOf="@id/tilt_display"
         app:layout_constraintEnd_toEndOf="@id/tilt_display"
-        android:text = "degrees"/>
+        android:text = "@string/degrees_label"/>
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,10 +106,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/distance_label"
-        android:text = "distance"
+        android:text = "@string/distance_label"
         app:layout_constraintBottom_toTopOf="@id/distance_text_view"
         android:gravity="center"
-        android:textSize="17dp"/>
+        android:textSize="17sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -118,16 +118,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="150dp"
-        android:text = "10km"
-        android:textSize = "40dp"/>
+        tools:text = "10km"
+        android:textSize = "40sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/pace_label"
-        android:text = "pace"
+        android:text = "@string/pace_label"
         app:layout_constraintBottom_toTopOf="@id/pace_text_view"
         android:gravity="center"
-        android:textSize="17dp"/>
+        android:textSize="17sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -136,16 +136,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/distance_text_view"
         android:layout_margin="50dp"
-        android:text = "5'"
-        android:textSize = "40dp"/>
+        tools:text = "5'"
+        android:textSize = "40sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/time_label"
-        android:text = "time"
+        android:text = "@string/time_label_lowercase"
         app:layout_constraintBottom_toTopOf="@id/time_text_view"
         android:gravity="center"
-        android:textSize="17dp"/>
+        android:textSize="17sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -154,16 +154,16 @@
         app:layout_constraintTop_toBottomOf="@id/pace_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="50dp"
-        android:text = "100:07"
-        android:textSize = "40dp"/>
+        tools:text = "100:07"
+        android:textSize = "40sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/calories_label"
-        android:text = "calories"
+        android:text = "@string/calories_label"
         app:layout_constraintBottom_toTopOf="@id/calories_text_view"
         android:gravity="center"
-        android:textSize="17dp"/>
+        android:textSize="17sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -172,16 +172,16 @@
         app:layout_constraintTop_toBottomOf="@id/time_text_view"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="50dp"
-        android:text = "100 kcal"
-        android:textSize = "40dp"/>
+        tools:text = "100 kcal"
+        android:textSize = "40sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/progress_label"
-        android:text = "progress"
+        android:text = "@string/progress_label"
         app:layout_constraintBottom_toTopOf="@id/progress_text_view"
         android:gravity="center"
-        android:textSize="17dp"/>
+        android:textSize="17sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -190,6 +190,6 @@
         app:layout_constraintTop_toBottomOf="@id/calories_text_view"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="50dp"
-        android:text = "98%"
-        android:textSize = "40dp"/>
+        tools:text = "98%"
+        android:textSize = "40sp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

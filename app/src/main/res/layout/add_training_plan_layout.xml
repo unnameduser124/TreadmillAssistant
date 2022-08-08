@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/plan_name_input"
-            android:hint="Plan name"/>
+            android:hint="@string/plan_name_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -30,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id = "@+id/add_new_phase"
-        android:text = "Add new phase"
+        android:text = "@string/add_new_phase_button_label"
         app:layout_constraintTop_toBottomOf="@id/add_training_plan_phase_list"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
@@ -41,8 +42,8 @@
         app:layout_constraintTop_toBottomOf="@id/add_new_phase"
         android:layout_marginStart = "10dp"
         android:layout_marginEnd = "10dp"
-        android:text = "Total duration: 0 min"
-        android:textSize = "20dp"/>
+        tools:text = "Total duration: 0 min"
+        android:textSize = "20sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,13 +51,13 @@
         app:layout_constraintTop_toBottomOf="@id/total_duration_training_plan_label"
         android:layout_marginStart = "10dp"
         android:layout_marginEnd = "10dp"
-        android:text = "Total distance: 0 km"
-        android:textSize = "20dp"/>
+        tools:text = "Total distance: 0 km"
+        android:textSize = "20sp"/>
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id = "@+id/training_plan_save_button"
-        android:text = "save"
+        android:text = "@string/save"
         app:layout_constraintTop_toBottomOf="@id/total_distance_training_plan_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id = "@+id/cancel_button"
-        android:text = "cancel"
+        android:text = "@string/cancel"
         app:layout_constraintBottom_toBottomOf="@id/training_plan_save_button"
         app:layout_constraintTop_toTopOf="@id/training_plan_save_button"
         app:layout_constraintStart_toEndOf="@id/training_plan_save_button"

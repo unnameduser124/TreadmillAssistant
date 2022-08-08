@@ -41,7 +41,7 @@
             android:parentActivityName = ".MainActivity">
         </activity>
         <activity
-            android:name=".AddTraining"
+            android:name=".ui.addTraining.AddTraining"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity">
         </activity>

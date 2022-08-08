@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Treadmill"
+            android:text="@string/treadmill_selection_label"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
@@ -24,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="@string/date_label"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
 
@@ -39,7 +38,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time"
+            android:text="@string/time_label"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
 
@@ -53,26 +52,28 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Workout plan"
+            android:text="@string/workout_plan_label"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Spinner
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id = "@+id/training_plan_selection"
-                android:layout_margin="10dp"
+                android:id = "@+id/selected_training_plan_name"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/add_training_plan_button"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/add_training_plan_button"/>
+                tools:text = "selected training plan"
+                android:textSize = "20sp"
+                android:layout_margin="10dp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id = "@+id/add_training_plan_button"
-                android:text = "new"
+                android:text = "@string/select_plan"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -82,7 +83,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Media link"
+            android:text="@string/media_link_label_uppercase"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"/>
@@ -95,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id = "@+id/media_link"
-                android:hint="media link"/>
+                android:hint="@string/media_link_label"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -103,6 +104,6 @@
             android:layout_height="wrap_content"
             android:id = "@+id/save_new_training_button"
             android:layout_margin="10dp"
-            android:text = "save"/>
+            android:text = "@string/save"/>
     </LinearLayout>
 </ScrollView>

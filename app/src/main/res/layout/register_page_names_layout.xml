@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:text="Register"
-        android:textSize="30dp"
+        android:text="@string/register_label"
+        android:textSize="30sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -27,8 +27,8 @@
             android:layout_height="wrap_content"
             android:id = "@+id/first_name_input"
             android:inputType="textPersonName"
-            android:hint="first name"
-            android:textSize="25dp"/>
+            android:hint="@string/first_name_hint"
+            android:textSize="25sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -43,9 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/last_name_input"
-            android:hint="last name"
+            android:hint="@string/last_name_hint"
             android:inputType="text"
-            android:textSize="25dp"/>
+            android:textSize="25sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/username_input"
-            android:hint="username"
+            android:hint="@string/username_hint"
             android:inputType="text"
             android:textSize="25dp"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="next"
+        android:text="@string/next_label"
         android:layout_marginBottom="50dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

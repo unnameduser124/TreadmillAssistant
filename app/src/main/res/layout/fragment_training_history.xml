@@ -21,7 +21,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/history_item_avg_speed_header"
             android:layout_margin="10dp"
-            android:text = "date"
+            android:text = "@string/date_label_lowercase"
             android:textSize = "15sp"
             android:gravity="center"/>
 
@@ -33,7 +33,7 @@
             app:layout_constraintTop_toTopOf="@id/history_item_date_header"
             app:layout_constraintBottom_toBottomOf="@id/history_item_date_header"
             app:layout_constraintEnd_toStartOf="@id/history_item_calories_header"
-            android:text = "average speed"
+            android:text = "@string/average_speed_label"
             android:textSize = "15sp"
             android:gravity="center"/>
 
@@ -45,7 +45,7 @@
             app:layout_constraintTop_toTopOf="@id/history_item_date_header"
             app:layout_constraintBottom_toBottomOf="@id/history_item_date_header"
             app:layout_constraintEnd_toStartOf="@id/history_item_duration_header"
-            android:text = "distance"
+            android:text = "@string/distance_label"
             android:textSize = "15sp"
             android:gravity="center"/>
 
@@ -57,7 +57,7 @@
             app:layout_constraintTop_toTopOf="@id/history_item_date_header"
             app:layout_constraintBottom_toBottomOf="@id/history_item_date_header"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text = "duration"
+            android:text = "@string/duration_label"
             android:layout_margin="10dp"
             android:textSize = "15sp"
             android:gravity="center"/>

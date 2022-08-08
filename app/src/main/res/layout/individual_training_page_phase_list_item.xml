@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="5dp">
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp">
@@ -20,7 +18,7 @@
             app:layout_constraintEnd_toStartOf="@id/training_details_phase_speed"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text = "130 min"
+            tools:text= "130 min"
             android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
@@ -33,7 +31,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/training_details_phase_tilt"
-            android:text = "10 km/h"
+            tools:text= "10 km/h"
             android:textSize="20sp"
             android:gravity="center"/>
         <TextView
@@ -44,7 +42,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/training_details_phase_distance"
-            android:text = "10 km/h"
+            tools:text= "10 km/h"
             android:textSize="20sp"
             android:gravity="center"/>
         <TextView
@@ -55,7 +53,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text = "20 km"
+            tools:text= "20 km"
             android:textSize="20sp"
             android:gravity="center"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

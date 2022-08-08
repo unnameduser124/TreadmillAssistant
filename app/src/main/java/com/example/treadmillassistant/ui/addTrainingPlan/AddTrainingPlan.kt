@@ -2,29 +2,31 @@ package com.example.treadmillassistant.ui.addTrainingPlan
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.AddTraining
+import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
-import com.example.treadmillassistant.databinding.AddWorkoutPlanLayoutBinding
+import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
+import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
 import java.util.*
 
 class AddTrainingPlan: AppCompatActivity() {
 
     private var fromTraining: Boolean = false
     var date: Date = Date()
-    private lateinit var binding: AddWorkoutPlanLayoutBinding
+    private lateinit var binding: AddTrainingPlanLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = AddWorkoutPlanLayoutBinding.inflate(layoutInflater)
+        binding = AddTrainingPlanLayoutBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
@@ -86,6 +88,7 @@ class AddTrainingPlan: AppCompatActivity() {
                 intent.putExtra("date", date.time)
                 finish()
                 startActivity(intent)
+                popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
             }
             else{
                 intent = Intent(this, MainActivity::class.java)

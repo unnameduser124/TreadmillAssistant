@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <ImageView
         android:id="@+id/profile_picture_img_view"
         android:layout_width="wrap_content"
@@ -12,14 +12,15 @@
         app:srcCompat="@mipmap/ic_launcher_round"
         app:layout_constraintStart_toStartOf = "parent"
         app:layout_constraintEnd_toEndOf = "parent"
-        app:layout_constraintTop_toTopOf = "parent"/>
+        app:layout_constraintTop_toTopOf = "parent"
+        android:contentDescription="@string/profile_picture_content_description" />
 
     <TextView
         android:id = "@+id/email_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="email@email.com"
+        tools:text="email@email.com"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintStart_toStartOf = "parent"
         app:layout_constraintEnd_toEndOf = "parent"
@@ -34,7 +35,7 @@
         android:id = "@+id/full_name_text_view"
         app:layout_constraintTop_toBottomOf="@id/email_text_view"
         android:textSize="25sp"
-        android:text = "Jan Kowalski"
+        tools:text = "Jan Kowalski"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -42,7 +43,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/username_label"
         app:layout_constraintTop_toBottomOf="@id/full_name_text_view"
-        android:text="Nickname"
+        android:text="@string/nickname_label"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -51,7 +52,7 @@
         android:id = "@+id/username_text_view"
         app:layout_constraintTop_toBottomOf="@id/username_label"
         android:textSize="25sp"
-        android:text = "Janek"
+        tools:text = "Janek"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -59,7 +60,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/weight_label"
         app:layout_constraintTop_toBottomOf="@id/username_text_view"
-        android:text="Weight"
+        android:text="@string/weight_label"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -68,7 +69,7 @@
         android:id = "@+id/weight_text_view"
         app:layout_constraintTop_toBottomOf="@id/weight_label"
         android:textSize="25sp"
-        android:text = "80kg"
+        tools:text = "80kg"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -76,7 +77,7 @@
         android:layout_height="wrap_content"
         android:id = "@+id/age_label"
         app:layout_constraintTop_toBottomOf="@id/weight_text_view"
-        android:text="Age"
+        android:text="@string/age_label"
         android:gravity="center"
         android:layout_margin="5dp"/>
     <TextView
@@ -85,7 +86,7 @@
         android:id = "@+id/age_text_view"
         app:layout_constraintTop_toBottomOf="@id/age_label"
         android:textSize="25sp"
-        android:text = "20"
+        tools:text = "20"
         android:gravity="center"
         android:layout_margin="5dp"/>
 
@@ -96,7 +97,7 @@
         app:layout_constraintTop_toBottomOf="@id/age_text_view"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="40dp"
-        android:text = "Total distance"
+        android:text = "@string/total_distance_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -106,7 +107,7 @@
         app:layout_constraintStart_toStartOf="@id/total_distance_label"
         app:layout_constraintEnd_toEndOf="@id/total_distance_label"
         android:layout_margin="10dp"
-        android:text = "150km"
+        tools:text = "150km"
         android:gravity="center"
         android:textSize="25sp"/>
     <TextView
@@ -117,7 +118,7 @@
         app:layout_constraintStart_toStartOf="@id/total_distance_label"
         app:layout_constraintEnd_toEndOf="@id/total_distance_label"
         android:layout_margin="40dp"
-        android:text = "Total duration"
+        android:text = "@string/total_duration_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -127,7 +128,7 @@
         app:layout_constraintStart_toStartOf="@id/total_duration_label"
         app:layout_constraintEnd_toEndOf="@id/total_duration_label"
         android:layout_margin="10dp"
-        android:text = "420h"
+        tools:text = "420h"
         android:gravity="center"
         android:textSize="25sp"/>
     <TextView
@@ -137,7 +138,7 @@
         app:layout_constraintTop_toBottomOf="@id/age_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="40dp"
-        android:text = "Number of workouts"
+        android:text = "@string/number_of_workouts_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -147,7 +148,7 @@
         app:layout_constraintStart_toStartOf="@id/total_workout_number_label"
         app:layout_constraintEnd_toEndOf="@id/total_workout_number_label"
         android:layout_margin="10dp"
-        android:text = "30"
+        tools:text = "30"
         android:gravity="center"
         android:textSize="25sp"/>
     <TextView
@@ -158,7 +159,7 @@
         app:layout_constraintEnd_toEndOf="@id/total_workout_number_label"
         app:layout_constraintStart_toStartOf="@id/total_workout_number_label"
         android:layout_margin="40dp"
-        android:text = "Longest distance"
+        android:text = "@string/longest_distance_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -168,7 +169,7 @@
         app:layout_constraintStart_toStartOf="@id/longest_distance_workout_label"
         app:layout_constraintEnd_toEndOf="@id/longest_distance_workout_label"
         android:layout_margin="10dp"
-        android:text = "7km"
+        tools:text = "7km"
         android:gravity="center"
         android:textSize="25sp"/>
     <TextView
@@ -179,7 +180,7 @@
         app:layout_constraintStart_toStartOf="@id/total_distance_label"
         app:layout_constraintEnd_toEndOf="@id/total_distance_label"
         android:layout_margin="40dp"
-        android:text = "Longest duration"
+        android:text = "@string/longest_duration_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -189,7 +190,7 @@
         app:layout_constraintStart_toStartOf="@id/longest_duration_workout_label"
         app:layout_constraintEnd_toEndOf = "@id/longest_duration_workout_label"
         android:layout_margin="10dp"
-        android:text = "1.5h"
+        tools:text = "1.5h"
         android:gravity="center"
         android:textSize="25sp"/>
 
@@ -201,7 +202,7 @@
         app:layout_constraintStart_toStartOf="@id/longest_distance_workout_label"
         app:layout_constraintEnd_toEndOf="@id/longest_distance_workout_label"
         android:layout_margin="40dp"
-        android:text = "Total calories"
+        android:text = "@string/total_calories_label"
         android:gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -211,7 +212,7 @@
         app:layout_constraintStart_toStartOf="@id/total_calories_workout_label"
         app:layout_constraintEnd_toEndOf = "@id/total_calories_workout_label"
         android:layout_margin="10dp"
-        android:text = "100000 kcal"
+        tools:text = "100000 kcal"
         android:gravity="center"
         android:textSize="25sp"/>
 
@@ -221,5 +222,5 @@
         android:id = "@+id/log_out_button"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="10dp"
-        android:text = "Log out"/>
+        android:text = "@string/log_out_button_label"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
