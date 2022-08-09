@@ -32,7 +32,7 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = phaseList[position]
 
-        holder.durationInput.setText("${item.duration}")
+        holder.durationInput.setText("${round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER)}")
         holder.speedInput.setText("${item.speed}")
         holder.tiltInput.setText("${item.tilt}")
 
@@ -84,7 +84,7 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
             distance += (it.duration.toDouble() / SECONDS_IN_HOUR.toDouble())*it.speed
         }
         distance = round(distance, DISTANCE_ROUND_MULTIPLIER)
-        totalDistance.text = String.format(context.getString(R.string.total_duration_minutes), distance)
+        totalDistance.text = String.format(context.getString(R.string.total_distance), distance)
     }
 
     private fun setDuration(context: Context){
@@ -92,6 +92,6 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         phaseList.forEach {
             duration += it.duration
         }
-        totalDuration.text = String.format(context.getString(R.string.total_duration_minutes), secondsToMinutes(duration))
+        totalDuration.text = String.format(context.getString(R.string.total_duration_minutes), round(secondsToMinutes(duration), DURATION_ROUND_MULTIPLIER))
     }
 }

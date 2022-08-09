@@ -1,26 +1,26 @@
 package com.example.treadmillassistant.backend.training
 
-import android.os.Build.ID
 import com.example.treadmillassistant.backend.user
 import java.util.*
+import kotlin.NoSuchElementException
 
-class TrainingCalendar(var currentDate: Date = Date(), var trainingLists: MutableList<Training> = mutableListOf()) {
+class TrainingCalendar(var currentDate: Date = Date(), var trainingList: MutableList<Training> = mutableListOf()) {
 
     fun getTrainingsForDateRange(start: Calendar, end: Calendar): MutableList<Training>{
-        return trainingLists.filter{ it.trainingTime.time>start.time && it.trainingTime.time<end.time}.toMutableList()
+        return trainingList.filter{ it.trainingTime.time>start.time && it.trainingTime.time<end.time}.toMutableList()
     }
 
     fun addNewTraining(training: Training){
-        trainingLists.add(training)
+        trainingList.add(training)
         sortCalendar()
     }
 
     fun removeTraining(training: Training){
-        trainingLists.remove(training)
+        trainingList.remove(training)
     }
 
     fun updateTraining(oldTraining: Training?, newTraining: Training){
-        var training = getTraining(oldTraining!!.ID)
+        val training = getTraining(oldTraining!!.ID)
         training!!.trainingTime = newTraining.trainingTime
         training.treadmill = newTraining.treadmill
         training.trainingPlan = newTraining.trainingPlan
@@ -28,26 +28,31 @@ class TrainingCalendar(var currentDate: Date = Date(), var trainingLists: Mutabl
     }
 
     fun getTraining(trainingID: Long): Training? {
-        return trainingLists.find{ it.ID == trainingID}
+        return try{
+            trainingList.first{ it.ID == trainingID }
+        }
+        catch (exception: NoSuchElementException){
+            null
+        }
     }
 
     fun sortCalendar(){
-        trainingLists.sortBy{ it.trainingTime }
+        trainingList.sortBy{ it.trainingTime }
     }
 
     fun getNewID(): Long {
-        return if (user.trainingSchedule.trainingLists.isEmpty()) {
+        return if (user.trainingSchedule.trainingList.isEmpty()) {
             1L
         } else {
-            user.trainingSchedule.trainingLists.sortBy { it.ID }
-            val ID = user.trainingSchedule.trainingLists.last().ID + 1
+            user.trainingSchedule.trainingList.sortBy { it.ID }
+            val ID = user.trainingSchedule.trainingList.last().ID + 1
             user.trainingSchedule.sortCalendar()
             ID
         }
     }
 
     fun getTrainingsForDate(calendar: Calendar): MutableList<Training> {
-        return user.trainingSchedule.trainingLists.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
+        return user.trainingSchedule.trainingList.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
                 && it.trainingTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
                 && it.trainingTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}.toMutableList()
     }

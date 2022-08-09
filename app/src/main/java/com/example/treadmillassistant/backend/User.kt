@@ -19,7 +19,7 @@ class User(
 
     fun getTotalDistance(): Double{
         var totalDistance = 0.0
-        trainingSchedule.trainingLists.forEach {
+        trainingSchedule.trainingList.forEach {
             totalDistance+=it.getTotalDistance()
         }
         return round(totalDistance, DISTANCE_ROUND_MULTIPLIER)
@@ -27,7 +27,7 @@ class User(
 
     fun getTotalDuration(): Double{
         var totalDuration = 0
-        trainingSchedule.trainingLists.forEach {
+        trainingSchedule.trainingList.forEach {
             totalDuration+=it.getTotalDuration()
         }
         return secondsToHours(totalDuration.toDouble())
@@ -35,7 +35,7 @@ class User(
 
     fun getTotalCalories(): Int{
         var totalCalories = 0
-        trainingSchedule.trainingLists.forEach {
+        trainingSchedule.trainingList.forEach {
             totalCalories+= it.calculateCalories()
         }
         return totalCalories
@@ -44,7 +44,7 @@ class User(
     fun getLongestDistance(): Double {
         var longestDistance = 0.0
 
-        trainingSchedule.trainingLists.forEach {
+        trainingSchedule.trainingList.forEach {
             if(it.getTotalDistance()>longestDistance){
 
                 longestDistance = it.getTotalDistance()
@@ -55,7 +55,7 @@ class User(
 
     fun getLongestDuration(): Double{
         var longestDuration = 0
-        trainingSchedule.trainingLists.forEach {
+        trainingSchedule.trainingList.forEach {
             if(it.getTotalDuration()>longestDuration){
                 longestDuration = it.getTotalDuration()
             }
@@ -64,7 +64,7 @@ class User(
     }
 
     fun getTreadmillNames(): MutableList<String>{
-        var treadmillNames = mutableListOf<String>()
+        val treadmillNames = mutableListOf<String>()
         treadmillList.forEach {
             treadmillNames.add(it.name)
         }

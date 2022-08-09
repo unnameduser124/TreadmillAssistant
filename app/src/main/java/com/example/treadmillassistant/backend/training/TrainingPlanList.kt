@@ -9,16 +9,25 @@ class TrainingPlanList(var trainingPlanList: MutableList<TrainingPlan> = mutable
         trainingPlanList.remove(trainingPlan)
     }
 
-    fun getTrainingPlanByID(planID: Long): TrainingPlan{
-        return trainingPlanList.first{it.ID == planID}
+    fun getTrainingPlanByID(planID: Long): TrainingPlan?{
+        return try{
+            trainingPlanList.first{it.ID == planID}
+        } catch (exception: NoSuchElementException){
+            null
+        }
+
     }
 
     fun getTrainingPlanNames(): MutableList<String>{
-        var trainingPlanNames = mutableListOf<String>()
+        val trainingPlanNames = mutableListOf<String>()
         trainingPlanList.forEach {
             trainingPlanNames.add(it.name)
         }
         return trainingPlanNames
+    }
+
+    fun updateTrainingPlan(newTrainingPlan: TrainingPlan, id: Long) {
+        trainingPlanList.find{it.ID == id}?.updateTrainingPlan(newTrainingPlan)
     }
 
 }

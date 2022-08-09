@@ -29,7 +29,7 @@ class TrainingHistoryFragment : Fragment() {
         val root: View = binding.root
 
         //item adapter with training list sorted from newest to oldest as dataset
-        val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingLists.filter {
+        val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingList.filter {
             it.trainingStatus==TrainingStatus.Finished }.sortedByDescending { it.trainingTime })
 
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)

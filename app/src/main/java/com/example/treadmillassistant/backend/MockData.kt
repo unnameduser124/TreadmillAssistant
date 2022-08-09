@@ -114,15 +114,15 @@ fun generateDBdata(context: Context){
         val newTrainingPlan = TrainingPlan("Plan ${i+1}", userID = user.ID)
         val newID = trainingPlanService.insertNewTrainingPlan(newTrainingPlan)
         newTrainingPlan.ID = newID
-        for(i in 0..5){
+        for(j in 0..5){
             val trainingPhase = TrainingPhase((10..20).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 (1L..5L).random(),
-                i,
+                j,
                 false)
-            val newID = trainingPhaseService.insertNewTrainingPhase(trainingPhase,db)
-            trainingPhase.ID = newID
+            val newPhaseID = trainingPhaseService.insertNewTrainingPhase(trainingPhase,db)
+            trainingPhase.ID = newPhaseID
         }
         newTrainingPlanList.addTrainingPlan(newTrainingPlan)
     }
@@ -152,12 +152,12 @@ fun generateDBdata(context: Context){
 }
 
 fun loadAllData(context: Context){
-    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingLists.isEmpty() && user.trainingPlanList.trainingPlanList.isEmpty()){
+    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingList.isEmpty() && user.trainingPlanList.trainingPlanList.isEmpty()){
         val userService = UserService(context)
         user = userService.loadUser()!!
 
         val trainingService = TrainingService(context)
-        user.trainingSchedule.trainingLists = trainingService.getAllTrainings()
+        user.trainingSchedule.trainingList = trainingService.getAllTrainings()
 
         val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
         trainingPlanIDs.forEach {

@@ -1,16 +1,13 @@
 package com.example.treadmillassistant.ui.addTraining
 
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.Gravity
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -82,9 +79,9 @@ class AddTraining: AppCompatActivity(){
             dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
 
-            user.trainingSchedule.trainingLists.sortBy{it.ID}
+            user.trainingSchedule.trainingList.sortBy{it.ID}
             val newTraining = PlannedTraining(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), TrainingStatus.Upcoming,
-                selectedTrainingPlan, ID =user.trainingSchedule.trainingLists.last().ID+1)
+                selectedTrainingPlan, ID =user.trainingSchedule.trainingList.last().ID+1)
             user.trainingSchedule.addNewTraining(newTraining)
             user.trainingSchedule.sortCalendar()
 
@@ -103,7 +100,7 @@ class AddTraining: AppCompatActivity(){
             popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
             popupWindow.contentView = popupBinding.root
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
-            val itemAdapter = AddTrainingPlanPopupItemAdapter(user.trainingPlanList.trainingPlanList)
+            val itemAdapter = AddTrainingPlanPopupItemAdapter(user.trainingPlanList.trainingPlanList, true)
             val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.trainingPlanSearchList.adapter = itemAdapter
             popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
@@ -134,7 +131,7 @@ class AddTraining: AppCompatActivity(){
 
             popupBinding.trainingPlanSearchInput.addTextChangedListener {typedText: Editable? ->
                 val filteredList = user.trainingPlanList.trainingPlanList.filter{ it.name.lowercase().contains(typedText.toString().lowercase()) }.toMutableList()
-                val newAdapter = AddTrainingPlanPopupItemAdapter(filteredList)
+                val newAdapter = AddTrainingPlanPopupItemAdapter(filteredList, true)
 
                 popupBinding.trainingPlanSearchList.adapter = newAdapter
             }

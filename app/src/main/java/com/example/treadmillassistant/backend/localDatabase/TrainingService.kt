@@ -2,6 +2,7 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
+import android.os.Build.ID
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.finishPhases
@@ -36,8 +37,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TRAINING_TIME, time)
             put(MEDIA_LINK, training.mediaLink)
             put(TRAINING_STATUS, "${training.trainingStatus}")
-            put(TREADMILL_ID, training.treadmill?.ID)
-            put(TRAINING_PLAN_ID, training.trainingPlan?.ID)
+            put(TREADMILL_ID, training.treadmill.ID)
+            put(TRAINING_PLAN_ID, training.trainingPlan.ID)
             put(USER_ID, user.ID)
         }
 
@@ -66,8 +67,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TRAINING_TIME, time)
             put(MEDIA_LINK, newTraining.mediaLink)
             put(TRAINING_STATUS, "${newTraining.trainingStatus}")
-            put(TREADMILL_ID, newTraining.treadmill?.ID)
-            put(TRAINING_PLAN_ID, newTraining.trainingPlan?.ID)
+            put(TREADMILL_ID, newTraining.treadmill.ID)
+            put(TRAINING_PLAN_ID, newTraining.trainingPlan.ID)
             put(USER_ID, user.ID)
         }
         val selection = "${BaseColumns._ID} = ?"
@@ -89,7 +90,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             TRAINING_PLAN_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val cursor = db.query(
             TABLE_NAME,
@@ -136,13 +137,17 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     Treadmill(ID = treadmillID),
                     mediaLink,
                     trainingStatus,
-                    TrainingPlan(ID = trainingPlanID,
-                        trainingPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID)),
+                    if(TrainingPlanService(context).getTrainingPlanByID(trainingPlanID)!=null) {
+                        TrainingPlanService(context).getTrainingPlanByID(trainingPlanID)!!
+                    }
+                    else{ TrainingPlan(ID = trainingPlanID,
+                        trainingPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID))
+                    },
                     ID = trainingID)
 
                 trainingList.add(training)
-                if(training!!.trainingStatus == TrainingStatus.Finished){
-                    finishPhases(training!!)
+                if(training.trainingStatus == TrainingStatus.Finished){
+                    finishPhases(training)
                 }
             }
         }
@@ -163,7 +168,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             TRAINING_PLAN_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "$TRAINING_DATE = ?"
 
@@ -222,8 +227,8 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     ID = trainingID)
 
                 trainingList.add(training)
-                if(training!!.trainingStatus == TrainingStatus.Finished){
-                    finishPhases(training!!)
+                if(training.trainingStatus == TrainingStatus.Finished){
+                    finishPhases(training)
                 }
             }
         }
@@ -243,7 +248,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             TRAINING_PLAN_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "${BaseColumns._ID} = ?"
 
@@ -278,11 +283,11 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val currentDate = Calendar.getInstance()
                 currentDate.set(Calendar.HOUR_OF_DAY, 0)
                 currentDate.set(Calendar.MINUTE, 0)
-                calendar.time = date
+                if (date != null) {
+                    calendar.time = date
+                }
 
-                var trainingStatus: TrainingStatus
-
-                trainingStatus = if(calendar.time < currentDate.time){
+                val trainingStatus: TrainingStatus = if(calendar.time < currentDate.time){
                     TrainingStatus.Finished
                 }
                 else if(status=="Upcoming"){
@@ -305,10 +310,10 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
 
                 if(treadmill!=null && workoutPlan!=null){
                     training = PlannedTraining(calendar,
-                        treadmill!!,
+                        treadmill,
                         mediaLink,
                         trainingStatus,
-                        workoutPlan!!,
+                        workoutPlan,
                         ID = trainingID)
                     if(training!!.trainingStatus == TrainingStatus.Finished){
                         finishPhases(training!!)
@@ -377,11 +382,11 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val date = simpleDateFormat.parse("$trainingDate $trainingTime")
 
                 val calendar = Calendar.getInstance()
-                calendar.time = date
+                if (date != null) {
+                    calendar.time = date
+                }
 
-                var trainingStatus: TrainingStatus
-
-                trainingStatus = if(status=="Upcoming"){
+                var trainingStatus: TrainingStatus = if(status=="Upcoming"){
                     TrainingStatus.Upcoming
                 } else if(status=="Finished"){
                     TrainingStatus.Finished

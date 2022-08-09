@@ -20,6 +20,12 @@ class TrainingPlan(var name: String = "default name", var trainingPhaseList: Mut
         return trainingPhaseList.first {it.ID == phaseID}
     }
 
+    fun updateTrainingPlan(newTrainingPlan: TrainingPlan){
+        name = newTrainingPlan.name
+        trainingPhaseList = newTrainingPlan.trainingPhaseList
+        userID = newTrainingPlan.userID
+    }
+
     fun getDuration(): Int{
         var duration = 0
 

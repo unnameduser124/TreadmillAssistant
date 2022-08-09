@@ -18,7 +18,7 @@ class ProfilePage: AppCompatActivity() {
 
         binding.totalDistanceValue.text = String.format(getString(R.string.distance), user.getTotalDistance())
         binding.totalDurationValue.text = String.format(getString(R.string.duration_hours), user.getTotalDuration())
-        binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingLists.size}"
+        binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingList.size}"
         binding.longestDistanceTrainingValue.text = String.format(getString(R.string.distance), user.getLongestDistance())
         binding.longestDurationTrainingValue.text = String.format(getString(R.string.duration_hours), user.getLongestDuration())
         binding.fullNameTextView.text = String.format(getString(R.string.full_name), user.firstName, user.lastName)

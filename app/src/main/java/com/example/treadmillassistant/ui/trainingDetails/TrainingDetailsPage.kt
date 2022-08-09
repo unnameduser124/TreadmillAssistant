@@ -11,12 +11,14 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.IndividualTrainingPageBinding
-import com.example.treadmillassistant.ui.EditTraining
+import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class TrainingDetailsPage: AppCompatActivity() {
+
+    private var fromCalendarPage = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +27,7 @@ class TrainingDetailsPage: AppCompatActivity() {
         setContentView(binding.root)
 
         val itemID = intent.getLongExtra("id", -1L)
-        val fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", false)
+        fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", false)
 
         if(itemID == -1L){
             val intent = Intent(this, MainActivity::class.java)
@@ -114,5 +116,18 @@ class TrainingDetailsPage: AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        if(!fromCalendarPage){
+            intent.putExtra("navViewPosition", TRAINING_HISTORY_NAV_VIEW_POSITION)
+        }
+        else{
+            intent.putExtra("navViewPosition", HOME_TAB_NAV_VIEW_POSITION)
+        }
+        finishAffinity()
+        startActivity(intent)
     }
 }

@@ -61,9 +61,13 @@
             android:parentActivityName = ".MainActivity">
         </activity>
         <activity
-            android:name=".ui.EditTraining"
+            android:name=".ui.editTraining.EditTraining"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".ui.trainingDetails.TrainingDetailsPage"/>
+        <activity
+            android:name=".ui.EditTrainingPlan"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity"/>
     </application>
 
 </manifest>
