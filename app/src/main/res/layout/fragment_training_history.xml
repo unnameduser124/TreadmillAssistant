@@ -6,10 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.trainingHistory.TrainingHistoryFragment">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id = "@+id/month_picked_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"
+        tools:text = "August 2022"
+        android:background="#00ffffff"
+        android:fontStyle = "normal"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textAllCaps="false"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/month_picked_button"
         android:layout_marginTop="10dp"
         android:id = "@+id/training_history_header">
         <TextView

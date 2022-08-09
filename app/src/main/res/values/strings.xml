@@ -92,4 +92,6 @@
     <string name="pace_label">pace</string>
     <string name="time_label_lowercase">time</string>
     <string name="progress_label">progress</string>
+    <string name="confirm_label">confirm</string>
+    <string name="month_and_year">%1$s %2$s</string>
 </resources>

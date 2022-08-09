@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable-v24/popup_background.xml" value="0.1805" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.1815" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.1815" />
@@ -26,6 +27,7 @@
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/individual_training_page_phase_list_item.xml" value="0.7060889929742389" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/individual_workout_page.xml" value="0.7060889929742389" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/login_page_layout.xml" value="0.7084309133489461" />
+        <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/month_picker_popup.xml" value="0.7060889929742389" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/nav_header_main.xml" value="0.6545454318464303" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/phase_item.xml" value="0.7084309133489461" />
         <entry key="..\:/Programowanie/AndroidStudioProjects/TreadmillAssistant/app/src/main/res/layout/profile_page_layout.xml" value="0.7060889929742389" />
