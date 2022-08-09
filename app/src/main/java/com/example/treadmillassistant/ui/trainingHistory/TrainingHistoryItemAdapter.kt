@@ -43,6 +43,7 @@ class TrainingHistoryItemAdapter(private val dataset: List<Training>): RecyclerV
 
         holder.item.setOnClickListener {
             val intent = Intent(holder.date.context, TrainingDetailsPage::class.java)
+            intent.putExtra("fromCalendarPage", false)
             intent.putExtra("id", item.ID)
             startActivity(holder.date.context, intent, null)
         }

@@ -38,10 +38,7 @@ class EditTraining: AppCompatActivity() {
         binding.trainingTime.setIs24HourView(true)
 
         var selectedTreadmill: Treadmill
-
         val chosenDate = Calendar.getInstance()
-
-
 
         item = user.trainingSchedule.getTraining(intent.getLongExtra("id", -1))
 
@@ -114,20 +111,20 @@ class EditTraining: AppCompatActivity() {
         binding.addTrainingPlanButton.setOnClickListener {
 
             val popupBinding = TrainingPlanSelectionPopupBinding.inflate(layoutInflater)
-
             val width = LinearLayout.LayoutParams.MATCH_PARENT
             val height = LinearLayout.LayoutParams.MATCH_PARENT
             val focusable = true
             popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
             popupWindow.contentView = popupBinding.root
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
+
             val itemAdapter = EditTrainingPlanPopupItemAdapter(user.trainingPlanList.trainingPlanList, false, item!!.ID)
             val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.trainingPlanSearchList.adapter = itemAdapter
             popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
             popupBinding.trainingPlanSearchList.setHasFixedSize(false)
 
-            popupBinding.trainingPlanSelectionCancelButton.setOnClickListener { AddTraining.popupWindow.dismiss() }
+            popupBinding.trainingPlanSelectionCancelButton.setOnClickListener { popupWindow.dismiss() }
 
             popupWindow.setOnDismissListener {
                 popupWindow.dismiss()
@@ -139,6 +136,7 @@ class EditTraining: AppCompatActivity() {
             popupBinding.trainingPlanSelectionAddNewButton.setOnClickListener {
                 val intent = Intent(this, AddTrainingPlan::class.java)
                 intent.putExtra("fromTraining", false)
+
                 val dateCal = Calendar.getInstance()
                 dateCal.set(Calendar.YEAR, binding.trainingDate.year)
                 dateCal.set(Calendar.MONTH, binding.trainingDate.month)
@@ -146,6 +144,7 @@ class EditTraining: AppCompatActivity() {
                 dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
                 dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
                 intent.putExtra("date", dateCal.time)
+
                 startActivity(intent)
                 popupWindow.dismiss()
             }

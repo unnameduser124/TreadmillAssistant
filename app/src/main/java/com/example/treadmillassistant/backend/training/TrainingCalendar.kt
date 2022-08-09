@@ -1,5 +1,6 @@
 package com.example.treadmillassistant.backend.training
 
+import com.example.treadmillassistant.backend.setUpDayCalendarCopy
 import com.example.treadmillassistant.backend.user
 import java.util.*
 import kotlin.NoSuchElementException
@@ -43,16 +44,10 @@ class TrainingCalendar(var currentDate: Date = Date(), var trainingList: Mutable
     fun getHistoryTrainingsForMonth(calendar: Calendar): MutableList<Training>{
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
-        var from = Calendar.getInstance()
-        from.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
-        from.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
-        from.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+        var from = setUpDayCalendarCopy(calendar)
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-        var to = Calendar.getInstance()
-        to.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
-        to.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
-        to.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+        var to = setUpDayCalendarCopy(calendar)
 
         from.set(Calendar.HOUR_OF_DAY, 0)
         from.set(Calendar.MINUTE, 0)

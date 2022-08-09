@@ -21,28 +21,28 @@ import java.util.*
 class EditTrainingPlan: AppCompatActivity() {
 
     private var fromTraining: Boolean = false
-    var date: Date = Date()
+    var date: Calendar = Calendar.getInstance()
     private lateinit var binding: AddTrainingPlanLayoutBinding
-    var trainingID = -1L
+    private var trainingID = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = AddTrainingPlanLayoutBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
         val item = user.trainingPlanList.getTrainingPlanByID(intent.getLongExtra("ID", -1))
-        trainingID = intent.getLongExtra("trainingID", -1L)
         if(item==null){
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             return
         }
 
+        trainingID = intent.getLongExtra("trainingID", -1L)
+
         fromTraining = intent.getBooleanExtra("fromTraining", false)
         if(fromTraining){
-            date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
+            date.timeInMillis = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
 
         binding.planNameInput.setText(item.name)
@@ -88,7 +88,7 @@ class EditTrainingPlan: AppCompatActivity() {
                 user.trainingPlanList.updateTrainingPlan(newTrainingPlan, item.ID)
                 if(fromTraining){
                     intent = Intent(this, AddTraining::class.java)
-                    intent.putExtra("date", date.time)
+                    intent.putExtra("date", date.timeInMillis)
                     finish()
                     startActivity(intent)
                 }
@@ -107,7 +107,7 @@ class EditTrainingPlan: AppCompatActivity() {
         binding.cancelButton.setOnClickListener {
             if(fromTraining){
                 intent = Intent(this, AddTraining::class.java)
-                intent.putExtra("date", date.time)
+                intent.putExtra("date", date.timeInMillis)
                 finish()
                 startActivity(intent)
                 AddTraining.popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
@@ -140,7 +140,7 @@ class EditTrainingPlan: AppCompatActivity() {
         super.onBackPressed()
         if(fromTraining){
             intent = Intent(this, AddTraining::class.java)
-            intent.putExtra("date", date.time)
+            intent.putExtra("date", date.timeInMillis)
             finish()
             startActivity(intent)
         }

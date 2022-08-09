@@ -58,3 +58,12 @@ fun setUpTimePicker(timePicker: TimePicker, date: Calendar){
     timePicker.hour = date.get(Calendar.HOUR_OF_DAY)
     timePicker.minute = date.get(Calendar.MINUTE)
 }
+
+fun setUpDayCalendarCopy(calendar: Calendar): Calendar {
+    val newCalendar = Calendar.getInstance()
+    newCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
+    newCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
+    newCalendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+    return newCalendar
+}
+

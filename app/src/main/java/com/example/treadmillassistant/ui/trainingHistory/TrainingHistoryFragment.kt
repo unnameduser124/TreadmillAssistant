@@ -67,15 +67,15 @@ class TrainingHistoryFragment : Fragment() {
                 val daySpinner = popupBinding.datePicker.findViewById<NumberPicker>(daySpinnerId)
                 daySpinner.isVisible = false
             }
+
             popupWindow.showAtLocation(binding.monthPickedButton, Gravity.CENTER, 0, 0)
 
             popupBinding.dateConfirmButton.setOnClickListener {
-                year = popupBinding.datePicker.year
-                month = popupBinding.datePicker.month
-                cal.set(Calendar.YEAR, year)
-                cal.set(Calendar.MONTH, month)
+                cal.set(Calendar.YEAR, popupBinding.datePicker.year)
+                cal.set(Calendar.MONTH, popupBinding.datePicker.month)
                 itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.getHistoryTrainingsForMonth(cal))
                 binding.trainingHistoryTrainingList.adapter = itemAdapter
+
                 popupWindow.dismiss()
                 updateDateButton(cal)
             }

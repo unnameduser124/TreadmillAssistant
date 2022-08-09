@@ -27,13 +27,7 @@ class TrainingDetailsPage: AppCompatActivity() {
         setContentView(binding.root)
 
         val itemID = intent.getLongExtra("id", -1L)
-        fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", false)
-
-        if(itemID == -1L){
-            val intent = Intent(this, MainActivity::class.java)
-            finishAffinity()
-            startActivity(intent)
-        }
+        fromCalendarPage = intent.getBooleanExtra("fromCalendarPage", true)
 
         val item = user.trainingSchedule.getTraining(itemID)
 

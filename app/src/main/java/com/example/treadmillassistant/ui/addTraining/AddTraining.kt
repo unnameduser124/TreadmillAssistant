@@ -31,7 +31,6 @@ class AddTraining: AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         val binding = AddTrainingLayoutBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
         binding.trainingTime.setIs24HourView(true)

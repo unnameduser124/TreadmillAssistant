@@ -47,18 +47,14 @@ class EditTrainingPlanPopupItemAdapter(private val trainingPlanList: MutableList
             round(item.getDistance(), DISTANCE_ROUND_MULTIPLIER)
         )
 
-        holder.trainingPlanName.setOnClickListener {
+        val listener = View.OnClickListener{
             selectedTrainingPlan = item
             popupWindow.dismiss()
         }
-        holder.trainingDuration.setOnClickListener {
-            selectedTrainingPlan = item
-            popupWindow.dismiss()
-        }
-        holder.trainingDistance.setOnClickListener {
-            selectedTrainingPlan = item
-            popupWindow.dismiss()
-        }
+
+        holder.trainingDistance.setOnClickListener(listener)
+        holder.trainingPlanName.setOnClickListener(listener)
+        holder.trainingDuration.setOnClickListener(listener)
 
         holder.editButton.setOnClickListener {
             val intent = Intent(holder.editButton.context, EditTrainingPlan::class.java)
