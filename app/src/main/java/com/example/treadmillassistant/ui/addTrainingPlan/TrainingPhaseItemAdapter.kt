@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
-import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.ui.InputFilterMinMax
 import com.google.android.material.textfield.TextInputEditText
 

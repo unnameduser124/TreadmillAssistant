@@ -68,10 +68,15 @@ class AddTraining: AppCompatActivity(){
             dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
             dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
-
             user.trainingSchedule.trainingList.sortBy{it.ID}
-            val newTraining = PlannedTraining(dateCal, selectedTreadmill, binding.mediaLink.text.toString(), TrainingStatus.Upcoming,
-                selectedTrainingPlan, ID =user.trainingSchedule.trainingList.last().ID+1)
+            val newTraining = PlannedTraining(
+                dateCal,
+                selectedTreadmill,
+                binding.mediaLink.text.toString(),
+                TrainingStatus.Upcoming,
+                selectedTrainingPlan,
+                ID =user.trainingSchedule.trainingList.last().ID+1
+            )
             user.trainingSchedule.addNewTraining(newTraining)
             user.trainingSchedule.sortCalendar()
 
@@ -89,6 +94,7 @@ class AddTraining: AppCompatActivity(){
             treadmillPopup = PopupWindow(popupBinding.root, width, height, focusable)
             treadmillPopup.contentView = popupBinding.root
             treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
+
             val itemAdapter = AddTreadmillPopupItemAdapter(user.treadmillList, true)
             val linearLayoutManager = LinearLayoutManager(popupBinding.treadmillSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.treadmillSearchList.adapter = itemAdapter
@@ -125,14 +131,14 @@ class AddTraining: AppCompatActivity(){
 
         binding.addTrainingPlanButton.setOnClickListener {
 
-            val popupBinding = com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding.inflate(layoutInflater)
-
+            val popupBinding = TrainingPlanSelectionPopupBinding.inflate(layoutInflater)
             val width = LinearLayout.LayoutParams.MATCH_PARENT
             val height = LinearLayout.LayoutParams.MATCH_PARENT
             val focusable = true
             popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
             popupWindow.contentView = popupBinding.root
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
+
             val itemAdapter = AddTrainingPlanPopupItemAdapter(user.trainingPlanList.trainingPlanList, true)
             val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.trainingPlanSearchList.adapter = itemAdapter

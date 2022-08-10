@@ -2,14 +2,11 @@ package com.example.treadmillassistant.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.Treadmill
-import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.AddTreadmillLayoutBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.editTraining.EditTraining
@@ -20,7 +17,7 @@ class AddTreadmill: AppCompatActivity() {
     private lateinit var binding: AddTreadmillLayoutBinding
     private var fromEditTraining: Boolean = false
     var date: Date = Date()
-    private var fromTraining = true
+    private var fromAddTraining = true
     private var trainingID: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +27,14 @@ class AddTreadmill: AppCompatActivity() {
 
         setContentView(binding.root)
 
-        fromTraining = intent.getBooleanExtra("fromTraining", false)
-        if(fromTraining){
+        fromAddTraining = intent.getBooleanExtra("fromTraining", false)
+        fromEditTraining = intent.getBooleanExtra("fromEditTraining", false)
+        if(fromAddTraining){
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
-        fromEditTraining = intent.getBooleanExtra("fromEditTraining", false)
         trainingID = intent.getLongExtra("id", -1)
 
+        //filter preventing user from putting in invalid values
         binding.treadmillMaxSpeedInput.filters = arrayOf(InputFilterMinMax(1.0, 30.0))
         binding.treadmillMinSpeedInput.filters = arrayOf(InputFilterMinMax(1.0, 30.0))
         binding.treadmillMaxTiltInput.filters = arrayOf(InputFilterMinMax(-5.0, 15.0))
@@ -60,7 +58,7 @@ class AddTreadmill: AppCompatActivity() {
                         ID = if(user.treadmillList.isEmpty()) 1 else user.treadmillList.last().ID+1
                     )
                 )
-                if(fromTraining){
+                if(fromAddTraining){
                     intent = Intent(this, AddTraining::class.java)
                     intent.putExtra("date", date.time)
                     finish()
@@ -68,7 +66,6 @@ class AddTreadmill: AppCompatActivity() {
                 }
                 else if(fromEditTraining){
                     intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("date", date.time)
                     intent.putExtra("id", trainingID)
                     finish()
                     startActivity(intent)
@@ -85,7 +82,7 @@ class AddTreadmill: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener{
-            if(fromTraining){
+            if(fromAddTraining){
                 intent = Intent(this, AddTraining::class.java)
                 intent.putExtra("date", date.time)
                 finish()
@@ -93,7 +90,6 @@ class AddTreadmill: AppCompatActivity() {
             }
             else if(fromEditTraining){
                 intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("date", date.time)
                 intent.putExtra("id", trainingID)
                 finish()
                 startActivity(intent)
@@ -108,7 +104,7 @@ class AddTreadmill: AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if(fromTraining){
+        if(fromAddTraining){
             intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.time)
             finish()
@@ -116,7 +112,6 @@ class AddTreadmill: AppCompatActivity() {
         }
         else if(fromEditTraining){
             intent = Intent(this, EditTraining::class.java)
-            intent.putExtra("date", date.time)
             intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)

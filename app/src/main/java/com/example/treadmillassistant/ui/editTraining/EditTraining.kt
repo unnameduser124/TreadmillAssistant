@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -41,9 +40,6 @@ class EditTraining: AppCompatActivity() {
         binding.trainingTime.setIs24HourView(true)
         val chosenDate = Calendar.getInstance()
 
-        setUpDatePicker(binding.trainingDate, chosenDate)
-        setUpTimePicker(binding.trainingTime, chosenDate)
-
         item = user.trainingSchedule.getTraining(intent.getLongExtra("id", -1))
 
         if (item == null) {
@@ -56,8 +52,8 @@ class EditTraining: AppCompatActivity() {
             selectedTrainingPlan = item!!.trainingPlan
             binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
             binding.selectedTreadmillName.text = selectedTreadmill.name
-            setUpDatePicker(binding.trainingDate, item!!.trainingTime)
-            setUpTimePicker(binding.trainingTime, item!!.trainingTime)
+            setUpDatePicker(binding.trainingDate, chosenDate)
+            setUpTimePicker(binding.trainingTime, chosenDate)
         }
 
 
@@ -76,7 +72,7 @@ class EditTraining: AppCompatActivity() {
                 binding.mediaLink.text.toString(),
                 TrainingStatus.Upcoming,
                 selectedTrainingPlan,
-                ID = user.trainingSchedule.trainingList.last().ID + 1
+                ID = if(user.trainingSchedule.trainingList.isEmpty()) 1L else user.trainingSchedule.trainingList.last().ID + 1L
             )
             user.trainingSchedule.updateTraining(item, newTraining)
             user.trainingSchedule.sortCalendar()
@@ -89,13 +85,13 @@ class EditTraining: AppCompatActivity() {
 
         binding.addTreadmillButton.setOnClickListener{
             val popupBinding = TreadmillSelectionPopupBinding.inflate(layoutInflater)
-
             val width = LinearLayout.LayoutParams.MATCH_PARENT
             val height = LinearLayout.LayoutParams.MATCH_PARENT
             val focusable = true
             AddTraining.treadmillPopup = PopupWindow(popupBinding.root, width, height, focusable)
             AddTraining.treadmillPopup.contentView = popupBinding.root
             AddTraining.treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
+
             val itemAdapter = AddTreadmillPopupItemAdapter(user.treadmillList, true)
             val linearLayoutManager = LinearLayoutManager(popupBinding.treadmillSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.treadmillSearchList.adapter = itemAdapter
@@ -106,7 +102,7 @@ class EditTraining: AppCompatActivity() {
 
             AddTraining.treadmillPopup.setOnDismissListener {
                 if(AddTraining.selectedTreadmill.ID!=-1L){
-                    binding.selectedTreadmillName.text = AddTraining.selectedTreadmill.name
+                    binding.selectedTreadmillName.text = selectedTreadmill.name
                 }
             }
 

@@ -87,7 +87,6 @@ fun generateMockData(context: Context){
 }*/
 
 fun generateDBdata(context: Context){
-    val db = TrainingDatabaseService(context).writableDatabase
     val userService = UserService(context)
 
     tempUser = userService.loadUser()

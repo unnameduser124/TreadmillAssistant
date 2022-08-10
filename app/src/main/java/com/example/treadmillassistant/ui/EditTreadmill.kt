@@ -19,7 +19,7 @@ class EditTreadmill: AppCompatActivity() {
     var date: Date = Date()
     private var fromTraining = true
     private var trainingID: Long = -1
-    private var item: Treadmill? = null
+    private var treadmill: Treadmill? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,22 +35,22 @@ class EditTreadmill: AppCompatActivity() {
         fromEditTraining = intent.getBooleanExtra("fromEditTraining", false)
         trainingID = intent.getLongExtra("id", -1)
 
-        item = user.treadmillList.firstOrNull { it.ID == intent.getLongExtra("ID", -1) }
+        treadmill = user.treadmillList.firstOrNull { it.ID == intent.getLongExtra("ID", -1) }
 
-        if(item==null){
+        if(treadmill==null){
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             return
         }
         else{
-            binding.treadmillNameInput.setText(item!!.name)
-            binding.treadmillMaxSpeedInput.setText("${item!!.maxSpeed}")
-            binding.treadmillMinSpeedInput.setText("${item!!.minSpeed}")
-            binding.treadmillMaxTiltInput.setText("${item!!.maxTilt}")
-            binding.treadmillMinTiltInput.setText("${item!!.minTilt}")
+            binding.treadmillNameInput.setText(treadmill!!.name)
+            binding.treadmillMaxSpeedInput.setText("${treadmill!!.maxSpeed}")
+            binding.treadmillMinSpeedInput.setText("${treadmill!!.minSpeed}")
+            binding.treadmillMaxTiltInput.setText("${treadmill!!.maxTilt}")
+            binding.treadmillMinTiltInput.setText("${treadmill!!.minTilt}")
         }
 
-
+        //filters preventing user from putting in invalid values
         binding.treadmillMaxSpeedInput.filters = arrayOf(InputFilterMinMax(1.0, 30.0))
         binding.treadmillMinSpeedInput.filters = arrayOf(InputFilterMinMax(1.0, 30.0))
         binding.treadmillMaxTiltInput.filters = arrayOf(InputFilterMinMax(-5.0, 15.0))
@@ -73,7 +73,7 @@ class EditTreadmill: AppCompatActivity() {
                         minTilt = minTilt,
                         ID = if(user.treadmillList.isEmpty()) 1 else user.treadmillList.last().ID+1
                     ),
-                    item!!.ID
+                    treadmill!!.ID
                 )
                 if(fromTraining){
                     intent = Intent(this, AddTraining::class.java)
@@ -83,7 +83,6 @@ class EditTreadmill: AppCompatActivity() {
                 }
                 else if(fromEditTraining){
                     intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("date", date.time)
                     intent.putExtra("id", trainingID)
                     finish()
                     startActivity(intent)
@@ -108,7 +107,6 @@ class EditTreadmill: AppCompatActivity() {
             }
             else if(fromEditTraining){
                 intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("date", date.time)
                 intent.putExtra("id", trainingID)
                 finish()
                 startActivity(intent)
@@ -131,7 +129,6 @@ class EditTreadmill: AppCompatActivity() {
         }
         else if(fromEditTraining){
             intent = Intent(this, EditTraining::class.java)
-            intent.putExtra("date", date.time)
             intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)

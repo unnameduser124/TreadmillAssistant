@@ -37,8 +37,8 @@ class AddTrainingPlan: AppCompatActivity() {
         if(fromTraining){
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
-        trainingID = intent.getLongExtra("id", -1)
         fromEditTraining = intent.getBooleanExtra("fromEditTraining", false)
+        trainingID = intent.getLongExtra("id", -1)
 
 
         //phase list recycler view setup
@@ -80,7 +80,6 @@ class AddTrainingPlan: AppCompatActivity() {
                 }
                 else if(fromEditTraining){
                     intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("date", date.time)
                     intent.putExtra("id", trainingID)
                     finish()
                     startActivity(intent)
@@ -105,7 +104,6 @@ class AddTrainingPlan: AppCompatActivity() {
             }
             else if(fromEditTraining){
                 intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("date", date.time)
                 intent.putExtra("id", trainingID)
                 finish()
                 startActivity(intent)
@@ -143,7 +141,6 @@ class AddTrainingPlan: AppCompatActivity() {
         }
         else if(fromEditTraining){
             intent = Intent(this, EditTraining::class.java)
-            intent.putExtra("date", date.time)
             intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)
