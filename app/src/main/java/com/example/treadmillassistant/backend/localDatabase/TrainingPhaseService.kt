@@ -15,22 +15,23 @@ import com.example.treadmillassistant.backend.training.TrainingPhase
 class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTrainingPhase(trainingPhase: TrainingPhase, db: SQLiteDatabase): Long {
-
+    fun insertNewTrainingPhase(trainingPhase: TrainingPhase): Long {
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(SPEED, trainingPhase.speed)
             put(TILT, trainingPhase.tilt)
             put(DURATION, trainingPhase.duration)
             put(ORDER_NUMBER, trainingPhase.orderNumber)
-            put(TRAINING_PLAN_ID, trainingPhase.workoutPlanID)
+            put(TRAINING_PLAN_ID, trainingPhase.trainingPlanID)
         }
 
         return db.insert(TABLE_NAME, null, contentValues)
     }
 
     //returns number of rows deleted
-    fun deleteTrainingPhase(id: Int, db: SQLiteDatabase): Int{
+    fun deleteTrainingPhase(id: Int): Int{
 
+        val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
         val selectionArgs = arrayOf("$id")
@@ -39,14 +40,14 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows updated
-    fun updateTrainingPhase(newTrainingPhase: TrainingPhase, trainingPhaseID: Int, db: SQLiteDatabase): Int{
-
+    fun updateTrainingPhase(newTrainingPhase: TrainingPhase, trainingPhaseID: Long): Int{
+        val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(SPEED, newTrainingPhase.speed)
             put(TILT, newTrainingPhase.tilt)
             put(DURATION, newTrainingPhase.duration)
             put(ORDER_NUMBER, newTrainingPhase.orderNumber)
-            put(TRAINING_PLAN_ID, newTrainingPhase.workoutPlanID)
+            put(TRAINING_PLAN_ID, newTrainingPhase.trainingPlanID)
         }
         val selection = "${BaseColumns._ID} = ?"
 

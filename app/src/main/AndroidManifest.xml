@@ -68,6 +68,16 @@
             android:name=".ui.EditTrainingPlan"
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity"/>
+        <activity
+            android:name=".ui.AddTreadmill"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
+        <activity
+            android:name=".ui.EditTreadmill"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
     </application>
 
 </manifest>

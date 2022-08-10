@@ -134,13 +134,19 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 }
 
                 val training = PlannedTraining(calendar,
-                    Treadmill(ID = treadmillID),
+                    if(TreadmillService(context).getTreadmillByID(treadmillID)!=null){
+                        TreadmillService(context).getTreadmillByID(treadmillID)!!
+                    }
+                    else{
+                        Treadmill(ID=treadmillID)
+                    },
                     mediaLink,
                     trainingStatus,
                     if(TrainingPlanService(context).getTrainingPlanByID(trainingPlanID)!=null) {
                         TrainingPlanService(context).getTrainingPlanByID(trainingPlanID)!!
                     }
-                    else{ TrainingPlan(ID = trainingPlanID,
+                    else{
+                        TrainingPlan(ID = trainingPlanID,
                         trainingPhaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(trainingPlanID))
                     },
                     ID = trainingID)

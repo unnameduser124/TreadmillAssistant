@@ -17,6 +17,7 @@ import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.ui.EditTrainingPlan
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.selectedTrainingPlan
+import com.example.treadmillassistant.ui.editTraining.EditTraining
 import com.google.android.material.button.MaterialButton
 
 class AddTrainingPlanPopupItemAdapter(private val trainingPlanList: MutableList<TrainingPlan>, private val fromTraining: Boolean, private val trainingID: Long = -1): RecyclerView.Adapter<AddTrainingPlanPopupItemAdapter.ItemViewHolder>(){
@@ -44,14 +45,17 @@ class AddTrainingPlanPopupItemAdapter(private val trainingPlanList: MutableList<
 
         holder.trainingPlanName.setOnClickListener {
             selectedTrainingPlan = item
+            EditTraining.selectedTrainingPlan = item
             popupWindow.dismiss()
         }
         holder.trainingDuration.setOnClickListener {
             selectedTrainingPlan = item
+            EditTraining.selectedTrainingPlan = item
             popupWindow.dismiss()
         }
         holder.trainingDistance.setOnClickListener {
             selectedTrainingPlan = item
+            EditTraining.selectedTrainingPlan = item
             popupWindow.dismiss()
         }
 

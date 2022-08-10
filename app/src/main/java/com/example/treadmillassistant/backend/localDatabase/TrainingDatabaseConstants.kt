@@ -54,6 +54,16 @@ object TrainingDatabaseConstants {
             "${UserTable.AGE} INTEGER NOT NULL, " +
             "${UserTable.WEIGHT} REAL NOT NULL)"
 
+    const val SQL_CLEAR_USER_TABLE = "DELETE FROM ${UserTable.TABLE_NAME}"
+
+    const val SQL_CLEAR_TREADMILL_TABLE = "DELETE FROM ${TreadmillTable.TABLE_NAME}"
+
+    const val SQL_CLEAR_TRAINING_PLAN_TABLE = "DELETE FROM ${TrainingPlanTable.TABLE_NAME}"
+
+    const val SQL_CLEAR_TRAINING_TABLE = "DELETE FROM ${TrainingTable.TABLE_NAME}"
+
+    const val SQL_CLEAR_TRAINING_PHASE_TABLE = "DELETE FROM ${TrainingPhaseTable.TABLE_NAME}"
+
 
     object TrainingTable: BaseColumns {
         const val TABLE_NAME = "Training"

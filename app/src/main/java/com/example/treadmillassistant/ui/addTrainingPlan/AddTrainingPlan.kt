@@ -15,13 +15,16 @@ import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
+import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.util.*
 
 class AddTrainingPlan: AppCompatActivity() {
 
     private var fromTraining: Boolean = false
+    private var fromEditTraining: Boolean = false
     var date: Date = Date()
     private lateinit var binding: AddTrainingPlanLayoutBinding
+    private var trainingID: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,9 @@ class AddTrainingPlan: AppCompatActivity() {
         if(fromTraining){
             date.time = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
+        trainingID = intent.getLongExtra("id", -1)
+        fromEditTraining = intent.getBooleanExtra("fromEditTraining", false)
+
 
         //phase list recycler view setup
         val phaseList = mutableListOf<TrainingPhase>()
@@ -64,10 +70,18 @@ class AddTrainingPlan: AppCompatActivity() {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
                 val intent: Intent
-                user.trainingPlanList.addTrainingPlan(TrainingPlan(name, phaseList, user.ID))
+                user.trainingPlanList.addTrainingPlan(TrainingPlan(name, phaseList, user.ID,
+                    ID = if(user.trainingPlanList.trainingPlanList.isEmpty()) 1 else user.trainingPlanList.trainingPlanList.last().ID +1))
                 if(fromTraining){
                     intent = Intent(this, AddTraining::class.java)
                     intent.putExtra("date", date.time)
+                    finish()
+                    startActivity(intent)
+                }
+                else if(fromEditTraining){
+                    intent = Intent(this, EditTraining::class.java)
+                    intent.putExtra("date", date.time)
+                    intent.putExtra("id", trainingID)
                     finish()
                     startActivity(intent)
                 }
@@ -88,7 +102,13 @@ class AddTrainingPlan: AppCompatActivity() {
                 intent.putExtra("date", date.time)
                 finish()
                 startActivity(intent)
-                popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+            }
+            else if(fromEditTraining){
+                intent = Intent(this, EditTraining::class.java)
+                intent.putExtra("date", date.time)
+                intent.putExtra("id", trainingID)
+                finish()
+                startActivity(intent)
             }
             else{
                 intent = Intent(this, MainActivity::class.java)
@@ -118,6 +138,13 @@ class AddTrainingPlan: AppCompatActivity() {
         if(fromTraining){
             intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.time)
+            finish()
+            startActivity(intent)
+        }
+        else if(fromEditTraining){
+            intent = Intent(this, EditTraining::class.java)
+            intent.putExtra("date", date.time)
+            intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)
         }

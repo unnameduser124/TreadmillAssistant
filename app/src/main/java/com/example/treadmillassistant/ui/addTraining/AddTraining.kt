@@ -22,6 +22,8 @@ import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
+import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
+import com.example.treadmillassistant.ui.AddTreadmill
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import java.util.*
 
@@ -35,38 +37,27 @@ class AddTraining: AppCompatActivity(){
 
         binding.trainingTime.setIs24HourView(true)
 
-        var selectedTreadmill: Treadmill
         val chosenDate = Calendar.getInstance()
         chosenDate.timeInMillis = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         setUpDatePicker(binding.trainingDate, chosenDate)
         setUpTimePicker(binding.trainingTime, chosenDate)
 
-        val treadmillDropdownAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, user.getTreadmillNames())
-        treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.treadmillSelection.adapter = treadmillDropdownAdapter
-        selectedTreadmill = if(user.treadmillList.isEmpty()){
-            Treadmill()
-        } else{
-            user.treadmillList.first()
-        }
 
-        binding.treadmillSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?,
-                selectedItemView: View,
-                position: Int,
-                id: Long
-            ) {
-                selectedTreadmill = user.treadmillList[position]
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>?) {}
-        }
 
         binding.selectedTrainingPlanName.text = if(user.trainingPlanList.trainingPlanList.isEmpty()){
             getString(R.string.no_training_plan)
         } else{
+            selectedTrainingPlan = user.trainingPlanList.trainingPlanList.first()
             user.trainingPlanList.trainingPlanList.first().name
+        }
+
+        binding.selectedTreadmillName.text = if(user.treadmillList.isEmpty()){
+            getString(R.string.no_treadmill)
+        }
+        else{
+            selectedTreadmill= user.treadmillList.first()
+            user.treadmillList.first().name
+
         }
 
         binding.saveNewTrainingButton.setOnClickListener{
@@ -89,9 +80,52 @@ class AddTraining: AppCompatActivity(){
             startActivity(intent)
         }
 
+        binding.addTreadmillButton.setOnClickListener{
+            val popupBinding = TreadmillSelectionPopupBinding.inflate(layoutInflater)
+
+            val width = LinearLayout.LayoutParams.MATCH_PARENT
+            val height = LinearLayout.LayoutParams.MATCH_PARENT
+            val focusable = true
+            treadmillPopup = PopupWindow(popupBinding.root, width, height, focusable)
+            treadmillPopup.contentView = popupBinding.root
+            treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
+            val itemAdapter = AddTreadmillPopupItemAdapter(user.treadmillList, true)
+            val linearLayoutManager = LinearLayoutManager(popupBinding.treadmillSearchList.context, RecyclerView.VERTICAL, false)
+            popupBinding.treadmillSearchList.adapter = itemAdapter
+            popupBinding.treadmillSearchList.layoutManager = linearLayoutManager
+            popupBinding.treadmillSearchList.setHasFixedSize(false)
+
+            popupBinding.treadmillSelectionCancelButton.setOnClickListener { treadmillPopup.dismiss() }
+
+            treadmillPopup.setOnDismissListener {
+                if(selectedTreadmill.ID!=-1L){
+                    binding.selectedTreadmillName.text = selectedTreadmill.name
+                }
+            }
+
+            popupBinding.treadmillSelectionAddNewButton.setOnClickListener {
+                val intent = Intent(this, AddTreadmill::class.java)
+                intent.putExtra("fromTraining", true)
+                val dateCal = Calendar.getInstance()
+                dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+                dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+                dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+                dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+                dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
+                intent.putExtra("date", dateCal.time)
+                startActivity(intent)
+            }
+
+            popupBinding.treadmillSearchInput.addTextChangedListener {typedText: Editable? ->
+                val filteredList = user.treadmillList.filter{ it.name.lowercase().contains(typedText.toString().lowercase()) }.toMutableList()
+                val newAdapter = AddTreadmillPopupItemAdapter(filteredList, true)
+                popupBinding.treadmillSearchList.adapter = newAdapter
+            }
+        }
+
         binding.addTrainingPlanButton.setOnClickListener {
 
-            val popupBinding = TrainingPlanSelectionPopupBinding.inflate(layoutInflater)
+            val popupBinding = com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding.inflate(layoutInflater)
 
             val width = LinearLayout.LayoutParams.MATCH_PARENT
             val height = LinearLayout.LayoutParams.MATCH_PARENT
@@ -108,7 +142,6 @@ class AddTraining: AppCompatActivity(){
             popupBinding.trainingPlanSelectionCancelButton.setOnClickListener { popupWindow.dismiss() }
 
             popupWindow.setOnDismissListener {
-                popupWindow.dismiss()
                 if(selectedTrainingPlan.ID!=-1L){
                     binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
                 }
@@ -139,7 +172,9 @@ class AddTraining: AppCompatActivity(){
 
     companion object {
         var selectedTrainingPlan: TrainingPlan = TrainingPlan()
+        var selectedTreadmill: Treadmill = Treadmill()
         var popupWindow: PopupWindow = PopupWindow()
+        var treadmillPopup: PopupWindow = PopupWindow()
     }
     override fun onBackPressed() {
         super.onBackPressed()

@@ -94,4 +94,11 @@
     <string name="progress_label">progress</string>
     <string name="confirm_label">confirm</string>
     <string name="month_and_year">%1$s %2$s</string>
+    <string name="treadmill_name_hint">treadmill name</string>
+    <string name="select_treadmill">select treadmill</string>
+    <string name="no_treadmill">no treadmill</string>
+    <string name="min_speed_hint">min speed</string>
+    <string name="max_speed_hint">max speed</string>
+    <string name="max_tilt_hint">max tilt</string>
+    <string name="min_tilt_hint">min tilt</string>
 </resources>

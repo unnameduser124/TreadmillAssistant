@@ -70,4 +70,13 @@ class User(
         }
         return treadmillNames
     }
+
+    fun updateTreadmill(treadmill: Treadmill, treadmillID: Long) {
+        val oldTreadmill = treadmillList.find{ it.ID == treadmillID }
+        oldTreadmill!!.name = treadmill.name
+        oldTreadmill.maxSpeed = treadmill.maxSpeed
+        oldTreadmill.minSpeed = treadmill.minSpeed
+        oldTreadmill.maxTilt = treadmill.maxTilt
+        oldTreadmill.minTilt = treadmill.minTilt
+    }
 }

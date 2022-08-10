@@ -20,7 +20,10 @@ import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
+import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
+import com.example.treadmillassistant.ui.AddTreadmill
 import com.example.treadmillassistant.ui.addTraining.AddTraining
+import com.example.treadmillassistant.ui.addTraining.AddTreadmillPopupItemAdapter
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.util.*
@@ -36,9 +39,10 @@ class EditTraining: AppCompatActivity() {
         setContentView(binding.root)
 
         binding.trainingTime.setIs24HourView(true)
-
-        var selectedTreadmill: Treadmill
         val chosenDate = Calendar.getInstance()
+
+        setUpDatePicker(binding.trainingDate, chosenDate)
+        setUpTimePicker(binding.trainingTime, chosenDate)
 
         item = user.trainingSchedule.getTraining(intent.getLongExtra("id", -1))
 
@@ -50,38 +54,13 @@ class EditTraining: AppCompatActivity() {
             binding.mediaLink.setText(item!!.mediaLink)
             selectedTreadmill = item!!.treadmill
             selectedTrainingPlan = item!!.trainingPlan
-            binding.selectedTrainingPlanName.text = item!!.trainingPlan.name
-            binding.treadmillSelection.setSelection(user.treadmillList.indexOf(selectedTreadmill))
+            binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
+            binding.selectedTreadmillName.text = selectedTreadmill.name
+            setUpDatePicker(binding.trainingDate, item!!.trainingTime)
+            setUpTimePicker(binding.trainingTime, item!!.trainingTime)
         }
 
-        //treadmill dropdown
-        val treadmillDropdownAdapter =
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                user.getTreadmillNames()
-            )
-        treadmillDropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.treadmillSelection.adapter = treadmillDropdownAdapter
 
-        setUpDatePicker(binding.trainingDate, chosenDate)
-        setUpTimePicker(binding.trainingTime, chosenDate)
-
-
-
-        binding.treadmillSelection.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>?,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedTreadmill = user.treadmillList[position]
-                }
-
-                override fun onNothingSelected(parentView: AdapterView<*>?) {}
-            }
 
         binding.saveNewTrainingButton.setOnClickListener {
             val dateCal = Calendar.getInstance()
@@ -106,6 +85,43 @@ class EditTraining: AppCompatActivity() {
             intent.putExtra("id", item!!.ID)
             finish()
             startActivity(intent)
+        }
+
+        binding.addTreadmillButton.setOnClickListener{
+            val popupBinding = TreadmillSelectionPopupBinding.inflate(layoutInflater)
+
+            val width = LinearLayout.LayoutParams.MATCH_PARENT
+            val height = LinearLayout.LayoutParams.MATCH_PARENT
+            val focusable = true
+            AddTraining.treadmillPopup = PopupWindow(popupBinding.root, width, height, focusable)
+            AddTraining.treadmillPopup.contentView = popupBinding.root
+            AddTraining.treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
+            val itemAdapter = AddTreadmillPopupItemAdapter(user.treadmillList, true)
+            val linearLayoutManager = LinearLayoutManager(popupBinding.treadmillSearchList.context, RecyclerView.VERTICAL, false)
+            popupBinding.treadmillSearchList.adapter = itemAdapter
+            popupBinding.treadmillSearchList.layoutManager = linearLayoutManager
+            popupBinding.treadmillSearchList.setHasFixedSize(false)
+
+            popupBinding.treadmillSelectionCancelButton.setOnClickListener { AddTraining.treadmillPopup.dismiss() }
+
+            AddTraining.treadmillPopup.setOnDismissListener {
+                if(AddTraining.selectedTreadmill.ID!=-1L){
+                    binding.selectedTreadmillName.text = AddTraining.selectedTreadmill.name
+                }
+            }
+
+            popupBinding.treadmillSelectionAddNewButton.setOnClickListener {
+                val intent = Intent(this, AddTreadmill::class.java)
+                intent.putExtra("fromEditTraining", true)
+                intent.putExtra("id", item?.ID ?: -1)
+                startActivity(intent)
+            }
+
+            popupBinding.treadmillSearchInput.addTextChangedListener {typedText: Editable? ->
+                val filteredList = user.treadmillList.filter{ it.name.lowercase().contains(typedText.toString().lowercase()) }.toMutableList()
+                val newAdapter = AddTreadmillPopupItemAdapter(filteredList, true)
+                popupBinding.treadmillSearchList.adapter = newAdapter
+            }
         }
 
         binding.addTrainingPlanButton.setOnClickListener {
@@ -135,16 +151,8 @@ class EditTraining: AppCompatActivity() {
 
             popupBinding.trainingPlanSelectionAddNewButton.setOnClickListener {
                 val intent = Intent(this, AddTrainingPlan::class.java)
-                intent.putExtra("fromTraining", false)
-
-                val dateCal = Calendar.getInstance()
-                dateCal.set(Calendar.YEAR, binding.trainingDate.year)
-                dateCal.set(Calendar.MONTH, binding.trainingDate.month)
-                dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
-                dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
-                dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
-                intent.putExtra("date", dateCal.time)
-
+                intent.putExtra("fromEditTraining", true)
+                intent.putExtra("id", item?.ID ?: -1)
                 startActivity(intent)
                 popupWindow.dismiss()
             }
@@ -160,6 +168,7 @@ class EditTraining: AppCompatActivity() {
 
     companion object {
         var selectedTrainingPlan: TrainingPlan = TrainingPlan()
+        var selectedTreadmill: Treadmill = Treadmill()
         var popupWindow: PopupWindow = PopupWindow()
     }
 

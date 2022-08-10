@@ -3,6 +3,9 @@ package com.example.treadmillassistant
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.treadmillassistant.backend.User
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
+import com.example.treadmillassistant.backend.tempUser
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ProfilePageLayoutBinding
 
@@ -29,6 +32,8 @@ class ProfilePage: AppCompatActivity() {
 
         //doesn't do anything right now TODO("Make it clear tables in database")
         binding.logOutButton.setOnClickListener{
+            TrainingDatabaseService(this).clearDatabase()
+            tempUser = null
             val intent = Intent(this, LoginPage::class.java)
             finishAffinity()
             startActivity(intent)

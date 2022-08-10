@@ -118,13 +118,19 @@ fun generateDBdata(context: Context){
             val trainingPhase = TrainingPhase((10..20).random(),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
                 ThreadLocalRandom.current().nextDouble(1.0, 20.0),
-                (1L..5L).random(),
+                -1,
                 j,
                 false)
-            val newPhaseID = trainingPhaseService.insertNewTrainingPhase(trainingPhase,db)
+            val newPhaseID = trainingPhaseService.insertNewTrainingPhase(trainingPhase)
+            newTrainingPlan.trainingPhaseList.add(trainingPhase)
             trainingPhase.ID = newPhaseID
         }
         newTrainingPlanList.addTrainingPlan(newTrainingPlan)
+
+        newTrainingPlanList.trainingPlanList.last().trainingPhaseList.forEach {
+            it.trainingPlanID = newTrainingPlanList.trainingPlanList.last().ID
+            trainingPhaseService.updateTrainingPhase(it, it.ID)
+        }
     }
 
     val treadmillOne = Treadmill(name = "TreadmillOne")

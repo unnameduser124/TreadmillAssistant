@@ -12,6 +12,7 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
+import com.example.treadmillassistant.ui.InputFilterMinMax
 import com.google.android.material.textfield.TextInputEditText
 
 class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>,
@@ -35,6 +36,9 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         holder.durationInput.setText("${round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER)}")
         holder.speedInput.setText("${item.speed}")
         holder.tiltInput.setText("${item.tilt}")
+
+        holder.speedInput.filters = arrayOf(InputFilterMinMax(0.0, 30.0))
+        holder.tiltInput.filters = arrayOf(InputFilterMinMax(-5.0, 15.0))
 
         holder.removeButton.setOnClickListener {
             if(position<phaseList.size){
