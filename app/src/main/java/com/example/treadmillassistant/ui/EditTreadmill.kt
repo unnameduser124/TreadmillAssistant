@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
+import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.AddTreadmillLayoutBinding
@@ -75,23 +76,7 @@ class EditTreadmill: AppCompatActivity() {
                     ),
                     treadmill!!.ID
                 )
-                if(fromTraining){
-                    intent = Intent(this, AddTraining::class.java)
-                    intent.putExtra("date", date.time)
-                    finish()
-                    startActivity(intent)
-                }
-                else if(fromEditTraining){
-                    intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("id", trainingID)
-                    finish()
-                    startActivity(intent)
-                }
-                else{
-                    intent = Intent(this, MainActivity::class.java)
-                    finishAffinity()
-                    startActivity(intent)
-                }
+                exitActivity()
             }
             else{
                 Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
@@ -99,28 +84,21 @@ class EditTreadmill: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener{
-            if(fromTraining){
-                intent = Intent(this, AddTraining::class.java)
-                intent.putExtra("date", date.time)
-                finish()
-                startActivity(intent)
-            }
-            else if(fromEditTraining){
-                intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("id", trainingID)
-                finish()
-                startActivity(intent)
-            }
-            else{
-                intent = Intent(this, MainActivity::class.java)
-                finishAffinity()
-                startActivity(intent)
-            }
+            exitActivity()
+        }
+
+        binding.treadmillRemoveButton.setOnClickListener{
+            user.removeTreadmill(treadmill!!.ID)
+            exitActivity()
         }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
+        exitActivity()
+    }
+
+    private fun exitActivity(){
         if(fromTraining){
             intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.time)
@@ -139,5 +117,4 @@ class EditTreadmill: AppCompatActivity() {
             startActivity(intent)
         }
     }
-
 }

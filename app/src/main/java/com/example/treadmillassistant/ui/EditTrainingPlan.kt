@@ -2,7 +2,6 @@ package com.example.treadmillassistant.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,8 +30,8 @@ class EditTrainingPlan: AppCompatActivity() {
         binding = AddTrainingPlanLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val item = user.trainingPlanList.getTrainingPlanByID(intent.getLongExtra("ID", -1))
-        if(item==null){
+        val trainingPlan = user.trainingPlanList.getTrainingPlanByID(intent.getLongExtra("ID", -1))
+        if(trainingPlan==null){
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             return
@@ -45,10 +44,10 @@ class EditTrainingPlan: AppCompatActivity() {
             date.timeInMillis = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
 
-        binding.planNameInput.setText(item.name)
+        binding.planNameInput.setText(trainingPlan.name)
 
         //phase list recycler view setup
-        val phaseList = item.trainingPhaseList
+        val phaseList = trainingPlan.trainingPhaseList
         val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
@@ -83,21 +82,9 @@ class EditTrainingPlan: AppCompatActivity() {
         binding.trainingPlanSaveButton.setOnClickListener {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
-                val intent: Intent
                 val newTrainingPlan = TrainingPlan(name, phaseList, user.ID)
-                user.trainingPlanList.updateTrainingPlan(newTrainingPlan, item.ID)
-                if(fromTraining){
-                    intent = Intent(this, AddTraining::class.java)
-                    intent.putExtra("date", date.timeInMillis)
-                    finish()
-                    startActivity(intent)
-                }
-                else{
-                    intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("id", trainingID)
-                    finish()
-                    startActivity(intent)
-                }
+                user.trainingPlanList.updateTrainingPlan(newTrainingPlan, trainingPlan.ID)
+                exitActivity()
             }
             else{
                 Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
@@ -105,19 +92,12 @@ class EditTrainingPlan: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            if(fromTraining){
-                intent = Intent(this, AddTraining::class.java)
-                intent.putExtra("date", date.timeInMillis)
-                finish()
-                startActivity(intent)
-                AddTraining.popupWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
-            }
-            else{
-                intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("id", trainingID)
-                finish()
-                startActivity(intent)
-            }
+            exitActivity()
+        }
+
+        binding.trainingPlanRemoveButton.setOnClickListener {
+            user.trainingPlanList.removeTrainingPlan(trainingPlan)
+            exitActivity()
         }
     }
 
@@ -138,14 +118,18 @@ class EditTrainingPlan: AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        exitActivity()
+    }
+
+    fun exitActivity(){
         if(fromTraining){
-            intent = Intent(this, AddTraining::class.java)
+            val intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.timeInMillis)
             finish()
             startActivity(intent)
         }
         else{
-            intent = Intent(this, EditTraining::class.java)
+            val intent = Intent(this, EditTraining::class.java)
             intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)

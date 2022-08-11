@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.ui.addTraining.AddTraining
@@ -30,6 +31,7 @@ class AddTrainingPlan: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = AddTrainingPlanLayoutBinding.inflate(layoutInflater)
+        binding.trainingPlanRemoveButton.isGone = true
 
         setContentView(binding.root)
 

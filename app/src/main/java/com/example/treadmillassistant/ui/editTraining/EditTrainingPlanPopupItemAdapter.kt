@@ -60,6 +60,7 @@ class EditTrainingPlanPopupItemAdapter(private val trainingPlanList: MutableList
             val intent = Intent(holder.editButton.context, EditTrainingPlan::class.java)
             intent.putExtra("ID", item.ID)
             intent.putExtra("fromTraining", fromTraining)
+            intent.putExtra("fromEditTraining", true)
             if(trainingID!=-1L){
                 intent.putExtra("trainingID", trainingID)
             }

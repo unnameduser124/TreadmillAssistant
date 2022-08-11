@@ -23,6 +23,7 @@ class TrainingCalendar(var currentDate: Date = Date(), var trainingList: Mutable
     fun updateTraining(oldTraining: Training?, newTraining: Training){
         val training = getTraining(oldTraining!!.ID)
         training!!.trainingTime = newTraining.trainingTime
+        //println("${newTraining.treadmill.name} ${oldTraining.treadmill.name}")
         training.treadmill = newTraining.treadmill
         training.trainingPlan = newTraining.trainingPlan
         training.mediaLink = newTraining.mediaLink

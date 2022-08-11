@@ -79,4 +79,14 @@ class User(
         oldTreadmill.maxTilt = treadmill.maxTilt
         oldTreadmill.minTilt = treadmill.minTilt
     }
+
+    fun removeTreadmill(treadmillID: Long){
+        val deletedTreadmill = treadmillList.firstOrNull { it.ID == treadmillID }
+        if(deletedTreadmill!=null){
+            user.trainingSchedule.trainingList.filter { it.treadmill.ID == deletedTreadmill.ID}.forEach {
+                it.treadmill = Treadmill(name = "select treadmill")
+            }
+            treadmillList.remove(deletedTreadmill)
+        }
+    }
 }

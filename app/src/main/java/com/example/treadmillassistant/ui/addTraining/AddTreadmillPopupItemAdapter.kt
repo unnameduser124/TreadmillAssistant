@@ -39,15 +39,20 @@ class AddTreadmillPopupItemAdapter(private val trainingPlanList: MutableList<Tre
             selectedTreadmill = item
             EditTraining.selectedTreadmill = item
             treadmillPopup.dismiss()
+            EditTraining.treadmillPopup.dismiss()
         }
 
         holder.editButton.setOnClickListener {
             val intent = Intent(holder.editButton.context, EditTreadmill::class.java)
             intent.putExtra("ID", item.ID)
             intent.putExtra("fromTraining", fromTraining)
-            if(trainingID!=-1L){
-                intent.putExtra("trainingID", trainingID)
+            if(!fromTraining){
+                intent.putExtra("fromEditTraining", true)
             }
+            if(trainingID!=-1L){
+                intent.putExtra("id", trainingID)
+            }
+            EditTraining.treadmillPopup.dismiss()
             treadmillPopup.dismiss()
             startActivity(holder.editButton.context, intent, null)
         }

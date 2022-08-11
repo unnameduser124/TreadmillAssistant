@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.user
@@ -24,6 +25,7 @@ class AddTreadmill: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = AddTreadmillLayoutBinding.inflate(layoutInflater)
+        binding.treadmillRemoveButton.isGone = true
 
         setContentView(binding.root)
 
