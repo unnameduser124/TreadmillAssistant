@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
+import com.example.treadmillassistant.backend.TRAINING_HISTORY_NAV_VIEW_POSITION
+import com.example.treadmillassistant.backend.lastNavViewPosition
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.FragmentTrainingHistoryBinding
 import com.example.treadmillassistant.databinding.MonthPickerPopupBinding
@@ -39,7 +42,6 @@ class TrainingHistoryFragment : Fragment() {
 
         _binding = FragmentTrainingHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
         updateDateButton(cal)
 
         //item adapter with training list sorted from newest to oldest as dataset

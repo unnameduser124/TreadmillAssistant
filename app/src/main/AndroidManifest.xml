@@ -78,6 +78,21 @@
             android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
             android:parentActivityName = ".MainActivity">
         </activity>
+        <activity
+            android:name=".ui.settings.ChangePassword"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
+        <activity
+            android:name=".ui.settings.ChangeUserData"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
+        <activity
+            android:name=".ui.settings.ChangeHealthData"
+            android:theme="@style/Theme.TreadmillAssistant.NoActionBar"
+            android:parentActivityName = ".MainActivity">
+        </activity>
     </application>
 
 </manifest>

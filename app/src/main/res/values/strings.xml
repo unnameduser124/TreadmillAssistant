@@ -101,4 +101,11 @@
     <string name="max_speed_hint">max speed</string>
     <string name="max_tilt_hint">max tilt</string>
     <string name="min_tilt_hint">min tilt</string>
+    <string name="change_user_data_label">Change user data</string>
+    <string name="change_password_label">Change password</string>
+    <string name="old_password_hint">old password</string>
+    <string name="confirm_new_password_hint">confirm new password</string>
+    <string name="new_password_hint">new password</string>
+    <string name="change_data_label">change data</string>
+    <string name="change_health_data_label">Change health data</string>
 </resources>

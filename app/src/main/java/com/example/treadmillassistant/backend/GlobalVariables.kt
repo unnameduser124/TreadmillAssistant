@@ -25,6 +25,8 @@ const val DEFAULT_PHASE_DURATION = 0.0
 const val DEFAULT_PHASE_TILT = 0.0
 const val HOME_TAB_NAV_VIEW_POSITION = 0
 const val TRAINING_HISTORY_NAV_VIEW_POSITION = 1
+const val SETTINGS_TAB_NAV_VIEW_POSITION = 2
 
 var tabLayout: TabLayout? = null
 var startClicked: OnStartClickedListener? = null
+var lastNavViewPosition = 0
