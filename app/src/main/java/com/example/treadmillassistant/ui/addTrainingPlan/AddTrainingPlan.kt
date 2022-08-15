@@ -2,7 +2,6 @@ package com.example.treadmillassistant.ui.addTrainingPlan
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -15,7 +14,6 @@ import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
-import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
 import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.util.*
 
@@ -51,6 +49,7 @@ class AddTrainingPlan: AppCompatActivity() {
         binding.addTrainingPlanPhaseList.adapter = phaseListItemAdapter
         binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
 
+        updateTotalValues(phaseList)
 
         binding.addNewPhase.setOnClickListener{
             //adding new phase with locally valid ID

@@ -61,25 +61,24 @@ class MainActivity : AppCompatActivity() {
             navView.setNavigationItemSelectedListener {
                 if(it ==  navView.menu.getItem(HOME_TAB_NAV_VIEW_POSITION)){
                     lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
-                    navView.menu.getItem(lastNavViewPosition).isChecked = true
                     val handler = Handler()
                     handler.postDelayed({drawerLayout.closeDrawers()}, 100)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                 }
                 else if(it ==  navView.menu.getItem(TRAINING_HISTORY_NAV_VIEW_POSITION)){
                     lastNavViewPosition = TRAINING_HISTORY_NAV_VIEW_POSITION
-                    navView.menu.getItem(lastNavViewPosition).isChecked = true
                     val handler = Handler()
                     handler.postDelayed({drawerLayout.closeDrawers()}, 100)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                 }
                 else{
+
                     lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
-                    navView.menu.getItem(lastNavViewPosition).isChecked = true
                     val handler = Handler()
                     handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                 }
+                it.isChecked = true
                 true
             }
 

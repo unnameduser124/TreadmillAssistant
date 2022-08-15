@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment">
-
-    <com.google.android.material.button.MaterialButton
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id = "@+id/change_user_data"
-        android:text = "@string/change_user_data_label"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textColor = "@color/black"
-        android:gravity="start"
-        android:padding="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
-        style="@style/Widget.MaterialComponents.Button.TextButton" />
+        tools:context=".ui.settings.SettingsFragment">
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/change_user_data"
+            android:text = "@string/change_user_data_label"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor = "@color/black"
+            android:gravity="start"
+            android:padding="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id = "@+id/change_password"
-        android:text = "@string/change_password_label"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textColor = "@color/black"
-        android:gravity="start"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/change_user_data"
-        android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
-        android:padding="10dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/change_password"
+            android:text = "@string/change_password_label"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor = "@color/black"
+            android:gravity="start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/change_user_data"
+            android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:padding="10dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id = "@+id/change_health_data"
-        android:text = "@string/change_health_data_label"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textColor = "@color/black"
-        android:gravity="start"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/change_password"
-        android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
-        android:padding="10dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/change_health_data"
+            android:text = "@string/change_health_data_label"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor = "@color/black"
+            android:gravity="start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/change_password"
+            android:drawableRight="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:padding="10dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

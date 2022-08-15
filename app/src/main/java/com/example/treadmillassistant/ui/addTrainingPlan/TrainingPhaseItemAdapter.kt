@@ -32,7 +32,13 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = phaseList[position]
 
-        holder.durationInput.setText("${round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER)}")
+        if(item.duration == 0){
+            holder.durationInput.setText("0")
+        }
+        else{
+            holder.durationInput.setText("${round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER)}")
+        }
+
         holder.speedInput.setText("${item.speed}")
         holder.tiltInput.setText("${item.tilt}")
 
