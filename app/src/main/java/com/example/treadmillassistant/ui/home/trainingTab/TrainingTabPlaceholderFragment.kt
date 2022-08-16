@@ -25,8 +25,6 @@ import java.util.*
 class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
 
-    private var training: Training = GenericTraining()
-    private var treadmill: Treadmill = Treadmill()
     private lateinit var binding: TrainingTabBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +55,28 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         }
 
         binding.finishTrainingButton.isGone = true
+
+
         hideTrainingItems()
+        if(training.trainingStatus == TrainingStatus.InProgress){
+            if(training is GenericTraining){
+                showGenericTrainingItems()
+                updateSteeringDisplays()
+                binding.startTrainingButton.text = getString(R.string.stop)
+                runTimer()
+            }
+            else{
+                showTrainingItems()
+                updateSteeringDisplays()
+                updateStatusDisplays()
+                binding.startTrainingButton.text = getString(R.string.stop)
+                runTimer()
+            }
+        }
+        else if(training.trainingStatus == TrainingStatus.Paused){
+            binding.startTrainingButton.text = getString(R.string.resume)
+            binding.finishTrainingButton.isGone = false
+        }
 
         binding.startTrainingButton.setOnClickListener {
             if(training is GenericTraining){
@@ -66,7 +85,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     training.startTraining()
                     updateSteeringDisplays()
                     (it as MaterialButton).text = getString(R.string.stop)
-                    runTimer(training)
+                    runTimer()
                 }
                 else if(training.trainingStatus == TrainingStatus.InProgress){
                     (it as MaterialButton).text = getString(R.string.resume)
@@ -77,7 +96,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     (it as MaterialButton).text = getString(R.string.stop)
                     binding.finishTrainingButton.isGone = true
                     training.resumeTraining()
-                    runTimer(training)
+                    runTimer()
                 }
             }
             else{
@@ -87,7 +106,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     updateSteeringDisplays()
                     updateStatusDisplays()
                     (it as MaterialButton).text = getString(R.string.stop)
-                    runTimer(training)
+                    runTimer()
                 }
                 else if(training.trainingStatus == TrainingStatus.InProgress){
                     (it as MaterialButton).text = getString(R.string.resume)
@@ -98,7 +117,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     (it as MaterialButton).text = getString(R.string.stop)
                     binding.finishTrainingButton.isGone = true
                     training.resumeTraining()
-                    runTimer(training)
+                    runTimer()
                 }
 
             }
@@ -207,20 +226,21 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     }
 
 
-    private fun runTimer(currentTraining: Training){
-        if(currentTraining is PlannedTraining){
+    private fun runTimer(){
+        if(training is PlannedTraining){
             val handler = Handler()
             var runnableCode = object: Runnable {
                 override fun run() {
-                    if(currentTraining.trainingStatus == TrainingStatus.InProgress){
+                    if(training.trainingStatus == TrainingStatus.InProgress){
                         updateStatusDisplays()
 
-                        if(currentTraining.getCurrentPhase().speed!=treadmill.getSpeed() || currentTraining.getCurrentPhase().tilt!=treadmill.getTilt()){
+                        if((training as PlannedTraining).getCurrentPhase().speed!=treadmill.getSpeed()
+                            || (training as PlannedTraining).getCurrentPhase().tilt!=treadmill.getTilt()){
                             changePhases()
                         }
 
-                        if(currentTraining.getCurrentMoment()>=currentTraining.getTotalDuration()){
-                            currentTraining.finishTraining()
+                        if(training.getCurrentMoment()>=training.getTotalDuration()){
+                            training.finishTraining()
                             binding.startTrainingButton.text = getString(R.string.training_finished)
                             newGenericTraining()
                         }
@@ -234,7 +254,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             val handler = Handler()
             var runnableCode = object: Runnable {
                 override fun run() {
-                    if(currentTraining.trainingStatus == TrainingStatus.InProgress){
+                    if(training.trainingStatus == TrainingStatus.InProgress){
                         updateStatusDisplays()
                         handler.postDelayed(this, 250)
                     }
@@ -280,6 +300,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     companion object{
 
         private const val SECTION_NUMBER = "section number"
+        var training: Training = GenericTraining()
+        var treadmill: Treadmill = Treadmill()
 
         @JvmStatic
         fun newInstance(sectionNumber: Int): TrainingTabPlaceholderFragment {

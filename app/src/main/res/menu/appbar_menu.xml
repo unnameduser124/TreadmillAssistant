@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id = "@+id/add_menu">
 
     <item android:id="@+id/add_new_training_menu_item"
-        android:title="Add new workout"
+        android:title="@string/add_new_training_label"
         app:showAsAction="never"/>
     <item android:id="@+id/add_new_training_plan_menu_item"
-        android:title="Add new workout plan"
+        android:title="@string/add_new_training_plan_menu_item_label"
         app:showAsAction="never"/>
 
 </menu>

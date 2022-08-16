@@ -61,7 +61,8 @@
         app:layout_constraintBottom_toTopOf="@id/training_plan_save_button"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:text = "@string/remove"/>
+        android:text = "@string/remove"
+        android:backgroundTint="@color/remove_red"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"

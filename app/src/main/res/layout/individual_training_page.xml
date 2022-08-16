@@ -261,5 +261,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"
-        android:text = "@string/remove"/>
+        android:text = "@string/remove"
+        android:backgroundTint="@color/remove_red"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

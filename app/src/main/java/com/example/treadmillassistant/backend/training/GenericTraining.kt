@@ -1,5 +1,7 @@
 package com.example.treadmillassistant.backend.training
 
+import android.os.Handler
+import android.os.Looper
 import com.example.treadmillassistant.backend.*
 import java.util.*
 
@@ -87,13 +89,30 @@ class GenericTraining(
 
     override fun addNewPhase() {
         val lastPhaseTimeInSeconds = (millisecondsToSeconds(Calendar.getInstance().timeInMillis) - millisecondsToSeconds(lastPhaseStart)).toInt()
-        val phase = TrainingPhase(lastPhaseTimeInSeconds,
-            treadmill.getSpeed(),
-            treadmill.getTilt(),
-            trainingPlan.ID,
-            trainingPlan.trainingPhaseList.size,
-            true)
-        trainingPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
+        if(lastPhaseTimeInSeconds>5 || trainingPlan.trainingPhaseList.isEmpty()){
+            val phase = TrainingPhase(lastPhaseTimeInSeconds,
+                treadmill.getSpeed(),
+                treadmill.getTilt(),
+                trainingPlan.ID,
+                trainingPlan.trainingPhaseList.size,
+                true)
+            trainingPlan.addNewPhase(phase)
+            lastPhaseStart = Calendar.getInstance().timeInMillis
+        }
+        else{
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                if(lastPhaseTimeInSeconds>5){
+                    val phase = TrainingPhase(lastPhaseTimeInSeconds,
+                        treadmill.getSpeed(),
+                        treadmill.getTilt(),
+                        trainingPlan.ID,
+                        trainingPlan.trainingPhaseList.size,
+                        true)
+                    trainingPlan.addNewPhase(phase)
+                    lastPhaseStart = Calendar.getInstance().timeInMillis
+                }
+            }, 5000)
+        }
     }
 }

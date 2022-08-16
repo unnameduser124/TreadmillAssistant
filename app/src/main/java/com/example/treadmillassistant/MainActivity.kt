@@ -3,10 +3,14 @@ package com.example.treadmillassistant
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -23,6 +27,7 @@ import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
+    private var doubleBackToExitPressedOnce: Boolean = false
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -62,14 +67,17 @@ class MainActivity : AppCompatActivity() {
                 if(it ==  navView.menu.getItem(HOME_TAB_NAV_VIEW_POSITION)){
                     lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
                     val handler = Handler()
-                    handler.postDelayed({drawerLayout.closeDrawers()}, 100)
+                    handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                    binding.appBarMain.toolbar.menu.setGroupVisible(0, true)
+
                 }
                 else if(it ==  navView.menu.getItem(TRAINING_HISTORY_NAV_VIEW_POSITION)){
                     lastNavViewPosition = TRAINING_HISTORY_NAV_VIEW_POSITION
                     val handler = Handler()
-                    handler.postDelayed({drawerLayout.closeDrawers()}, 100)
+                    handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                    binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
                 }
                 else{
 
@@ -77,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                     val handler = Handler()
                     handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                    binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
                 }
                 it.isChecked = true
                 true
@@ -114,7 +123,9 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onBackPressed() {
+
         if(lastNavViewPosition!= HOME_TAB_NAV_VIEW_POSITION){
             lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
             binding.navView.menu.getItem(lastNavViewPosition).isChecked = true
@@ -122,8 +133,16 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(binding.navView.menu.getItem(lastNavViewPosition).itemId)
         }
         else{
-            super.onBackPressed()
-            finishAffinity()
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                finishAffinity()
+                return
+            }
+            doubleBackToExitPressedOnce = true
+            Toast.makeText(this, "click again to exit", Toast.LENGTH_SHORT).show()
+            tabLayout?.selectTab(tabLayout?.getTabAt(0))
+            Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
         }
+
     }
 }

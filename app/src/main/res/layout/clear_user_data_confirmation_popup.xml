@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/popup_background"
+    android:paddingBottom="50dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/are_you_sure_clear_user_data_text"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text = "@string/are_you_sure_label"
+        android:textSize="25sp"
+        android:paddingStart="100dp"
+        android:paddingEnd="100dp"
+        android:paddingTop="50dp"
+        android:gravity="center"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/cancel_data_deletion_button"
+        app:layout_constraintTop_toBottomOf="@id/are_you_sure_clear_user_data_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/confirm_data_deletion_button"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="10dp"
+        android:text = "@string/cancel"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id = "@+id/confirm_data_deletion_button"
+        app:layout_constraintTop_toBottomOf="@id/are_you_sure_clear_user_data_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cancel_data_deletion_button"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="75dp"
+        android:backgroundTint="@color/remove_red"
+        android:text = "@string/confirm_label"
+        android:layout_marginStart="10dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
