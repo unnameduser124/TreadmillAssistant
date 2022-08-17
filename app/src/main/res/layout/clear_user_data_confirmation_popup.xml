@@ -12,6 +12,8 @@
         android:layout_height="wrap_content"
         android:id = "@+id/are_you_sure_clear_user_data_text"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text = "@string/are_you_sure_label"
         android:textSize="25sp"
         android:paddingStart="100dp"

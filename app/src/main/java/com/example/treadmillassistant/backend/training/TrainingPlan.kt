@@ -2,7 +2,7 @@ package com.example.treadmillassistant.backend.training
 
 import com.example.treadmillassistant.backend.SECONDS_IN_HOUR
 
-class TrainingPlan(var name: String = "default name", var trainingPhaseList: MutableList<TrainingPhase> = mutableListOf<TrainingPhase>(), var userID: Long = 0, var ID: Long = -1) {
+class TrainingPlan(var name: String = "default name", var trainingPhaseList: MutableList<TrainingPhase> = mutableListOf(), var userID: Long = 0, var ID: Long = -1) {
 
     fun addTrainingPhaseList(trainingPhaseList: MutableList<TrainingPhase>){
         this.trainingPhaseList = trainingPhaseList

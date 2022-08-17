@@ -2,13 +2,13 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.MAX_SPEED
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.MAX_TILT
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.MIN_SPEED
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.MIN_TILT
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.TREADMILL_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.USER_ID
@@ -27,6 +27,7 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
             put(MAX_TILT, treadmill.maxTilt)
             put(MIN_TILT, treadmill.minTilt)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "C")
         }
 
         return db.insert(TABLE_NAME, null, contentValues)
@@ -53,6 +54,7 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
             put(MAX_TILT, newTreadmill.maxTilt)
             put(MIN_TILT, newTreadmill.minTilt)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "U")
         }
 
         val selection = "${BaseColumns._ID} = ?"
@@ -95,12 +97,14 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
                 val maxTilt = getDouble(getColumnIndexOrThrow(MAX_TILT))
                 val minTilt = getDouble(getColumnIndexOrThrow(MIN_TILT))
 
-                treadmillList.add(Treadmill(name=treadmillName,
+                treadmillList.add(Treadmill(
+                    name=treadmillName,
+                    ID = treadmillID,
                     maxSpeed = maxSpeed,
                     minSpeed = minSpeed,
                     maxTilt = maxTilt,
-                    minTilt = minTilt,
-                    ID = treadmillID))
+                    minTilt = minTilt
+                ))
             }
         }
         cursor.close()
@@ -146,12 +150,14 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
                 val maxTilt = getDouble(getColumnIndexOrThrow(MAX_TILT))
                 val minTilt = getDouble(getColumnIndexOrThrow(MIN_TILT))
 
-                treadmill = Treadmill(name=treadmillName,
+                treadmill = Treadmill(
+                    name=treadmillName,
+                    ID = treadmillID,
                     maxSpeed = maxSpeed,
                     minSpeed = minSpeed,
                     maxTilt = maxTilt,
-                    minTilt = minTilt,
-                    ID = treadmillID)
+                    minTilt = minTilt
+                )
             }
         }
 

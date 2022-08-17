@@ -3,6 +3,7 @@ package com.example.treadmillassistant.backend.localDatabase
 import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.PLAN_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.USER_ID
@@ -17,6 +18,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
         val contentValues = ContentValues().apply {
             put(PLAN_NAME, trainingPlan.name)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "C")
         }
 
         return db.insert(TABLE_NAME, null, contentValues)
@@ -39,6 +41,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
         val contentValues = ContentValues().apply {
             put(PLAN_NAME, newTrainingPlan.name)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "U")
         }
 
         val selection = "${BaseColumns._ID} = ?"

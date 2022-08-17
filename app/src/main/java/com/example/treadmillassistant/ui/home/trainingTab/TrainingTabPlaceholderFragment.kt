@@ -2,6 +2,7 @@ package com.example.treadmillassistant.ui.home.trainingTab
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -228,8 +229,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
 
     private fun runTimer(){
         if(training is PlannedTraining){
-            val handler = Handler()
-            var runnableCode = object: Runnable {
+            val handler = Handler(Looper.getMainLooper())
+            val runnableCode = object: Runnable {
                 override fun run() {
                     if(training.trainingStatus == TrainingStatus.InProgress){
                         updateStatusDisplays()
@@ -251,8 +252,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             handler.post(runnableCode)
         }
         else{
-            val handler = Handler()
-            var runnableCode = object: Runnable {
+            val handler = Handler(Looper.getMainLooper())
+            val runnableCode = object: Runnable {
                 override fun run() {
                     if(training.trainingStatus == TrainingStatus.InProgress){
                         updateStatusDisplays()

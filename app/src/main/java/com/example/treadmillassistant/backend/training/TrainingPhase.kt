@@ -7,5 +7,4 @@ class TrainingPhase(
     var trainingPlanID: Long = -1,
     var orderNumber: Int = -1,
     var isFinished: Boolean = false,
-    var ID: Long =-1) {
-}
+    var ID: Long =-1)

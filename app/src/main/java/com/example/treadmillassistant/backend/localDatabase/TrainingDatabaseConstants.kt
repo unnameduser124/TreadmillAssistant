@@ -1,6 +1,7 @@
 package com.example.treadmillassistant.backend.localDatabase
 
 import android.provider.BaseColumns
+import com.example.treadmillassistant.backend.training.Training
 
 object TrainingDatabaseConstants {
 
@@ -13,6 +14,7 @@ object TrainingDatabaseConstants {
             "${TrainingTable.TREADMILL_ID} INTEGER NOT NULL, " +
             "${TrainingTable.TRAINING_PLAN_ID} INTEGER NOT NULL, " +
             "${TrainingTable.USER_ID} INTEGER NOT NULL, " +
+            "${TrainingTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
             "FOREIGN KEY (${TrainingTable.TREADMILL_ID}) REFERENCES ${TreadmillTable.TABLE_NAME}(${BaseColumns._ID}), " +
             "FOREIGN KEY (${TrainingTable.TRAINING_PLAN_ID}) REFERENCES ${TrainingPlanTable.TABLE_NAME}(${BaseColumns._ID}), " +
             "FOREIGN KEY (${TrainingTable.USER_ID}) REFERENCES ${UserTable.TABLE_NAME}(${BaseColumns._ID}))"
@@ -23,13 +25,15 @@ object TrainingDatabaseConstants {
             "${TrainingPhaseTable.SPEED} REAL NOT NULL, " +
             "${TrainingPhaseTable.TILT} REAL NOT NULL, " +
             "${TrainingPhaseTable.ORDER_NUMBER} INTEGER NOT NULL, " +
-            "${TrainingPhaseTable.TRAINING_PLAN_ID} INTEGER NOT NULL," +
+            "${TrainingPhaseTable.TRAINING_PLAN_ID} INTEGER NOT NULL, " +
+            "${TrainingPhaseTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
             "FOREIGN KEY (${TrainingPhaseTable.TRAINING_PLAN_ID}) REFERENCES ${TrainingPlanTable.TABLE_NAME}(${BaseColumns._ID}))"
 
     const val SQL_CREATE_TRAINING_PLAN_TABLE = "CREATE TABLE ${TrainingPlanTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "${TrainingPlanTable.PLAN_NAME} TEXT NOT NULL, " +
             "${TrainingPlanTable.USER_ID} INTEGER NOT NULL, " +
+            "${TrainingPlanTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
             "FOREIGN KEY (${TrainingPlanTable.USER_ID}) REFERENCES ${UserTable.TABLE_NAME}(${BaseColumns._ID}))"
 
 
@@ -41,6 +45,7 @@ object TrainingDatabaseConstants {
             "${TreadmillTable.MAX_TILT} REAL NOT NULL, " +
             "${TreadmillTable.MIN_TILT} REAL NOT NULL, " +
             "${TreadmillTable.USER_ID} INTEGER NOT NULL, " +
+            "${TreadmillTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
             "FOREIGN KEY (${TreadmillTable.USER_ID}) REFERENCES ${UserTable.TABLE_NAME}(${BaseColumns._ID}))"
 
 
@@ -52,7 +57,8 @@ object TrainingDatabaseConstants {
             "${UserTable.LAST_NAME} TEXT NOT NULL, " +
             "${UserTable.USERNAME} TEXT NOT NULL, " +
             "${UserTable.AGE} INTEGER NOT NULL, " +
-            "${UserTable.WEIGHT} REAL NOT NULL)"
+            "${UserTable.WEIGHT} REAL NOT NULL, " +
+            "${UserTable.MODIFICATION_FLAG} TEXT NOT NULL)"
 
     const val SQL_CLEAR_USER_TABLE = "DELETE FROM ${UserTable.TABLE_NAME}"
 
@@ -74,6 +80,7 @@ object TrainingDatabaseConstants {
         const val TREADMILL_ID = "TreadmillID"
         const val TRAINING_PLAN_ID = "TrainingPlanID"
         const val USER_ID = "UserID"
+        const val MODIFICATION_FLAG = "AccessFlag"
     }
 
     object TrainingPhaseTable: BaseColumns{
@@ -83,12 +90,14 @@ object TrainingDatabaseConstants {
         const val DURATION = "Duration"
         const val ORDER_NUMBER = "OrderNumber"
         const val TRAINING_PLAN_ID = "TrainingPlanID"
+        const val MODIFICATION_FLAG = "AccessFlag"
     }
 
     object TrainingPlanTable: BaseColumns{
         const val TABLE_NAME = "TrainingPlan"
         const val PLAN_NAME = "Name"
         const val USER_ID = "UserID"
+        const val MODIFICATION_FLAG = "AccessFlag"
     }
 
     object TreadmillTable: BaseColumns{
@@ -99,6 +108,7 @@ object TrainingDatabaseConstants {
         const val MAX_TILT = "MaxTilt"
         const val MIN_TILT = "MinTilt"
         const val USER_ID = "UserID"
+        const val MODIFICATION_FLAG = "AccessFlag"
     }
 
     object UserTable: BaseColumns{
@@ -110,5 +120,6 @@ object TrainingDatabaseConstants {
         const val USERNAME = "Username"
         const val AGE = "Age"
         const val WEIGHT = "Weight"
+        const val MODIFICATION_FLAG = "AccessFlag"
     }
 }

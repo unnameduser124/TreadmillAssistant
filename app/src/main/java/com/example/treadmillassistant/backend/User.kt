@@ -63,14 +63,6 @@ class User(
         return secondsToHours(longestDuration.toDouble())
     }
 
-    fun getTreadmillNames(): MutableList<String>{
-        val treadmillNames = mutableListOf<String>()
-        treadmillList.forEach {
-            treadmillNames.add(it.name)
-        }
-        return treadmillNames
-    }
-
     fun updateTreadmill(treadmill: Treadmill, treadmillID: Long) {
         val oldTreadmill = treadmillList.find{ it.ID == treadmillID }
         oldTreadmill!!.name = treadmill.name

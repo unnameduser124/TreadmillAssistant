@@ -61,7 +61,7 @@ class SettingsFragment : Fragment() {
             popupWindow.showAtLocation(binding.clearUserDataButton, Gravity.CENTER, 0, 0)
 
             popupBinding.cancelDataDeletionButton.setOnClickListener {
-                //TODO("Not implemented yet")
+                popupWindow.dismiss()
             }
             popupBinding.confirmDataDeletionButton.setOnClickListener {
                 //TODO("Not implemented yet")

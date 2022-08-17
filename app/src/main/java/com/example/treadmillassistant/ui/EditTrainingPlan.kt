@@ -121,7 +121,7 @@ class EditTrainingPlan: AppCompatActivity() {
         exitActivity()
     }
 
-    fun exitActivity(){
+    private fun exitActivity(){
         if(fromTraining){
             val intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.timeInMillis)

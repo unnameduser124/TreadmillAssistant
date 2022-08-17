@@ -2,11 +2,11 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.os.Build.ID
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.backend.finishPhases
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.MEDIA_LINK
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TRAINING_DATE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TRAINING_PLAN_ID
@@ -27,9 +27,9 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     //returns id for inserted object
     fun insertNewTraining(training: PlannedTraining): Long {
         val db = this.writableDatabase
-        var simpleDateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}")
+        var simpleDateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}", Locale.ROOT)
         val date = simpleDateFormat.format(training.trainingTime.time)
-        simpleDateFormat = SimpleDateFormat("HH:mm")
+        simpleDateFormat = SimpleDateFormat("HH:mm", Locale.ROOT)
         val time = simpleDateFormat.format(training.trainingTime.time)
 
         val contentValues = ContentValues().apply {
@@ -40,6 +40,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TREADMILL_ID, training.treadmill.ID)
             put(TRAINING_PLAN_ID, training.trainingPlan.ID)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "C")
         }
 
         return db.insert(TABLE_NAME, null, contentValues)
@@ -70,6 +71,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
             put(TREADMILL_ID, newTraining.treadmill.ID)
             put(TRAINING_PLAN_ID, newTraining.trainingPlan.ID)
             put(USER_ID, user.ID)
+            put(MODIFICATION_FLAG, "U")
         }
         val selection = "${BaseColumns._ID} = ?"
 

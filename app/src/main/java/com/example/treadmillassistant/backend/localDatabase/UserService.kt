@@ -9,6 +9,7 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.EMAIL
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.FIRST_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.LAST_NAME
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.PASSWORD
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.USERNAME
@@ -28,6 +29,7 @@ class UserService(val context: Context): TrainingDatabaseService(context){
             put(USERNAME, user.username)
             put(AGE, user.age)
             put(WEIGHT, user.weight)
+            put(MODIFICATION_FLAG, "C")
         }
 
         val newUserID = db.insert(TABLE_NAME, null, contentValues)
@@ -53,6 +55,7 @@ class UserService(val context: Context): TrainingDatabaseService(context){
             put(USERNAME, newUser.username)
             put(AGE, newUser.age)
             put(WEIGHT, newUser.weight)
+            put(MODIFICATION_FLAG, "U")
         }
 
         val selection = "${BaseColumns._ID} = ?"
@@ -74,7 +77,7 @@ class UserService(val context: Context): TrainingDatabaseService(context){
             WEIGHT
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val cursor = db.query(
             TABLE_NAME,

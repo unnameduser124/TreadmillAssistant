@@ -5,11 +5,7 @@ import com.example.treadmillassistant.backend.user
 import java.util.*
 import kotlin.NoSuchElementException
 
-class TrainingCalendar(var currentDate: Date = Date(), var trainingList: MutableList<Training> = mutableListOf()) {
-
-    fun getTrainingsForDateRange(start: Calendar, end: Calendar): MutableList<Training>{
-        return trainingList.filter{ it.trainingTime.time>start.time && it.trainingTime.time<end.time}.toMutableList()
-    }
+class TrainingCalendar(var trainingList: MutableList<Training> = mutableListOf()) {
 
     fun addNewTraining(training: Training){
         trainingList.add(training)
@@ -23,7 +19,6 @@ class TrainingCalendar(var currentDate: Date = Date(), var trainingList: Mutable
     fun updateTraining(oldTraining: Training?, newTraining: Training){
         val training = getTraining(oldTraining!!.ID)
         training!!.trainingTime = newTraining.trainingTime
-        //println("${newTraining.treadmill.name} ${oldTraining.treadmill.name}")
         training.treadmill = newTraining.treadmill
         training.trainingPlan = newTraining.trainingPlan
         training.mediaLink = newTraining.mediaLink
@@ -45,17 +40,17 @@ class TrainingCalendar(var currentDate: Date = Date(), var trainingList: Mutable
     fun getHistoryTrainingsForMonth(calendar: Calendar): MutableList<Training>{
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
-        var from = setUpDayCalendarCopy(calendar)
+        val from = setUpDayCalendarCopy(calendar)
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-        var to = setUpDayCalendarCopy(calendar)
+        val to = setUpDayCalendarCopy(calendar)
 
         from.set(Calendar.HOUR_OF_DAY, 0)
         from.set(Calendar.MINUTE, 0)
         to.set(Calendar.HOUR_OF_DAY, 23)
         to.set(Calendar.MINUTE, 59)
 
-        var trainingList = trainingList.filter {
+        val trainingList = trainingList.filter {
             it.trainingTime.time>from.time
             && it.trainingTime.time<to.time
             && (it.trainingStatus == TrainingStatus.Finished  || it.trainingStatus == TrainingStatus.Abandoned )

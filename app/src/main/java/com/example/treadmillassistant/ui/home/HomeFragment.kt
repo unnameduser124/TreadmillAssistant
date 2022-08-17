@@ -36,6 +36,7 @@ class HomeFragment : Fragment() {
         val tabs: TabLayout = binding.homeTabs
         tabs.setupWithViewPager(viewPager)
         tabLayout = tabs
+
         return root
     }
 

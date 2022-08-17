@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -52,6 +51,7 @@ class AddTraining: AppCompatActivity(){
         }
 
         binding.selectedTreadmillName.text = if(user.treadmillList.isEmpty()){
+            selectedTreadmill = Treadmill()
             getString(R.string.no_treadmill)
         }
         else{
@@ -61,28 +61,33 @@ class AddTraining: AppCompatActivity(){
         }
 
         binding.saveNewTrainingButton.setOnClickListener{
-            val dateCal = Calendar.getInstance()
-            dateCal.set(Calendar.YEAR, binding.trainingDate.year)
-            dateCal.set(Calendar.MONTH, binding.trainingDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
-            dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
-            dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
+            if(selectedTreadmill.ID != -1L){
+                val dateCal = Calendar.getInstance()
+                dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+                dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+                dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+                dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+                dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
-            user.trainingSchedule.trainingList.sortBy{it.ID}
-            val newTraining = PlannedTraining(
-                dateCal,
-                selectedTreadmill,
-                binding.mediaLink.text.toString(),
-                TrainingStatus.Upcoming,
-                selectedTrainingPlan,
-                ID =user.trainingSchedule.trainingList.last().ID+1
-            )
-            user.trainingSchedule.addNewTraining(newTraining)
-            user.trainingSchedule.sortCalendar()
+                user.trainingSchedule.trainingList.sortBy{it.ID}
+                val newTraining = PlannedTraining(
+                    dateCal,
+                    selectedTreadmill,
+                    binding.mediaLink.text.toString(),
+                    TrainingStatus.Upcoming,
+                    selectedTrainingPlan,
+                    ID =user.trainingSchedule.trainingList.last().ID+1
+                )
+                user.trainingSchedule.addNewTraining(newTraining)
+                user.trainingSchedule.sortCalendar()
 
-            val intent = Intent(this, MainActivity::class.java)
-            finishAffinity()
-            startActivity(intent)
+                val intent = Intent(this, MainActivity::class.java)
+                finishAffinity()
+                startActivity(intent)
+            }
+            else{
+                Toast.makeText(this, "Pick a treadmill", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.addTreadmillButton.setOnClickListener{

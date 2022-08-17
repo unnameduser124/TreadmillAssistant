@@ -4,7 +4,12 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import java.util.*
+
 
 fun round(variableRounded: Double, multiplier: Double): Double{
     return Math.round(variableRounded * multiplier) / multiplier
@@ -67,3 +72,24 @@ fun setUpDayCalendarCopy(calendar: Calendar): Calendar {
     return newCalendar
 }
 
+fun serialize(item: Any): String{
+    return Gson().toJson(item)
+}
+
+fun serializeWithExceptions(item: Any, exceptions: List<String>): String{
+    val strategy: ExclusionStrategy = object : ExclusionStrategy {
+        override fun shouldSkipField(field: FieldAttributes): Boolean {
+            return exceptions.contains(field.name)
+        }
+
+        override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+            return false
+        }
+    }
+
+    val gsonBuilder = GsonBuilder()
+        .addSerializationExclusionStrategy(strategy)
+        .create()
+
+    return gsonBuilder.toJson(item)
+}

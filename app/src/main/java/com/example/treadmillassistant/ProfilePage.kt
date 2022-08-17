@@ -30,7 +30,6 @@ class ProfilePage: AppCompatActivity() {
         binding.ageTextView.text = user.age.toString()
         binding.totalCaloriesTrainingValue.text = String.format(getString(R.string.calories), user.getTotalCalories())
 
-        //doesn't do anything right now TODO("Make it clear tables in database")
         binding.logOutButton.setOnClickListener{
             TrainingDatabaseService(this).clearDatabase()
             tempUser = null

@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.DURATION
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.ORDER_NUMBER
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.SPEED
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.TABLE_NAME
@@ -23,13 +24,14 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
             put(DURATION, trainingPhase.duration)
             put(ORDER_NUMBER, trainingPhase.orderNumber)
             put(TRAINING_PLAN_ID, trainingPhase.trainingPlanID)
+            put(MODIFICATION_FLAG, "C")
         }
 
         return db.insert(TABLE_NAME, null, contentValues)
     }
 
     //returns number of rows deleted
-    fun deleteTrainingPhase(id: Int): Int{
+    fun deleteTrainingPhase(id: Int): Int{//TODO("Needs to modify the flag not delete item, item is deleted after delete confirmation from server")
 
         val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
@@ -48,6 +50,7 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
             put(DURATION, newTrainingPhase.duration)
             put(ORDER_NUMBER, newTrainingPhase.orderNumber)
             put(TRAINING_PLAN_ID, newTrainingPhase.trainingPlanID)
+            put(MODIFICATION_FLAG, "U")
         }
         val selection = "${BaseColumns._ID} = ?"
 

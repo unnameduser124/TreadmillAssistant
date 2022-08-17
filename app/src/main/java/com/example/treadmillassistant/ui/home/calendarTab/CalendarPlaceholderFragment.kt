@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel

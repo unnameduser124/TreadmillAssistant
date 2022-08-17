@@ -82,28 +82,33 @@ class EditTraining: AppCompatActivity() {
 
 
         binding.saveNewTrainingButton.setOnClickListener {
-            val dateCal = Calendar.getInstance()
-            dateCal.set(Calendar.YEAR, binding.trainingDate.year)
-            dateCal.set(Calendar.MONTH, binding.trainingDate.month)
-            dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
-            dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
-            dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
+            if(selectedTreadmill.ID!=-1L){
+                val dateCal = Calendar.getInstance()
+                dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+                dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+                dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+                dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+                dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
-            val newTraining = PlannedTraining(
-                dateCal,
-                selectedTreadmill,
-                binding.mediaLink.text.toString(),
-                TrainingStatus.Upcoming,
-                selectedTrainingPlan,
-                ID = if(user.trainingSchedule.trainingList.isEmpty()) 1L else user.trainingSchedule.trainingList.last().ID + 1L
-            )
-            user.trainingSchedule.updateTraining(training, newTraining)
-            user.trainingSchedule.sortCalendar()
+                val newTraining = PlannedTraining(
+                    dateCal,
+                    selectedTreadmill,
+                    binding.mediaLink.text.toString(),
+                    TrainingStatus.Upcoming,
+                    selectedTrainingPlan,
+                    ID = if(user.trainingSchedule.trainingList.isEmpty()) 1L else user.trainingSchedule.trainingList.last().ID + 1L
+                )
+                user.trainingSchedule.updateTraining(training, newTraining)
+                user.trainingSchedule.sortCalendar()
 
-            val intent = Intent(this, TrainingDetailsPage::class.java)
-            intent.putExtra("id", training!!.ID)
-            finish()
-            startActivity(intent)
+                val intent = Intent(this, TrainingDetailsPage::class.java)
+                intent.putExtra("id", training!!.ID)
+                finish()
+                startActivity(intent)
+            }
+            else{
+                Toast.makeText(this, "Pick a treadmill!", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.addTreadmillButton.setOnClickListener{

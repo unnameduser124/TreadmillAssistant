@@ -6,11 +6,9 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -23,6 +21,7 @@ import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.Gson
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,8 +35,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val json = Gson().toJson(object{ val Password = "password"})
+        println(json)
+
         if(tempUser==null){
-            generateDBdata(this)
+            generateDBData(this)
             val intent = Intent(this, LoginPage::class.java)
             startActivity(intent)
         }
@@ -66,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             navView.setNavigationItemSelectedListener {
                 if(it ==  navView.menu.getItem(HOME_TAB_NAV_VIEW_POSITION)){
                     lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
-                    val handler = Handler()
+                    val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                     binding.appBarMain.toolbar.menu.setGroupVisible(0, true)
@@ -74,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else if(it ==  navView.menu.getItem(TRAINING_HISTORY_NAV_VIEW_POSITION)){
                     lastNavViewPosition = TRAINING_HISTORY_NAV_VIEW_POSITION
-                    val handler = Handler()
+                    val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                     binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 else{
 
                     lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
-                    val handler = Handler()
+                    val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({drawerLayout.closeDrawers()}, 50)
                     navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
                     binding.appBarMain.toolbar.menu.setGroupVisible(0, false)

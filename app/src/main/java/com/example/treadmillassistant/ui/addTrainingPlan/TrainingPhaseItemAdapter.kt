@@ -42,8 +42,8 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         holder.speedInput.setText("${item.speed}")
         holder.tiltInput.setText("${item.tilt}")
 
-        holder.speedInput.filters = arrayOf(InputFilterMinMax(0.0, 30.0))
-        holder.tiltInput.filters = arrayOf(InputFilterMinMax(-5.0, 15.0))
+        holder.speedInput.filters = arrayOf(InputFilterMinMax(DEFAULT_MIN_SPEED, DEFAULT_MAX_SPEED))
+        holder.tiltInput.filters = arrayOf(InputFilterMinMax(DEFAULT_MIN_TILT, DEFAULT_MAX_TILT))
 
         holder.removeButton.setOnClickListener {
             if(position<phaseList.size){

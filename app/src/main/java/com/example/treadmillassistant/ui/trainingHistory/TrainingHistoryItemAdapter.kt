@@ -31,7 +31,7 @@ class TrainingHistoryItemAdapter(private val dataset: List<Training>): RecyclerV
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val training = dataset[position]
 
-        val dateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}")
+        val dateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}", Locale.ROOT)
         val trainingTime = dateFormat.format(training.trainingTime.time)
 
         holder.duration.text = String.format(holder.duration.context.getString(R.string.duration_minutes),

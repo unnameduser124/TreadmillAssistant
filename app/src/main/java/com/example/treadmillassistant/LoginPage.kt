@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.treadmillassistant.backend.User
+import com.example.treadmillassistant.backend.tempUser
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.LoginPageLayoutBinding
 import com.example.treadmillassistant.ui.registration.RegisterNamesPage

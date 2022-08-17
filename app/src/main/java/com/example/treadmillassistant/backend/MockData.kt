@@ -11,7 +11,7 @@ var trainingCalendar = TrainingCalendar()
 var trainingPlanList = TrainingPlanList()
 var tempUser: User? = null
 var user = User(email = "defaultEmail@email.com",
-    password = hashMessage("easypassword"),
+    password = hashMessage("easyPassword"),
     firstName = "Jan",
     lastName = "Kowalski",
     username = "Janek",
@@ -86,7 +86,7 @@ fun generateMockData(context: Context){
     user.workoutPlanList = newWorkoutPlanList
 }*/
 
-fun generateDBdata(context: Context){
+fun generateDBData(context: Context){
     val userService = UserService(context)
 
     tempUser = userService.loadUser()

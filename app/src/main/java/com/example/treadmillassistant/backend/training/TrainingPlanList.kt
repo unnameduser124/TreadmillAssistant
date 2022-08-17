@@ -23,14 +23,6 @@ class TrainingPlanList(var trainingPlanList: MutableList<TrainingPlan> = mutable
 
     }
 
-    fun getTrainingPlanNames(): MutableList<String>{
-        val trainingPlanNames = mutableListOf<String>()
-        trainingPlanList.forEach {
-            trainingPlanNames.add(it.name)
-        }
-        return trainingPlanNames
-    }
-
     fun updateTrainingPlan(newTrainingPlan: TrainingPlan, id: Long) {
         trainingPlanList.find{it.ID == id}?.updateTrainingPlan(newTrainingPlan)
     }
