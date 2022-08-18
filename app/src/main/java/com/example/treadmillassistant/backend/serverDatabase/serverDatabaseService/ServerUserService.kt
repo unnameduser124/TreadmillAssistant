@@ -53,7 +53,7 @@ class ServerUserService {
         val client = OkHttpClient()
 
         val request: Request = Request.Builder()
-            .url("$BASE_URL/delete_user/${userID}")
+            .url("$BASE_URL/delete_user/$userID")
             .build()
 
         val call: Call = client.newCall(request)
@@ -70,7 +70,7 @@ class ServerUserService {
         val body = json.toRequestBody()
 
         val request: Request = Request.Builder()
-            .url("$BASE_URL/check_user_credentials/${email}")
+            .url("$BASE_URL/check_user_credentials/$email")
             .post(body)
             .build()
 
@@ -87,10 +87,10 @@ class ServerUserService {
     fun getUser(userID: Long): Pair<StatusCode, ServerUser>{
         val client = OkHttpClient()
         var code: StatusCode = StatusCode.Unknown
-        var deserializedUser: ServerUser = ServerUser("", "", "", -1, -1.0, "", "")
+        var deserializedUser = ServerUser("", "", "", -1, -1.0, "", "")
 
         val request = Request.Builder()
-            .url("$BASE_URL/get_user/${userID}")
+            .url("$BASE_URL/get_user/$userID")
             .build()
 
         client.newCall(request).enqueue(object : Callback {

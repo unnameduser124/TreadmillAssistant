@@ -27,6 +27,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
 
     private lateinit var binding: TrainingTabBinding
+    private var error = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,9 +133,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     training.trainingStatus = TrainingStatus.Upcoming
                 }
                 newGenericTraining()
-                hideTrainingItems()
                 finishTrainingButton.isGone = true
-                binding.startTrainingButton.text = getString(R.string.start)
+                binding.startTrainingButton.text = getString(R.string.start_new)
             }
         }
 
@@ -155,7 +155,6 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                 training.speedDown()
                 updateSteeringDisplays()
             }
-
         }
 
         binding.tiltUpButton.setOnClickListener{
@@ -267,21 +266,37 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     }
 
     private fun updateSteeringDisplays(){
-        binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
-        binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-        binding.paceTextView.text = String.format(getString(R.string.pace),
-            round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER))
+        try{
+            binding.speedDisplay.text = "${round(treadmill.getSpeed(), SPEED_ROUND_MULTIPLIER)}"
+            binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
+            binding.paceTextView.text = String.format(getString(R.string.pace),
+                round((SECONDS_IN_MINUTE.toDouble()/treadmill.getSpeed()), PACE_ROUND_MULTIPLIER))
+        }
+        catch(exception: IllegalStateException){
+            println(exception.message)
+            error++
+            if(error<5){
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({ updateStatusDisplays() }, 100)
+            }
+
+        }
     }
 
     fun updateStatusDisplays(){
-        binding.timeTextView.text = String.format(getString(R.string.duration_seconds), training.getCurrentMoment())
-        binding.distanceTextView.text = String.format(getString(R.string.distance), training.getCurrentDistance())
-        binding.caloriesTextView.text = String.format(getString(R.string.calories),
-            calculateCaloriesForOngoingTraining(training.getCurrentMoment()))
-        if(training is PlannedTraining){
-            binding.progressTextView.text = String.format(getString(R.string.percentage), round(
-                (training.getCurrentMoment().toDouble()/training.getTotalDuration().toDouble())*100.0,
-                PERCENTAGE_ROUND_MULTIPLIER))
+        try{
+            binding.timeTextView.text = String.format(getString(R.string.duration_seconds), training.getCurrentMoment())
+            binding.distanceTextView.text = String.format(getString(R.string.distance), training.getCurrentDistance())
+            binding.caloriesTextView.text = String.format(getString(R.string.calories),
+                calculateCaloriesForOngoingTraining(training.getCurrentMoment()))
+            if(training is PlannedTraining){
+                binding.progressTextView.text = String.format(getString(R.string.percentage), round(
+                    (training.getCurrentMoment().toDouble()/training.getTotalDuration().toDouble())*100.0,
+                    PERCENTAGE_ROUND_MULTIPLIER))
+            }
+        }
+        catch(exception: IllegalStateException){
+            println(exception.message)
         }
     }
 

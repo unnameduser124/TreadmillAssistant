@@ -113,4 +113,5 @@
     <string name="are_you_sure_label">Are you sure?</string>
     <string name="add_new_training_label">Add new training</string>
     <string name="add_new_training_plan_menu_item_label">Add new training plan</string>
+    <string name="start_new">start new</string>
 </resources>

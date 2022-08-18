@@ -6,5 +6,4 @@ data class ServerUser(val FirstName: String,
                  val Age: Int,
                  val Weight: Double,
                  val Email: String,
-                 val Password: String){
-}
+                 val Password: String)
