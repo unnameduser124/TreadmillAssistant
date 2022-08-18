@@ -109,7 +109,7 @@ fun generateDBData(context: Context){
     val trainingPlanService = TrainingPlanService(context)
     val newTrainingPlanList = TrainingPlanList()
 
-    for(i in 0..4){
+    for(i in 0..40){
         val newTrainingPlan = TrainingPlan("Plan ${i+1}", userID = user.ID)
         val newID = trainingPlanService.insertNewTrainingPlan(newTrainingPlan)
         newTrainingPlan.ID = newID

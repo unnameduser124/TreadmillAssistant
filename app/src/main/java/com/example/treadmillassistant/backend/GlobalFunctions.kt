@@ -4,6 +4,7 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
@@ -92,4 +93,16 @@ fun serializeWithExceptions(item: Any, exceptions: List<String>): String{
         .create()
 
     return gsonBuilder.toJson(item)
+}
+
+fun getTrainingPlansWithPagination(start: Int, offset: Int, list: MutableList<TrainingPlan>): MutableList<TrainingPlan>{
+    return if(start + offset < list.size){
+        list.filter { list.indexOf(it) >= start && list.indexOf(it) < start + offset }.toMutableList()
+    }
+    else if (start < list.size){
+        list.filter { list.indexOf(it) >= start && list.indexOf(it) < list.size }.toMutableList()
+    }
+    else{
+        return mutableListOf()
+    }
 }

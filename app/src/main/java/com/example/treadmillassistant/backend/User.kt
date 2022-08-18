@@ -1,6 +1,7 @@
 package com.example.treadmillassistant.backend
 
 import com.example.treadmillassistant.backend.training.TrainingCalendar
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingPlanList
 
 class User(
@@ -81,4 +82,6 @@ class User(
             treadmillList.remove(deletedTreadmill)
         }
     }
+
+
 }
