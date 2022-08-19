@@ -132,12 +132,14 @@ fun generateDBData(context: Context){
         }
     }
 
-    val treadmillOne = Treadmill(name = "TreadmillOne")
-    val treadmillTwo = Treadmill(name = "TreadmillTwo")
+    val treadmillList = mutableListOf<Treadmill>()
+    for(i in 0..40){
+        val treadmillOne = Treadmill(name = "Treadmill${i+1}")
+        val treadmillService = TreadmillService(context)
+        treadmillOne.ID = treadmillService.insertNewTreadmill(treadmillOne)
+        treadmillList.add(treadmillOne)
+    }
 
-    val treadmillService = TreadmillService(context)
-    treadmillOne.ID = treadmillService.insertNewTreadmill(treadmillOne)
-    treadmillTwo.ID = treadmillService.insertNewTreadmill(treadmillTwo)
 
     val trainingService = TrainingService(context)
     for(i in 0..100){
@@ -149,7 +151,7 @@ fun generateDBData(context: Context){
         calendar.set(Calendar.MINUTE, (0..60).random())
 
         val newTraining = PlannedTraining(calendar,
-            if(i%2==0) treadmillOne else treadmillTwo,
+            treadmillList.random(),
             trainingStatus = if (calendar.get(Calendar.DAY_OF_YEAR)<Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) TrainingStatus.Finished else TrainingStatus.Upcoming,
             trainingPlan = newTrainingPlanList.trainingPlanList.random())
         trainingService.insertNewTraining(newTraining)

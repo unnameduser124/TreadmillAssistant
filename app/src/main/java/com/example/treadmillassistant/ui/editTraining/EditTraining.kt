@@ -19,12 +19,10 @@ import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
 import com.example.treadmillassistant.ui.AddTreadmill
-import com.example.treadmillassistant.ui.addTraining.AddTrainingPlanPopupItemAdapter
 import com.example.treadmillassistant.ui.addTraining.AddTreadmillPopupItemAdapter
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.util.*
-import java.util.Locale.filter
 
 class EditTraining: AppCompatActivity() {
 
@@ -120,11 +118,43 @@ class EditTraining: AppCompatActivity() {
             treadmillPopup.contentView = popupBinding.root
             treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
 
-            val itemAdapter = AddTreadmillPopupItemAdapter(user.treadmillList, false, training!!.ID)
+            var start = 0
+            var baseList = user.treadmillList
+            var list = getTreadmillsWithPagination(start, SEARCH_POPUP_LIST_SIZE, baseList)
+            val itemAdapter = AddTreadmillPopupItemAdapter(
+                list,
+                false,
+                training!!.ID
+            )
+            start = SEARCH_POPUP_LIST_SIZE
+
             val linearLayoutManager = LinearLayoutManager(popupBinding.treadmillSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.treadmillSearchList.adapter = itemAdapter
             popupBinding.treadmillSearchList.layoutManager = linearLayoutManager
             popupBinding.treadmillSearchList.setHasFixedSize(false)
+
+            popupBinding.treadmillSearchList.setOnScrollChangeListener { _, _, _, _, _ ->
+                if(list.size>=SEARCH_POPUP_LIST_SIZE && list.size<baseList.size){
+                    if((popupBinding.treadmillSearchList.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == list.size - 1){
+                        val addList = getTreadmillsWithPagination(
+                            start,
+                            SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT,
+                            baseList
+                        )
+                        if(addList.size>0){
+                            list += addList
+                            start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
+                            popupBinding.treadmillSearchList.post {
+                                popupBinding.treadmillSearchList.adapter?.notifyItemRangeInserted(
+                                    list.size - addList.size,
+                                    addList.size
+                                )
+                                println(list.size)
+                            }
+                        }
+                    }
+                }
+            }
 
             popupBinding.treadmillSelectionCancelButton.setOnClickListener { treadmillPopup.dismiss() }
 
@@ -142,8 +172,18 @@ class EditTraining: AppCompatActivity() {
             }
 
             popupBinding.treadmillSearchInput.addTextChangedListener {typedText: Editable? ->
-                val filteredList = user.treadmillList.filter{ it.name.lowercase().contains(typedText.toString().lowercase()) }.toMutableList()
-                val newAdapter = AddTreadmillPopupItemAdapter(filteredList, false, training!!.ID)
+                baseList = user.treadmillList.filter{
+                    it.name.lowercase().contains(typedText.toString().lowercase())
+                }.toMutableList()
+                start = 0
+                list = getTreadmillsWithPagination(
+                    start,
+                    SEARCH_POPUP_LIST_SIZE,
+                    baseList
+                )
+                start = SEARCH_POPUP_LIST_SIZE
+                val newAdapter = AddTreadmillPopupItemAdapter(list, false, training!!.ID)
+
                 popupBinding.treadmillSearchList.adapter = newAdapter
             }
         }
@@ -160,13 +200,13 @@ class EditTraining: AppCompatActivity() {
 
             var start = 0
             var baseList = user.trainingPlanList.trainingPlanList
-            var list = getTrainingPlansWithPagination(start, SELECT_TRAINING_PLAN_LIST_SIZE, baseList)
+            var list = getTrainingPlansWithPagination(start, SEARCH_POPUP_LIST_SIZE, baseList)
             val itemAdapter = EditTrainingPlanPopupItemAdapter(
                 list,
                 false,
                 training!!.ID
             )
-            start = SELECT_TRAINING_PLAN_LIST_SIZE
+            start = SEARCH_POPUP_LIST_SIZE
 
             val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
             popupBinding.trainingPlanSearchList.adapter = itemAdapter
@@ -174,7 +214,7 @@ class EditTraining: AppCompatActivity() {
             popupBinding.trainingPlanSearchList.setHasFixedSize(false)
 
             popupBinding.trainingPlanSearchList.setOnScrollChangeListener { _, _, _, _, _ ->
-                if(list.size>=SELECT_TRAINING_PLAN_LIST_SIZE && list.size<baseList.size){
+                if(list.size>=SEARCH_POPUP_LIST_SIZE && list.size<baseList.size){
                     if((popupBinding.trainingPlanSearchList.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == list.size - 1){
                         val addList = getTrainingPlansWithPagination(
                             start,
@@ -220,10 +260,10 @@ class EditTraining: AppCompatActivity() {
                 start = 0
                 list = getTrainingPlansWithPagination(
                     start,
-                    SELECT_TRAINING_PLAN_LIST_SIZE,
+                    SEARCH_POPUP_LIST_SIZE,
                     baseList
                 )
-                start = SELECT_TRAINING_PLAN_LIST_SIZE
+                start = SEARCH_POPUP_LIST_SIZE
                 val newAdapter = EditTrainingPlanPopupItemAdapter(list, false, training!!.ID)
 
                 popupBinding.trainingPlanSearchList.adapter = newAdapter
