@@ -5,4 +5,5 @@ data class ServerTraining(val Date: String,
                      val Link: String,
                      val TrainingStatus: String,
                      val Treadmill: Long = 0L,
-                     val TrainingPlanID: Long = 0L)
+                     val TrainingPlanID: Long = 0L,
+                     val ID: Long = -1L)

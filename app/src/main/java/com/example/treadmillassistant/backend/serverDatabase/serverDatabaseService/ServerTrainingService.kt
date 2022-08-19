@@ -4,13 +4,15 @@ import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
-import okhttp3.Call
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.google.gson.reflect.TypeToken
+import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ServerTrainingService {
 
@@ -30,6 +32,70 @@ class ServerTrainingService {
             serverTraining = Gson().fromJson(response.body.toString(), ServerTraining::class.java)
         }
         return Pair(getResponseCode(response.code), serverTraining)
+    }
+
+    fun getTrainingsForDay(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<Training>>{
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ROOT)
+        val date = sdf.format(calendar)
+
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit")
+            .build()
+
+        var code = StatusCode.Unknown
+        var trainingList = mutableListOf<Training>()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if(response.code==StatusCode.OK.code){
+                    response.use {
+                        val trainingJson = response.body!!.string()
+                        trainingList = Gson().fromJson(trainingJson, object: TypeToken<List<Training>>(){}.type)
+                    }
+                }
+                code = getResponseCode(response.code)
+            }
+        })
+
+        return Pair(code, trainingList)
+    }
+
+    fun getTrainingsForMonth(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<Training>>{
+        val sdf = SimpleDateFormat("%MM-yyyy", Locale.ROOT)
+        val date = sdf.format(calendar)
+
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit")
+            .build()
+
+        var code = StatusCode.Unknown
+        var trainingList = mutableListOf<Training>()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if(response.code==StatusCode.OK.code){
+                    response.use {
+                        val trainingListJson = response.body!!.string()
+                        trainingList = Gson().fromJson(trainingListJson, object: TypeToken<List<Training>>(){}.type)
+                    }
+                }
+                code = getResponseCode(response.code)
+            }
+        })
+
+        return Pair(code, trainingList)
     }
 
     fun createTraining(serverTraining: ServerTraining): StatusCode{

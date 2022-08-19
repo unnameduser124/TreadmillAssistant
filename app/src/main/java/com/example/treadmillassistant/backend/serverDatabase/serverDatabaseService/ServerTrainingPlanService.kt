@@ -3,12 +3,13 @@ package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseServ
 import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 
 
 class ServerTrainingPlanService {
@@ -28,6 +29,35 @@ class ServerTrainingPlanService {
         trainingPlan = Gson().fromJson(response.body.toString(), object : TypeToken<List<List<Any>>>(){}.type)
 
         return Pair(code, trainingPlan)
+    }
+
+    fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<TrainingPlan>>{
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/get_all_user_training_plans/${user.ID}?skip=$skip&limit=$limit")
+            .build()
+
+        var code = StatusCode.Unknown
+        var trainingPlanList = mutableListOf<TrainingPlan>()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if(response.code==StatusCode.OK.code){
+                    response.use {
+                        val trainingPlanListJson = response.body!!.string()
+                        trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<TrainingPlan>>(){}.type)
+                    }
+                }
+                code = getResponseCode(response.code)
+            }
+        })
+
+        return Pair(code, trainingPlanList)
     }
 
     fun createTrainingPlan(serverTrainingPlan: ServerTrainingPlan): StatusCode{
