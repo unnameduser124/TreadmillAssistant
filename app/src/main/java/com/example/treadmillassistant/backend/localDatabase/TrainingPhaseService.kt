@@ -31,7 +31,7 @@ class TrainingPhaseService(context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows deleted
-    fun deleteTrainingPhase(id: Int): Int{//TODO("Needs to modify the flag not delete item, item is deleted after delete confirmation from server")
+    fun deleteTrainingPhase(id: Long): Int{//TODO("Needs to modify the flag not delete item, item is deleted after delete confirmation from server")
 
         val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"

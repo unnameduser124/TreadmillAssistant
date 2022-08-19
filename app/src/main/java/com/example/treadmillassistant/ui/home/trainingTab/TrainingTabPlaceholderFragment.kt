@@ -127,7 +127,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
 
         binding.finishTrainingButton.setOnClickListener{ finishTrainingButton ->
             if(training.trainingStatus==TrainingStatus.Paused){
-                training.finishTraining()
+                training.finishTraining(binding.finishTrainingButton.context)
                 if(training is PlannedTraining){
                     unfinishPhases(training)
                     training.trainingStatus = TrainingStatus.Upcoming
@@ -240,7 +240,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                         }
 
                         if(training.getCurrentMoment()>=training.getTotalDuration()){
-                            training.finishTraining()
+                            training!!.finishTraining(binding.finishTrainingButton.context)
                             binding.startTrainingButton.text = getString(R.string.training_finished)
                             newGenericTraining()
                         }

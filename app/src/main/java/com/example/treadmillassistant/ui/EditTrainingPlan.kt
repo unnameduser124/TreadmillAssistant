@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
+import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
@@ -45,9 +47,9 @@ class EditTrainingPlan: AppCompatActivity() {
         }
 
         binding.planNameInput.setText(trainingPlan.name)
-
         //phase list recycler view setup
         val phaseList = trainingPlan.trainingPhaseList
+        updateTotalValues(phaseList)
         val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
@@ -62,15 +64,19 @@ class EditTrainingPlan: AppCompatActivity() {
                     TrainingPhase(
                         orderNumber = phaseList.last().orderNumber+1,
                         speed = DEFAULT_PHASE_SPEED,
-                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION)
+                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
+                        trainingPlanID = trainingPlan.ID
                     )
                 )
             }
             else{
                 phaseList.add(
-                    TrainingPhase(orderNumber = 0,
+                    TrainingPhase(
+                        orderNumber = 0,
                         speed = DEFAULT_PHASE_SPEED,
-                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION))
+                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
+                        trainingPlanID = trainingPlan.ID
+                    )
                 )
             }
             binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
@@ -83,6 +89,17 @@ class EditTrainingPlan: AppCompatActivity() {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
                 val newTrainingPlan = TrainingPlan(name, phaseList, user.ID)
+                TrainingPlanService(this).updateTrainingPlan(newTrainingPlan, trainingPlan.ID)
+                val tpService = TrainingPhaseService(this)
+                phaseList.forEach {
+                    if(it.ID==-1L){
+                        it.ID = tpService.insertNewTrainingPhase(it)
+                        println(it.trainingPlanID)
+                    }
+                }
+                removedPhaseIDs.forEach {
+                    tpService.deleteTrainingPhase(it)
+                }
                 user.trainingPlanList.updateTrainingPlan(newTrainingPlan, trainingPlan.ID)
                 exitActivity()
             }
@@ -96,6 +113,7 @@ class EditTrainingPlan: AppCompatActivity() {
         }
 
         binding.trainingPlanRemoveButton.setOnClickListener {
+            TrainingPlanService(this).deleteTrainingPlan(trainingPlan)
             user.trainingPlanList.removeTrainingPlan(trainingPlan)
             exitActivity()
         }
@@ -119,6 +137,10 @@ class EditTrainingPlan: AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         exitActivity()
+    }
+
+    companion object{
+        val removedPhaseIDs = mutableListOf<Long>()
     }
 
     private fun exitActivity(){

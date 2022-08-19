@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.IndividualTrainingPageBinding
 import com.example.treadmillassistant.ui.editTraining.EditTraining
@@ -88,9 +89,10 @@ class TrainingDetailsPage: AppCompatActivity() {
 
             binding.trainingDetailsRemoveButton.setOnClickListener {
                 val intent = Intent(this, MainActivity::class.java)
-                user.trainingSchedule.removeTraining(training)
                 finish()
                 startActivity(intent)
+                TrainingService(this).deleteTraining(training)
+                user.trainingSchedule.removeTraining(training)
             }
 
             binding.trainingDetailsEditButton.setOnClickListener {

@@ -1,5 +1,6 @@
 package com.example.treadmillassistant.backend.training
 
+import android.content.Context
 import com.example.treadmillassistant.backend.*
 import java.util.*
 
@@ -31,7 +32,7 @@ interface Training {
         treadmill.setTilt(DEFAULT_WORKOUT_START_TILT)
     }
 
-    fun finishTraining(){
+    fun finishTraining(context: Context){
         trainingStatus = TrainingStatus.Finished
         phasePartialCompletion = 0
         partialPhaseCompletionDistance = 0.0

@@ -2,6 +2,7 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
+import android.os.Build.ID
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.PLAN_NAME
@@ -25,17 +26,26 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
     }
 
     //returns number of rows deleted
-    fun deleteTrainingPlan(id: Int): Int{
+    fun deleteTrainingPlan(trainingPlan: TrainingPlan): Int{
         val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
-        val selectionArgs = arrayOf("$id")
+        val selectionArgs = arrayOf("${trainingPlan.ID}")
+        val phaseService = TrainingPhaseService(context)
+
+        trainingPlan.trainingPhaseList.forEach {
+            phaseService.deleteTrainingPhase(it.ID)
+        }
+        db.execSQL(" UPDATE ${TrainingDatabaseConstants.TrainingTable.TABLE_NAME} " +
+                "SET ${TrainingDatabaseConstants.TrainingTable.TRAINING_PLAN_ID} = -1 " +
+                "WHERE ${TrainingDatabaseConstants.TrainingTable.TRAINING_PLAN_ID} = ${trainingPlan.ID}")
+
 
         return db.delete(TABLE_NAME, selection, selectionArgs)
     }
 
     //returns number of rows updated
-    fun updateTrainingPlan(newTrainingPlan: TrainingPlan, trainingPlanID: Int): Int{
+    fun updateTrainingPlan(newTrainingPlan: TrainingPlan, trainingPlanID: Long): Int{
         val db = this.writableDatabase
 
         val contentValues = ContentValues().apply {
@@ -61,11 +71,15 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
 
         val sortOrder = "${BaseColumns._ID}"
 
+        val selection = "$PLAN_NAME != ? "
+
+        val selectionArgs = arrayOf("GenericTrainingPlan")
+
         val cursor = db.query(
             TABLE_NAME,
             projection,
-            null,
-            null,
+            selection,
+            selectionArgs,
             null,
             null,
             sortOrder
@@ -96,9 +110,9 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
 
         val sortOrder = BaseColumns._ID
 
-        val selection = "${BaseColumns._ID} = ?"
+        val selection = "${BaseColumns._ID} = ? AND $PLAN_NAME != ? "
 
-        val selectionArgs = arrayOf("$ID")
+        val selectionArgs = arrayOf("$ID", "GenericTrainingPlan")
 
         val cursor = db.query(
             TABLE_NAME,

@@ -11,6 +11,8 @@ import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
+import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
@@ -71,8 +73,20 @@ class AddTrainingPlan: AppCompatActivity() {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
                 val intent: Intent
-                user.trainingPlanList.addTrainingPlan(TrainingPlan(name, phaseList, user.ID,
-                    ID = if(user.trainingPlanList.trainingPlanList.isEmpty()) 1 else user.trainingPlanList.trainingPlanList.last().ID +1))
+
+                val trainingPlan = TrainingPlan(
+                    name,
+                    phaseList,
+                    user.ID,
+                )
+                trainingPlan.ID = TrainingPlanService(this).insertNewTrainingPlan(trainingPlan)
+                val tpService = TrainingPhaseService(this)
+                trainingPlan.trainingPhaseList.forEach {
+                    it.trainingPlanID = trainingPlan.ID
+                    tpService.insertNewTrainingPhase(it)
+                }
+                user.trainingPlanList.addTrainingPlan(trainingPlan)
+
                 if(fromTraining){
                     intent = Intent(this, AddTraining::class.java)
                     intent.putExtra("date", date.time)

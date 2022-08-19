@@ -14,7 +14,7 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TreadmillTable.USER_ID
 import com.example.treadmillassistant.backend.user
 
-class TreadmillService(context: Context): TrainingDatabaseService(context){
+class TreadmillService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
     fun insertNewTreadmill(treadmill: Treadmill): Long {
@@ -34,18 +34,22 @@ class TreadmillService(context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows deleted
-    fun deleteTreadmill(id: Int): Int{
+    fun deleteTreadmill(id: Long): Int{
         val db = this.writableDatabase
 
         val selection = "${BaseColumns._ID} = ?"
 
         val selectionArgs = arrayOf("$id")
 
+        db.execSQL(" UPDATE ${TrainingDatabaseConstants.TrainingTable.TABLE_NAME} " +
+                "SET ${TrainingDatabaseConstants.TrainingTable.TREADMILL_ID} = -1 " +
+                "WHERE ${TrainingDatabaseConstants.TrainingTable.TREADMILL_ID} = $id")
+
         return db.delete(TABLE_NAME, selection, selectionArgs)
     }
 
     //returns number of rows updated
-    fun updateTreadmill(newTreadmill: Treadmill, treadmillID: Int): Int{
+    fun updateTreadmill(newTreadmill: Treadmill, treadmillID: Long): Int{
         val db = this.writableDatabase
         val contentValues = ContentValues().apply{
             put(TREADMILL_NAME, newTreadmill.name)

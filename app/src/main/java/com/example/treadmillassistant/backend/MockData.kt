@@ -133,7 +133,7 @@ fun generateDBData(context: Context){
     }
 
     val treadmillList = mutableListOf<Treadmill>()
-    for(i in 0..40){
+    for(i in 0..1){
         val treadmillOne = Treadmill(name = "Treadmill${i+1}")
         val treadmillService = TreadmillService(context)
         treadmillOne.ID = treadmillService.insertNewTreadmill(treadmillOne)
@@ -172,5 +172,6 @@ fun loadAllData(context: Context){
             user.trainingPlanList.addTrainingPlan(trainingPlan!!)
         }
         user.treadmillList = TreadmillService(context).getUserTreadmills()
+        user.trainingSchedule.sortCalendar()
     }
 }

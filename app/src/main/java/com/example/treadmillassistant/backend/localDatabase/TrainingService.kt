@@ -14,18 +14,15 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TRAINING_TIME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.TREADMILL_ID
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingTable.USER_ID
+import com.example.treadmillassistant.backend.training.*
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.backend.training.PlannedTraining
-import com.example.treadmillassistant.backend.training.Training
-import com.example.treadmillassistant.backend.training.TrainingPlan
-import com.example.treadmillassistant.backend.training.TrainingStatus
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TrainingService(val context: Context): TrainingDatabaseService(context){
 
     //returns id for inserted object
-    fun insertNewTraining(training: PlannedTraining): Long {
+    fun insertNewTraining(training: Training): Long {
         val db = this.writableDatabase
         var simpleDateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}", Locale.ROOT)
         val date = simpleDateFormat.format(training.trainingTime.time)
@@ -47,21 +44,25 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows deleted
-    fun deleteTraining(id: Int): Int{
+    fun deleteTraining(training: Training): Int{
         val db = this.writableDatabase
         val selection = "${BaseColumns._ID} = ?"
 
-        val selectionArgs = arrayOf("$id")
+        val selectionArgs = arrayOf("${training.ID}")
+        if(training is GenericTraining){
+            val planService = TrainingPlanService(context)
+            planService.deleteTrainingPlan(training.trainingPlan)
+        }
 
         return db.delete(TABLE_NAME, selection, selectionArgs)
     }
 
     //returns number of rows updated
-    fun updateTraining(newTraining: PlannedTraining, trainingID: Int): Int{
+    fun updateTraining(newTraining: PlannedTraining, trainingID: Long): Int{
         val db = this.writableDatabase
-        var simpleDateFormat = SimpleDateFormat("dd.MM.${newTraining.trainingTime.get(Calendar.YEAR)}")
+        var simpleDateFormat = SimpleDateFormat("dd.MM.${newTraining.trainingTime.get(Calendar.YEAR)}", Locale.ROOT)
         val date = simpleDateFormat.format(newTraining.trainingTime.time)
-        simpleDateFormat = SimpleDateFormat("kk:mm")
+        simpleDateFormat = SimpleDateFormat("kk:mm", Locale.ROOT)
         val time = simpleDateFormat.format(newTraining.trainingTime.time)
         val contentValues = ContentValues().apply {
             put(TRAINING_DATE, date)

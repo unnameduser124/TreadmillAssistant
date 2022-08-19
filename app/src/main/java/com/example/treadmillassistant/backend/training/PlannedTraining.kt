@@ -1,6 +1,8 @@
 package com.example.treadmillassistant.backend.training
 
+import android.content.Context
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import java.util.*
 
 enum class TrainingStatus{
@@ -37,11 +39,10 @@ class PlannedTraining(
         return trainingPlan.trainingPhaseList.last()
     }
 
-    override fun finishTraining(){
-        trainingStatus = TrainingStatus.Finished
-        phasePartialCompletion = 0
-        partialPhaseCompletionDistance = 0.0
+    override fun finishTraining(context: Context){
+        super.finishTraining(context)
         trainingPlan.trainingPhaseList.last().isFinished = true
+        TrainingService(context).updateTraining(this, ID)
     }
 
     override fun pauseTraining(){

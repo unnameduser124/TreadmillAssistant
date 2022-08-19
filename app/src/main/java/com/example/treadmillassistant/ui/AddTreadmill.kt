@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TreadmillService
 import com.example.treadmillassistant.databinding.AddTreadmillLayoutBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.editTraining.EditTraining
@@ -50,16 +51,16 @@ class AddTreadmill: AppCompatActivity() {
 
             if(name!="" && name!=" " && maxSpeed>minSpeed && maxTilt>minTilt){
                 val intent: Intent
-                user.treadmillList.add(
-                    Treadmill(
-                        name=name,
-                        ID = if(user.treadmillList.isEmpty()) 1 else user.treadmillList.last().ID+1,
-                        maxSpeed = maxSpeed,
-                        minSpeed = minSpeed,
-                        maxTilt = maxTilt,
-                        minTilt = minTilt
-                    )
+
+                val treadmill = Treadmill(
+                    name=name,
+                    maxSpeed = maxSpeed,
+                    minSpeed = minSpeed,
+                    maxTilt = maxTilt,
+                    minTilt = minTilt
                 )
+                treadmill.ID = TreadmillService(this).insertNewTreadmill(treadmill)
+                user.treadmillList.add(treadmill)
                 if(fromAddTraining){
                     intent = Intent(this, AddTraining::class.java)
                     intent.putExtra("date", date.time)

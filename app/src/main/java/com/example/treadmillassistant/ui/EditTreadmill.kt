@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TreadmillService
 import com.example.treadmillassistant.databinding.AddTreadmillLayoutBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.editTraining.EditTraining
@@ -63,16 +64,16 @@ class EditTreadmill: AppCompatActivity() {
             val minTilt = if(binding.treadmillMinTiltInput.text.toString()=="") 0.0 else  binding.treadmillMinTiltInput.text.toString().toDouble()
 
             if(name!="" && name!=" " && maxSpeed>minSpeed && maxTilt>minTilt){
-                val intent: Intent
+                val newTreadmill = Treadmill(
+                    name=name,
+                    maxSpeed = maxSpeed,
+                    minSpeed = minSpeed,
+                    maxTilt = maxTilt,
+                    minTilt = minTilt
+                )
+                TreadmillService(this).updateTreadmill(newTreadmill, treadmill!!.ID)
                 user.updateTreadmill(
-                    Treadmill(
-                        name=name,
-                        ID = if(user.treadmillList.isEmpty()) 1 else user.treadmillList.last().ID+1,
-                        maxSpeed = maxSpeed,
-                        minSpeed = minSpeed,
-                        maxTilt = maxTilt,
-                        minTilt = minTilt
-                    ),
+                    newTreadmill,
                     treadmill!!.ID
                 )
                 exitActivity()
@@ -87,6 +88,7 @@ class EditTreadmill: AppCompatActivity() {
         }
 
         binding.treadmillRemoveButton.setOnClickListener{
+            TreadmillService(this).deleteTreadmill(treadmill!!.ID)
             user.removeTreadmill(treadmill!!.ID)
             exitActivity()
         }

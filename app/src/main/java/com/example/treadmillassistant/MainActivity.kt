@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val json = Gson().toJson(object{ val Password = "password"})
-        println(json)
-
         if(tempUser==null){
             generateDBData(this)
             val intent = Intent(this, LoginPage::class.java)

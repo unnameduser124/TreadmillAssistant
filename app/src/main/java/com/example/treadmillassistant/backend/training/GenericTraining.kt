@@ -1,8 +1,12 @@
 package com.example.treadmillassistant.backend.training
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
+import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import java.util.*
 
 class GenericTraining(
@@ -25,10 +29,20 @@ class GenericTraining(
         trainingPlan.addNewPhase(phase)
     }
 
-    override fun finishTraining() {
-        super.finishTraining()
+    override fun finishTraining(context: Context) {
+        super.finishTraining(context)
         user.trainingSchedule.addNewTraining(this)
         trainingPlan.trainingPhaseList.last().isFinished = true
+        val newTrainingPlan = TrainingPlan("GenericTrainingPlan", trainingPlan.trainingPhaseList, userID = user.ID)
+        newTrainingPlan.ID = TrainingPlanService(context).insertNewTrainingPlan(newTrainingPlan)
+        val tpService = TrainingPhaseService(context)
+        newTrainingPlan.trainingPhaseList.forEach {
+            it.trainingPlanID = newTrainingPlan.ID
+            it.ID = tpService.insertNewTrainingPhase(it)
+        }
+        this.trainingPlan = newTrainingPlan
+        this.ID = TrainingService(context).insertNewTraining(this)
+
     }
 
     override fun getTotalDistance(): Double {

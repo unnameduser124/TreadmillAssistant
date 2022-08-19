@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.training.TrainingPlan
@@ -79,7 +80,7 @@ class EditTraining: AppCompatActivity() {
 
 
 
-        binding.saveNewTrainingButton.setOnClickListener {
+        binding.saveTrainingButton.setOnClickListener {
             if(selectedTreadmill.ID!=-1L){
                 val dateCal = Calendar.getInstance()
                 dateCal.set(Calendar.YEAR, binding.trainingDate.year)
@@ -93,9 +94,9 @@ class EditTraining: AppCompatActivity() {
                     selectedTreadmill,
                     binding.mediaLink.text.toString(),
                     TrainingStatus.Upcoming,
-                    selectedTrainingPlan,
-                    ID = if(user.trainingSchedule.trainingList.isEmpty()) 1L else user.trainingSchedule.trainingList.last().ID + 1L
+                    selectedTrainingPlan
                 )
+                TrainingService(this).updateTraining(newTraining, training!!.ID)
                 user.trainingSchedule.updateTraining(training, newTraining)
                 user.trainingSchedule.sortCalendar()
 

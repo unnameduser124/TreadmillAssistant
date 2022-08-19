@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
+import com.example.treadmillassistant.ui.EditTrainingPlan.Companion.removedPhaseIDs
 import com.example.treadmillassistant.ui.InputFilterMinMax
 import com.google.android.material.textfield.TextInputEditText
+import java.lang.NumberFormatException
 
 class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>,
                                private val totalDuration: TextView,
@@ -48,6 +50,7 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         holder.removeButton.setOnClickListener {
             if(position<phaseList.size){
                 phaseList.removeAt(position)
+                removedPhaseIDs.add(item.ID)
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position, phaseList.size)
                 setDuration(holder.durationInput.context)
@@ -57,7 +60,12 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
 
         holder.durationInput.addTextChangedListener {
             if(it.toString()!=""){
-                item.duration = minutesToSeconds(it.toString().toDouble())
+                try{
+                    item.duration = minutesToSeconds(it.toString().toDouble())
+                }
+                catch(exception: NumberFormatException){
+                    println(exception.message)
+                }
             }
             else{
                 item.duration = minutesToSeconds(DEFAULT_PHASE_DURATION)
@@ -67,7 +75,12 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         }
         holder.speedInput.addTextChangedListener {
             if(it.toString()!=""){
-                item.speed = it.toString().toDouble()
+                try{
+                    item.speed = it.toString().toDouble()
+                }
+                catch(exception: NumberFormatException){
+                    println(exception.message)
+                }
             }
             else{
                 item.speed = DEFAULT_PHASE_SPEED
@@ -76,7 +89,12 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         }
         holder.tiltInput.addTextChangedListener {
             if(it.toString()!="" && it.toString()!="-"){
-                item.tilt = it.toString().toDouble()
+                try{
+                    item.tilt = it.toString().toDouble()
+                }
+                catch(exception: NumberFormatException){
+                    println(exception.message)
+                }
             }
             else{
                 item.tilt = DEFAULT_PHASE_TILT
