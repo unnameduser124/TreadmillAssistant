@@ -11,12 +11,18 @@ class InputFilterMinMax(private var min: Double, private var max: Double) : Inpu
         }
         try
         {
-            val input = (dest.toString() + source.toString()).toDouble()
+            val before = dest.toString()
+            val input = StringBuilder(before).insert(dstart, source.toString()).toString().toDouble()
             if (isInRange(min, max, input)){
                 return null
             }
         }
-        catch (nfe:NumberFormatException) {}
+        catch (nfe:NumberFormatException) {
+
+        }
+        catch(outOfBoundsException: IndexOutOfBoundsException){
+            println(outOfBoundsException.message)
+        }
         return ""
     }
     private fun isInRange(a: Double, b: Double, c:Double):Boolean {

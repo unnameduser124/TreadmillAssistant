@@ -16,6 +16,8 @@
     <string name="calendar_item_duration">Duration: %1$s min</string>
     <string name="duration_minutes">%1$s min</string>
     <string name="duration_seconds">%1$s s</string>
+    <string name="current_duration_less_than_10_seconds">%1$s:0%2$s</string>
+    <string name="current_duration_more_than_10_seconds">%1$s:%2$s</string>
     <string name="duration_hours">%1$s h</string>
     <string name="percentage">%1$s%%</string>
     <string name="pace">%1$s\'</string>

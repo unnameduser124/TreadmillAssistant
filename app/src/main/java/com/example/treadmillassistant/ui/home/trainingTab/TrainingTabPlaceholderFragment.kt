@@ -20,8 +20,12 @@ import com.example.treadmillassistant.databinding.TrainingTabBinding
 import com.example.treadmillassistant.ui.home.OnStartClickedListener
 import com.example.treadmillassistant.ui.home.PageViewModel
 import com.google.android.material.button.MaterialButton
+import okhttp3.internal.wait
+import java.lang.Math.floor
+import java.lang.Thread.sleep
 
 import java.util.*
+import kotlin.concurrent.thread
 
 class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
@@ -138,46 +142,9 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             }
         }
 
-        binding.speedUpButton.setOnClickListener{
-            if(training is PlannedTraining){
-                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
-            }
-            else if(training.trainingStatus==TrainingStatus.InProgress){
-                training.speedUp()
-                updateSteeringDisplays()
-            }
-        }
-        binding.speedDownButton.setOnClickListener{
-            if(training is PlannedTraining){
-                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
-            }
-            else if(training.trainingStatus==TrainingStatus.InProgress){
-                training.speedDown()
-                updateSteeringDisplays()
-            }
-        }
+        speedButtonListeners()
 
-        binding.tiltUpButton.setOnClickListener{
-            if(training is PlannedTraining){
-                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
-            }
-            else if(training.trainingStatus==TrainingStatus.InProgress){
-                training.tiltUp()
-                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-            }
-
-        }
-        binding.tiltDownButton.setOnClickListener{
-            if(training is PlannedTraining){
-                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
-            }
-            else if(training.trainingStatus==TrainingStatus.InProgress){
-                training.tiltDown()
-                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
-            }
-
-        }
-
+        tiltButtonListeners()
 
         return binding.root
     }
@@ -213,7 +180,6 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         binding.caloriesLabel.isGone = false
         binding.caloriesTextView.isGone = false
     }
-
     private fun showGenericTrainingItems(){
         binding.distanceTextView.isGone = false
         binding.paceTextView.isGone = false
@@ -285,7 +251,20 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
 
     fun updateStatusDisplays(){
         try{
-            binding.timeTextView.text = String.format(getString(R.string.duration_seconds), training.getCurrentMoment())
+            val currentMoment = training.getCurrentMoment()
+            if(currentMoment<60){
+                binding.timeTextView.text = String.format(getString(R.string.duration_seconds), currentMoment)
+            }
+            else{
+                val seconds = currentMoment % 60
+                val minutes = currentMoment / 60
+                if(seconds<10){
+                    binding.timeTextView.text = String.format(getString(R.string.current_duration_less_than_10_seconds), minutes, seconds)
+                }
+                else {
+                    binding.timeTextView.text = String.format(getString(R.string.current_duration_more_than_10_seconds), minutes, seconds)
+                }
+            }
             binding.distanceTextView.text = String.format(getString(R.string.distance), training.getCurrentDistance())
             binding.caloriesTextView.text = String.format(getString(R.string.calories),
                 calculateCaloriesForOngoingTraining(training.getCurrentMoment()))
@@ -311,7 +290,140 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         updateSteeringDisplays()
     }
 
+    fun speedButtonListeners(){
+        binding.speedUpButton.setOnClickListener{
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.speedUp()
+                updateSteeringDisplays()
+            }
+        }
 
+        binding.speedUpButton.setOnLongClickListener {
+
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                val runnableCode = object: Runnable {
+                    override fun run(){
+                        Thread{
+                            if(binding.speedUpButton.isPressed){
+                                training.speedUp()
+                                updateSteeringDisplays()
+                                Handler(Looper.getMainLooper()).postDelayed(this, 200)
+                            }
+                        }.run()
+                    }
+                }
+                Handler(Looper.getMainLooper()).post(runnableCode)
+            }
+
+            true
+        }
+
+        binding.speedDownButton.setOnClickListener{
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.speedDown()
+                updateSteeringDisplays()
+            }
+        }
+
+        binding.speedDownButton.setOnLongClickListener {
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                val runnableCode = object: Runnable {
+                    override fun run(){
+                        Thread{
+                            if(binding.speedDownButton.isPressed){
+                                training.speedDown()
+                                updateSteeringDisplays()
+                                Handler(Looper.getMainLooper()).postDelayed(this, 200)
+                            }
+                        }.run()
+                    }
+                }
+                Handler(Looper.getMainLooper()).post(runnableCode)
+            }
+
+            true
+        }
+    }
+
+    fun tiltButtonListeners(){
+        binding.tiltUpButton.setOnClickListener{
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.tiltUp()
+                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
+            }
+
+        }
+
+        binding.tiltUpButton.setOnLongClickListener {
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                val runnableCode = object: Runnable {
+                    override fun run(){
+                        Thread{
+                            if(binding.tiltUpButton.isPressed){
+                                training.tiltUp()
+                                updateSteeringDisplays()
+                                Handler(Looper.getMainLooper()).postDelayed(this, 200)
+                            }
+                        }.run()
+                    }
+                }
+                Handler(Looper.getMainLooper()).post(runnableCode)
+            }
+
+            true
+        }
+
+        binding.tiltDownButton.setOnClickListener{
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                training.tiltDown()
+                binding.tiltDisplay.text = "${round(treadmill.getTilt(), TILT_ROUND_MULTIPLIER)}"
+            }
+
+        }
+
+        binding.tiltDownButton.setOnLongClickListener {
+            if(training is PlannedTraining){
+                Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
+            }
+            else if(training.trainingStatus==TrainingStatus.InProgress){
+                val runnableCode = object: Runnable {
+                    override fun run(){
+                        Thread{
+                            if(binding.tiltDownButton.isPressed){
+                                training.tiltDown()
+                                updateSteeringDisplays()
+                                Handler(Looper.getMainLooper()).postDelayed(this, 200)
+                            }
+                        }.run()
+                    }
+                }
+                Handler(Looper.getMainLooper()).post(runnableCode)
+            }
+
+            true
+        }
+    }
 
     companion object{
 
