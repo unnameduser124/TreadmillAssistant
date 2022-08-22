@@ -150,7 +150,6 @@ class EditTraining: AppCompatActivity() {
                                     list.size - addList.size,
                                     addList.size
                                 )
-                                println(list.size)
                             }
                         }
                     }
@@ -230,7 +229,6 @@ class EditTraining: AppCompatActivity() {
                                     list.size - addList.size,
                                     addList.size
                                 )
-                                println(list.size)
                             }
                         }
                     }

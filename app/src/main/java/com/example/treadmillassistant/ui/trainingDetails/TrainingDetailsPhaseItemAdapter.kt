@@ -25,8 +25,11 @@ class TrainingDetailsPhaseItemAdapter(private val dataset: List<TrainingPhase>):
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int){
         val item = dataset[position]
 
-        holder.duration.text = String.format(holder.duration.context.getString(R.string.duration_minutes),
-            round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER))
+        /*holder.duration.text = String.format(holder.duration.context.getString(R.string.duration_minutes),
+            round(secondsToMinutes(item.duration), DURATION_ROUND_MULTIPLIER))*/
+
+        setUpDurationView(holder.duration, item.duration)
+
         holder.speed.text = String.format(holder.speed.context.getString(R.string.speed), round(item.speed, SPEED_ROUND_MULTIPLIER))
         holder.distance.text = String.format(holder.distance.context.getString(R.string.distance),
             round(secondsToHoursNotRounded(item.duration)*item.speed, DISTANCE_ROUND_MULTIPLIER))

@@ -39,8 +39,9 @@ class AddTraining: AppCompatActivity(){
         chosenDate.timeInMillis = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         setUpDatePicker(binding.trainingDate, chosenDate)
         setUpTimePicker(binding.trainingTime, chosenDate)
+        val today = Calendar.getInstance()
 
-
+        binding.trainingDate.minDate = today.timeInMillis
 
         binding.selectedTrainingPlanName.text = if(user.trainingPlanList.trainingPlanList.isEmpty()){
             getString(R.string.no_training_plan)
@@ -140,7 +141,6 @@ class AddTraining: AppCompatActivity(){
                                     list.size - addList.size,
                                     addList.size
                                 )
-                                println(list.size)
                             }
                         }
                     }
@@ -220,7 +220,6 @@ class AddTraining: AppCompatActivity(){
                                     list.size - addList.size,
                                     addList.size
                                 )
-                                println(list.size)
                             }
                         }
                     }

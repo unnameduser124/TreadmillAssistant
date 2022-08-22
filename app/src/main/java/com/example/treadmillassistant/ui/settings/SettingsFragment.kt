@@ -8,15 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.treadmillassistant.backend.SETTINGS_TAB_NAV_VIEW_POSITION
-import com.example.treadmillassistant.backend.lastNavViewPosition
-import com.example.treadmillassistant.databinding.ClearUserDataConfirmationPopupBinding
+import com.example.treadmillassistant.backend.loadAllData
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
+import com.example.treadmillassistant.databinding.ClearTrainingHistoryConfirmationPopupBinding
 import com.example.treadmillassistant.databinding.FragmentSettingsBinding
-import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
-import com.example.treadmillassistant.ui.addTraining.AddTraining
 
 class SettingsFragment : Fragment() {
 
@@ -51,7 +47,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.clearUserDataButton.setOnClickListener {
-            val popupBinding = ClearUserDataConfirmationPopupBinding.inflate(layoutInflater)
+            val popupBinding = ClearTrainingHistoryConfirmationPopupBinding.inflate(layoutInflater)
 
             val width = LinearLayout.LayoutParams.WRAP_CONTENT
             val height = LinearLayout.LayoutParams.WRAP_CONTENT
@@ -64,7 +60,9 @@ class SettingsFragment : Fragment() {
                 popupWindow.dismiss()
             }
             popupBinding.confirmDataDeletionButton.setOnClickListener {
-                //TODO("Not implemented yet")
+                TrainingDatabaseService(it.context).clearTrainingHistory()
+                loadAllData(it.context)
+                popupWindow.dismiss()
             }
         }
 

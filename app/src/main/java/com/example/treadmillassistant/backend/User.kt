@@ -3,6 +3,8 @@ package com.example.treadmillassistant.backend
 import com.example.treadmillassistant.backend.training.TrainingCalendar
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingPlanList
+import com.example.treadmillassistant.backend.training.TrainingStatus
+import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 
 class User(
     var trainingSchedule: TrainingCalendar = TrainingCalendar(),
@@ -21,7 +23,9 @@ class User(
     fun getTotalDistance(): Double{
         var totalDistance = 0.0
         trainingSchedule.trainingList.forEach {
-            totalDistance+=it.getTotalDistance()
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalDistance+=it.getTotalDistance()
+            }
         }
         return round(totalDistance, DISTANCE_ROUND_MULTIPLIER)
     }
@@ -29,7 +33,9 @@ class User(
     fun getTotalDuration(): Double{
         var totalDuration = 0
         trainingSchedule.trainingList.forEach {
-            totalDuration+=it.getTotalDuration()
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalDuration+=it.getTotalDuration()
+            }
         }
         return secondsToHours(totalDuration.toDouble())
     }
@@ -37,7 +43,9 @@ class User(
     fun getTotalCalories(): Int{
         var totalCalories = 0
         trainingSchedule.trainingList.forEach {
-            totalCalories+= it.calculateCalories()
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalCalories+= it.calculateCalories()
+            }
         }
         return totalCalories
     }
@@ -46,8 +54,7 @@ class User(
         var longestDistance = 0.0
 
         trainingSchedule.trainingList.forEach {
-            if(it.getTotalDistance()>longestDistance){
-
+            if(it.getTotalDistance()>longestDistance && it.trainingStatus == TrainingStatus.Finished){
                 longestDistance = it.getTotalDistance()
             }
         }
@@ -57,7 +64,7 @@ class User(
     fun getLongestDuration(): Double{
         var longestDuration = 0
         trainingSchedule.trainingList.forEach {
-            if(it.getTotalDuration()>longestDuration){
+            if(it.getTotalDuration()>longestDuration && it.trainingStatus == TrainingStatus.Finished){
                 longestDuration = it.getTotalDuration()
             }
         }

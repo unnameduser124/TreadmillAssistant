@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.UserService
 import com.example.treadmillassistant.databinding.RegisterPageHealthLayoutBinding
 
 class RegisterHealthPage: AppCompatActivity() {
@@ -50,6 +51,7 @@ class RegisterHealthPage: AppCompatActivity() {
                 user = User(trainingCalendar, email, password,firstName,lastName, username, age, weight)
                 user.treadmillList.add(Treadmill())
                 user.trainingPlanList = trainingPlanList
+                UserService(this).insertNewUser(user)
                 val intent = Intent(this, MainActivity::class.java)
                 finishAffinity()
                 startActivity(intent)

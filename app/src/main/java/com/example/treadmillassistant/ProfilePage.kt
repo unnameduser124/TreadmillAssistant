@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
 import com.example.treadmillassistant.backend.tempUser
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ProfilePageLayoutBinding
 
@@ -21,7 +22,7 @@ class ProfilePage: AppCompatActivity() {
 
         binding.totalDistanceValue.text = String.format(getString(R.string.distance), user.getTotalDistance())
         binding.totalDurationValue.text = String.format(getString(R.string.duration_hours), user.getTotalDuration())
-        binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingList.size}"
+        binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingList.filter{it.trainingStatus == TrainingStatus.Finished}.size}"
         binding.longestDistanceTrainingValue.text = String.format(getString(R.string.distance), user.getLongestDistance())
         binding.longestDurationTrainingValue.text = String.format(getString(R.string.duration_hours), user.getLongestDuration())
         binding.fullNameTextView.text = String.format(getString(R.string.full_name), user.firstName, user.lastName)

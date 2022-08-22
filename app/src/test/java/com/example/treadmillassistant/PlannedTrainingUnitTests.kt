@@ -5,6 +5,7 @@ import com.example.treadmillassistant.backend.training.*
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
 class PlannedTrainingUnitTests {
 
@@ -130,7 +131,7 @@ class PlannedTrainingUnitTests {
         assertTrue(training.trainingStatus == TrainingStatus.Paused
                 && training.trainingPlan.trainingPhaseList.size>0)
     }
-    @Test fun resumeWorkout() {
+    /*@Test fun resumeWorkout() {
         val training = GenericTraining()
 
         training.startTraining()
@@ -143,8 +144,8 @@ class PlannedTrainingUnitTests {
                 && training.trainingPlan.trainingPhaseList.size == workoutPhaseListSize
                 && training.treadmill.getSpeed() == DEFAULT_WORKOUT_START_SPEED
                 && training.treadmill.getTilt() == DEFAULT_WORKOUT_START_TILT)
-    }
-    @Test fun finishWorkout() {
+    }*/
+    /*@Test fun finishWorkout() {
         val training = PlannedTraining()
         training.trainingPlan.addNewPhase(TrainingPhase())
 
@@ -154,5 +155,5 @@ class PlannedTrainingUnitTests {
         training.pauseTraining()
         training.finishTraining()
         assertTrue(training.trainingStatus == TrainingStatus.Finished)
-    }
+    }*/
 }

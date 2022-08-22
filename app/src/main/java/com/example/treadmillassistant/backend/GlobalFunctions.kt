@@ -1,7 +1,9 @@
 package com.example.treadmillassistant.backend
 
 import android.widget.DatePicker
+import android.widget.TextView
 import android.widget.TimePicker
+import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.training.TrainingPlan
@@ -116,5 +118,42 @@ fun getTreadmillsWithPagination(start: Int, offset: Int, list: MutableList<Tread
     }
     else{
         return mutableListOf()
+    }
+}
+
+fun setUpDurationView(textView: TextView, duration: Int){
+    if(duration>=6000){
+        val minutes = duration / 60
+        textView.text = String.format(
+            textView.context.getString(R.string.duration_minutes),
+            minutes
+        )
+    }
+    if(duration<60){
+        textView.text = String.format(textView.context.getString(R.string.duration_seconds), duration)
+    }
+    else{
+        val seconds = duration % 60
+        val minutes = duration / 60
+        if(seconds == 0){
+            textView.text = String.format(
+                textView.context.getString(R.string.duration_minutes),
+                minutes
+            )
+        }
+        else if(seconds<10){
+            textView.text = String.format(
+                textView.context.getString(R.string.current_duration_less_than_10_seconds_calendar),
+                minutes,
+                seconds
+            )
+        }
+        else {
+            textView.text = String.format(
+                textView.context.getString(R.string.current_duration_more_than_10_seconds_calendar),
+                minutes,
+                seconds
+            )
+        }
     }
 }

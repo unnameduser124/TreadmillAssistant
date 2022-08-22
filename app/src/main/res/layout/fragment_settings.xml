@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id = "@+id/clear_user_data_button"
-            android:text = "@string/clear_user_data_label"
+            android:text = "@string/clear_training_history_label"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/change_health_data"

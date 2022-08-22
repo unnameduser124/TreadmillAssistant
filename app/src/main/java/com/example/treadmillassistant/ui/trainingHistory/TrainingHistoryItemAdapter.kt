@@ -34,8 +34,11 @@ class TrainingHistoryItemAdapter(private val dataset: List<Training>): RecyclerV
         val dateFormat = SimpleDateFormat("dd.MM.${training.trainingTime.get(Calendar.YEAR)}", Locale.ROOT)
         val trainingTime = dateFormat.format(training.trainingTime.time)
 
-        holder.duration.text = String.format(holder.duration.context.getString(R.string.duration_minutes),
-            round(secondsToMinutes(training.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
+        /*holder.duration.text = String.format(holder.duration.context.getString(R.string.duration_minutes),
+            round(secondsToMinutes(training.getTotalDuration()), DURATION_ROUND_MULTIPLIER))*/
+
+        setUpDurationView(holder.duration, training.getTotalDuration())
+
         holder.avgSpeed.text = String.format(holder.avgSpeed.context.getString(R.string.speed), round(training.getAverageSpeed(), SPEED_ROUND_MULTIPLIER))
         holder.distance.text = String.format(holder.distance.context.getString(R.string.distance), round(training.getTotalDistance(), DISTANCE_ROUND_MULTIPLIER))
         holder.date.text = trainingTime

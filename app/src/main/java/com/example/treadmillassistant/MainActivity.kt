@@ -9,6 +9,8 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -17,11 +19,18 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.localDatabase.TrainingService
+import com.example.treadmillassistant.backend.localDatabase.UserService
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,65 +45,73 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if(tempUser==null){
-            generateDBData(this)
-            val intent = Intent(this, LoginPage::class.java)
-            startActivity(intent)
-        }
-        else{
-            loadAllData(this)
-            setSupportActionBar(binding.appBarMain.toolbar)
-            //navigation drawer setup
-            val header = binding.navView.getHeaderView(0)
-            val drawerLayout: DrawerLayout = binding.drawerLayout
-            val navView: NavigationView = binding.navView
-
-            navController = findNavController(R.id.nav_host_fragment_content_main)
-            appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.nav_home, R.id.nav_training_history, R.id.nav_settings
-                ), drawerLayout
-            )
-            navView.menu.getItem(lastNavViewPosition).isChecked = true
-            navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navView.setupWithNavController(navController)
-
-            //profile header email setup
-            header.findViewById<TextView>(R.id.email_header).text = user.email
-
-            navView.setNavigationItemSelectedListener {
-                if(it ==  navView.menu.getItem(HOME_TAB_NAV_VIEW_POSITION)){
-                    lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({drawerLayout.closeDrawers()}, 50)
-                    navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
-                    binding.appBarMain.toolbar.menu.setGroupVisible(0, true)
-
-                }
-                else if(it ==  navView.menu.getItem(TRAINING_HISTORY_NAV_VIEW_POSITION)){
-                    lastNavViewPosition = TRAINING_HISTORY_NAV_VIEW_POSITION
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({drawerLayout.closeDrawers()}, 50)
-                    navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
-                    binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
-                }
-                else{
-
-                    lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({drawerLayout.closeDrawers()}, 50)
-                    navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
-                    binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
-                }
-                it.isChecked = true
-                true
+        if(appStart){
+            val tempUser =  UserService(this).loadUser()
+            if(tempUser!=null){
+                user = tempUser
             }
-
-            header.setOnClickListener {
-                val intent = Intent(this, ProfilePage::class.java)
+            else{
+                val intent = Intent(this, LoginPage::class.java)
                 startActivity(intent)
+                return
             }
+            loadAllData(this)
+
+            appStart = false
+        }
+
+
+        setSupportActionBar(binding.appBarMain.toolbar)
+        //navigation drawer setup
+        val header = binding.navView.getHeaderView(0)
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        navController = findNavController(R.id.nav_host_fragment_content_main)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home, R.id.nav_training_history, R.id.nav_settings
+            ), drawerLayout
+        )
+        navView.menu.getItem(lastNavViewPosition).isChecked = true
+        navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+
+        //profile header email setup
+        header.findViewById<TextView>(R.id.email_header).text = user.email
+
+        navView.setNavigationItemSelectedListener {
+            if(it ==  navView.menu.getItem(HOME_TAB_NAV_VIEW_POSITION)){
+                lastNavViewPosition = HOME_TAB_NAV_VIEW_POSITION
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({drawerLayout.closeDrawers()}, 50)
+                navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                binding.appBarMain.toolbar.menu.setGroupVisible(0, true)
+
+            }
+            else if(it ==  navView.menu.getItem(TRAINING_HISTORY_NAV_VIEW_POSITION)){
+                lastNavViewPosition = TRAINING_HISTORY_NAV_VIEW_POSITION
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({drawerLayout.closeDrawers()}, 50)
+                navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
+            }
+            else{
+
+                lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({drawerLayout.closeDrawers()}, 50)
+                navController.navigate(navView.menu.getItem(lastNavViewPosition).itemId)
+                binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
+            }
+            it.isChecked = true
+            true
+        }
+
+        header.setOnClickListener {
+            val intent = Intent(this, ProfilePage::class.java)
+            startActivity(intent)
         }
     }
 

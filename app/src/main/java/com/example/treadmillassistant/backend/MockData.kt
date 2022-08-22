@@ -159,19 +159,21 @@ fun generateDBData(context: Context){
 }
 
 fun loadAllData(context: Context){
-    if(user.treadmillList.isEmpty() && user.trainingSchedule.trainingList.isEmpty() && user.trainingPlanList.trainingPlanList.isEmpty()){
-        val userService = UserService(context)
-        user = userService.loadUser()!!
+    user.treadmillList.clear()
+    user.trainingPlanList.trainingPlanList.clear()
+    user.trainingSchedule.trainingList.clear()
 
-        val trainingService = TrainingService(context)
-        user.trainingSchedule.trainingList = trainingService.getAllTrainings()
+    val userService = UserService(context)
+    user = userService.loadUser()!!
 
-        val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
-        trainingPlanIDs.forEach {
-            val trainingPlan = TrainingPlanService(context).getTrainingPlanByID(it.ID)
-            user.trainingPlanList.addTrainingPlan(trainingPlan!!)
-        }
-        user.treadmillList = TreadmillService(context).getUserTreadmills()
-        user.trainingSchedule.sortCalendar()
+    val trainingService = TrainingService(context)
+    user.trainingSchedule.trainingList = trainingService.getAllTrainings()
+
+    val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
+    trainingPlanIDs.forEach {
+        val trainingPlan = TrainingPlanService(context).getTrainingPlanByID(it.ID)
+        user.trainingPlanList.addTrainingPlan(trainingPlan!!)
     }
+    user.treadmillList = TreadmillService(context).getUserTreadmills()
+    user.trainingSchedule.sortCalendar()
 }

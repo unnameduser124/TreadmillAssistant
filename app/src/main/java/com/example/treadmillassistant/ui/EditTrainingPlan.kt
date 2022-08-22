@@ -94,7 +94,6 @@ class EditTrainingPlan: AppCompatActivity() {
                 phaseList.forEach {
                     if(it.ID==-1L){
                         it.ID = tpService.insertNewTrainingPhase(it)
-                        println(it.trainingPlanID)
                     }
                 }
                 removedPhaseIDs.forEach {

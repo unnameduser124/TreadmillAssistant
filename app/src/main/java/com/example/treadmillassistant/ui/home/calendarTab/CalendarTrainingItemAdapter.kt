@@ -38,8 +38,8 @@ class CalendarTrainingItemAdapter(private val dataset: List<Training>): Recycler
         val trainingTime = dateFormat.format(item.trainingTime.time)
 
         holder.timeView.text = trainingTime
-        holder.durationView.text = String.format(holder.parent.context.getString(R.string.calendar_item_duration),
-            round(secondsToMinutes(item.getTotalDuration()), DURATION_ROUND_MULTIPLIER))
+
+        setUpDurationView(holder.durationView, item.getTotalDuration())
 
         //hide start button if training is finished, abandoned or planned one day or more in the past
         val date = Calendar.getInstance()

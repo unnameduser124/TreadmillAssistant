@@ -29,6 +29,8 @@ const val SETTINGS_TAB_NAV_VIEW_POSITION = 2
 const val SEARCH_POPUP_LIST_SIZE = 13
 const val SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT = 5
 
+var appStart = true
+
 var tabLayout: TabLayout? = null
 var startClicked: OnStartClickedListener? = null
 var lastNavViewPosition = 0

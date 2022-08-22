@@ -37,6 +37,11 @@ open class TrainingDatabaseService(context: Context) : SQLiteOpenHelper(context,
         db.execSQL(SQL_CLEAR_TRAINING_PHASE_TABLE)
     }
 
+    fun clearTrainingHistory() {
+        val db = this.writableDatabase
+        db.execSQL(SQL_CLEAR_TRAINING_TABLE)
+    }
+
 
     companion object {
         // If you change the database schema, you must increment the database version.

@@ -88,7 +88,6 @@ class UserService(val context: Context): TrainingDatabaseService(context){
             null,
             sortOrder
         )
-
         var user: User? = null
         if((cursor != null) && (cursor.count > 0)){
             with(cursor) {
@@ -112,7 +111,6 @@ class UserService(val context: Context): TrainingDatabaseService(context){
         }
 
         cursor.close()
-
         return user
     }
 

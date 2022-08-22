@@ -80,17 +80,10 @@ class PlannedTraining(
 
     override fun getTotalDuration(): Int{
         var duration = 0
-        if(trainingStatus != TrainingStatus.Finished || trainingStatus == TrainingStatus.Upcoming || trainingStatus == TrainingStatus.Abandoned){
-            trainingPlan.trainingPhaseList.forEach {
-                duration += it.duration
-            }
+        trainingPlan.trainingPhaseList.forEach {
+            duration += it.duration
         }
-        else{
-            trainingPlan.trainingPhaseList.filter{ it.isFinished }.forEach {
-                duration += it.duration
-            }
-        }
-        return duration + phasePartialCompletion
+        return duration
     }
 
     override fun getCurrentMoment(): Int{

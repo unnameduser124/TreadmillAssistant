@@ -19,13 +19,11 @@ import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.TrainingTabBinding
 import com.example.treadmillassistant.ui.home.OnStartClickedListener
 import com.example.treadmillassistant.ui.home.PageViewModel
+import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFragment.Companion.chosenDay
+import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFragment.Companion.trainingList
+import com.example.treadmillassistant.ui.home.calendarTab.CalendarTrainingItemAdapter
 import com.google.android.material.button.MaterialButton
-import okhttp3.internal.wait
-import java.lang.Math.floor
-import java.lang.Thread.sleep
-
 import java.util.*
-import kotlin.concurrent.thread
 
 class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
@@ -136,6 +134,9 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     unfinishPhases(training)
                     training.trainingStatus = TrainingStatus.Upcoming
                 }
+                if(training is GenericTraining){
+                    trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
+                }
                 newGenericTraining()
                 finishTrainingButton.isGone = true
                 binding.startTrainingButton.text = getString(R.string.start_new)
@@ -206,11 +207,12 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                         }
 
                         if(training.getCurrentMoment()>=training.getTotalDuration()){
-                            training!!.finishTraining(binding.finishTrainingButton.context)
+                            training.finishTraining(binding.finishTrainingButton.context)
                             binding.startTrainingButton.text = getString(R.string.training_finished)
+                            trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
                             newGenericTraining()
                         }
-                        handler.postDelayed(this, 250)
+                        handler.postDelayed(this, 100)
                     }
                 }
             }
@@ -222,7 +224,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                 override fun run() {
                     if(training.trainingStatus == TrainingStatus.InProgress){
                         updateStatusDisplays()
-                        handler.postDelayed(this, 250)
+                        handler.postDelayed(this, 100)
                     }
                 }
             }
@@ -251,20 +253,8 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
 
     fun updateStatusDisplays(){
         try{
-            val currentMoment = training.getCurrentMoment()
-            if(currentMoment<60){
-                binding.timeTextView.text = String.format(getString(R.string.duration_seconds), currentMoment)
-            }
-            else{
-                val seconds = currentMoment % 60
-                val minutes = currentMoment / 60
-                if(seconds<10){
-                    binding.timeTextView.text = String.format(getString(R.string.current_duration_less_than_10_seconds), minutes, seconds)
-                }
-                else {
-                    binding.timeTextView.text = String.format(getString(R.string.current_duration_more_than_10_seconds), minutes, seconds)
-                }
-            }
+            setUpDurationView(binding.timeTextView, training.getCurrentMoment())
+
             binding.distanceTextView.text = String.format(getString(R.string.distance), training.getCurrentDistance())
             binding.caloriesTextView.text = String.format(getString(R.string.calories),
                 calculateCaloriesForOngoingTraining(training.getCurrentMoment()))
@@ -290,7 +280,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         updateSteeringDisplays()
     }
 
-    fun speedButtonListeners(){
+    private fun speedButtonListeners(){
         binding.speedUpButton.setOnClickListener{
             if(training is PlannedTraining){
                 Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()
@@ -357,7 +347,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
         }
     }
 
-    fun tiltButtonListeners(){
+    private fun tiltButtonListeners(){
         binding.tiltUpButton.setOnClickListener{
             if(training is PlannedTraining){
                 Toast.makeText(this.context, "Can't change in planned training!", Toast.LENGTH_SHORT).show()

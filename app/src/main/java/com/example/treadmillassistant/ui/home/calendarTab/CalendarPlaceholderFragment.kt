@@ -31,12 +31,14 @@ class CalendarPlaceholderFragment: Fragment() {
         val binding = CalendarTabBinding.inflate(layoutInflater)
         val calendar = Calendar.getInstance()
         var dataset = user.trainingSchedule.getTrainingsForDate(calendar)
+        chosenDay = Calendar.getInstance()
 
         val itemAdapter = CalendarTrainingItemAdapter(dataset)
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         binding.dayTrainingsList.layoutManager = linearLayoutManager
         binding.dayTrainingsList.adapter = itemAdapter
         binding.dayTrainingsList.setHasFixedSize(true)
+        trainingList = binding.dayTrainingsList
 
         binding.trainingScheduleCalendar.setOnDateChangeListener { _, year, month, day ->
             val newCalendar = Calendar.getInstance()
@@ -46,6 +48,7 @@ class CalendarPlaceholderFragment: Fragment() {
             dataset = user.trainingSchedule.getTrainingsForDate(newCalendar)
             val itemAdapter = CalendarTrainingItemAdapter(dataset)
             binding.dayTrainingsList.adapter = itemAdapter
+            chosenDay = newCalendar
         }
 
         return binding.root
@@ -54,6 +57,8 @@ class CalendarPlaceholderFragment: Fragment() {
     companion object{
 
         private const val SECTION_NUMBER = "section number"
+        lateinit var trainingList: RecyclerView
+        var chosenDay = Calendar.getInstance()
 
         @JvmStatic
         fun newInstance(sectionNumber: Int): CalendarPlaceholderFragment{

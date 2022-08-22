@@ -1,11 +1,7 @@
 <resources>
     <string name="app_name">TreadmillAssistant</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_training_history">Training history</string>
@@ -13,11 +9,10 @@
     <string name="total_distance">Total distance: %1$s km</string>
     <string name="distance">%1$s km</string>
     <string name="total_duration_minutes">Total duration: %1$s min</string>
-    <string name="calendar_item_duration">Duration: %1$s min</string>
     <string name="duration_minutes">%1$s min</string>
-    <string name="duration_seconds">%1$s s</string>
-    <string name="current_duration_less_than_10_seconds">%1$s:0%2$s</string>
-    <string name="current_duration_more_than_10_seconds">%1$s:%2$s</string>
+    <string name="duration_seconds">%1$ss</string>
+    <string name="current_duration_less_than_10_seconds_calendar">%1$s min 0%2$ss</string>
+    <string name="current_duration_more_than_10_seconds_calendar">%1$s min %2$ss</string>
     <string name="duration_hours">%1$s h</string>
     <string name="percentage">%1$s%%</string>
     <string name="pace">%1$s\'</string>
@@ -33,9 +28,7 @@
     <string name="add_new">add new</string>
     <string name="cancel">cancel</string>
     <string name="edit">edit</string>
-    <string name="select_plan">select plan</string>
     <string name="no_training_plan">no training plan</string>
-    <string name="search">search</string>
     <string name="duration_label">duration</string>
     <string name="distance_label">distance</string>
     <string name="tilt_label">tilt</string>
@@ -97,7 +90,6 @@
     <string name="confirm_label">confirm</string>
     <string name="month_and_year">%1$s %2$s</string>
     <string name="treadmill_name_hint">treadmill name</string>
-    <string name="select_treadmill">select treadmill</string>
     <string name="no_treadmill">no treadmill</string>
     <string name="min_speed_hint">min speed</string>
     <string name="max_speed_hint">max speed</string>
@@ -111,7 +103,7 @@
     <string name="change_data_label">change data</string>
     <string name="change_health_data_label">Change health data</string>
     <string name="select_label">select</string>
-    <string name="clear_user_data_label">clear user data</string>
+    <string name="clear_training_history_label">clear training history</string>
     <string name="are_you_sure_label">Are you sure?</string>
     <string name="add_new_training_label">Add new training</string>
     <string name="add_new_training_plan_menu_item_label">Add new training plan</string>
