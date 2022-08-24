@@ -9,8 +9,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.finishAffinity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,18 +17,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.localDatabase.UserService
-import com.example.treadmillassistant.backend.training.PlannedTraining
-import com.example.treadmillassistant.backend.training.Training
-import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,19 +38,39 @@ class MainActivity : AppCompatActivity() {
 
         if(appStart){
             val tempUser =  UserService(this).loadUser()
+
+            /*thread{
+                val client = OkHttpClient()
+
+                for(i in 0..50){
+                    val request = Request.Builder()
+                        .url("$BASE_URL/get_user_trainings/$i/24-08-2022?skip=0&limit=10")
+                        .build()
+
+                    val call = client.newCall(request)
+                    val response = call.execute()
+
+
+                    if(response.code == 200){
+                        println(getResponseCode(response.code))
+                        println(response.body!!.string())
+                    }
+                }
+
+            }*/
+
             if(tempUser!=null){
                 user = tempUser
             }
             else{
                 val intent = Intent(this, LoginPage::class.java)
+                appStart = false
                 startActivity(intent)
                 return
             }
-            loadAllData(this)
-
+            loadUser(this)
             appStart = false
         }
-
 
         setSupportActionBar(binding.appBarMain.toolbar)
         //navigation drawer setup

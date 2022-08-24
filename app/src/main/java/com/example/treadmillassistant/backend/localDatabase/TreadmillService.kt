@@ -78,7 +78,7 @@ class TreadmillService(val context: Context): TrainingDatabaseService(context){
             MIN_TILT
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val cursor = db.query(
             TABLE_NAME,
@@ -127,7 +127,7 @@ class TreadmillService(val context: Context): TrainingDatabaseService(context){
             MIN_TILT
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "${BaseColumns._ID} = ?"
 

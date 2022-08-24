@@ -158,22 +158,9 @@ fun generateDBData(context: Context){
     }
 }
 
-fun loadAllData(context: Context){
-    user.treadmillList.clear()
-    user.trainingPlanList.trainingPlanList.clear()
-    user.trainingSchedule.trainingList.clear()
 
+fun loadUser(context: Context){
     val userService = UserService(context)
     user = userService.loadUser()!!
-
-    val trainingService = TrainingService(context)
-    user.trainingSchedule.trainingList = trainingService.getAllTrainings()
-
-    val trainingPlanIDs = TrainingPlanService(context).getAllTrainingPlans()
-    trainingPlanIDs.forEach {
-        val trainingPlan = TrainingPlanService(context).getTrainingPlanByID(it.ID)
-        user.trainingPlanList.addTrainingPlan(trainingPlan!!)
-    }
     user.treadmillList = TreadmillService(context).getUserTreadmills()
-    user.trainingSchedule.sortCalendar()
 }

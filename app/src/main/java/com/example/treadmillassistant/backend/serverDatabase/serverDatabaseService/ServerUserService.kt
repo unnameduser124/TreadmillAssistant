@@ -2,14 +2,17 @@ package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseServ
 
 import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.LoginUserID
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewUserID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerUser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.hashMessage
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
 
 
 class ServerUserService {
@@ -17,6 +20,7 @@ class ServerUserService {
     fun createUser(serverUser: ServerUser): StatusCode {
         val json = serialize(serverUser)
         val client = OkHttpClient()
+        var code: StatusCode = StatusCode.Unknown
 
         val body: RequestBody = json
             .toRequestBody(json.toMediaTypeOrNull())
@@ -25,10 +29,16 @@ class ServerUserService {
             .url("$BASE_URL/create_user")
             .post(body)
             .build()
-
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
-        return getResponseCode(response.code)
+        code = getResponseCode(response.code)
+        if(code == StatusCode.Created){
+            val json = response.body!!.string()
+            val id = Gson().fromJson(json, NewUserID::class.java)
+            user.ID = id.id
+        }
+
+        return code
     }
 
     fun updateUser(serverUser: ServerUser, userID: Long): StatusCode{
@@ -40,7 +50,7 @@ class ServerUserService {
 
         val request: Request = Request.Builder()
             .url( "$BASE_URL/update_user/${userID}")
-            .post(body)
+            .put(body)
             .build()
 
         val call: Call = client.newCall(request)
@@ -54,16 +64,18 @@ class ServerUserService {
 
         val request: Request = Request.Builder()
             .url("$BASE_URL/delete_user/$userID")
+            .delete()
             .build()
 
+        println(request.url)
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
-
+        println(response.code)
         return getResponseCode(response.code)
     }
 
     fun checkUserCredentials(email: String, password: String): StatusCode {
-        val json = serialize(object{ val Password = password })
+        val json = serialize(object{ val Password = hashMessage(password) })
 
         val client = OkHttpClient()
 
@@ -78,36 +90,29 @@ class ServerUserService {
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
         if(response.code == StatusCode.OK.code){
-            val id = response.body.toString().toLong()
-            user.ID = id
+            val id = Gson().fromJson(response.body!!.string(), LoginUserID::class.java)
+            user.ID = id.UserID
         }
         return getResponseCode(response.code)
     }
 
-    fun getUser(userID: Long): Pair<StatusCode, ServerUser>{
+    fun getUser(userID: Long): Pair<StatusCode, List<ServerUser>>{
         val client = OkHttpClient()
         var code: StatusCode = StatusCode.Unknown
-        var deserializedUser = ServerUser("", "", "", -1, -1.0, "", "")
+        var deserializedUser = mutableListOf<ServerUser>()
 
         val request = Request.Builder()
             .url("$BASE_URL/get_user/$userID")
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
+        val call = client.newCall(request)
+        val response = call.execute()
+        code = getResponseCode(response.code)
+        if(code==StatusCode.OK){
+            val userJson = response.body!!.string()
+            deserializedUser = Gson().fromJson(userJson, object: TypeToken<List<ServerUser>>(){}.type)
+        }
 
-            override fun onResponse(call: Call, response: Response) {
-                if(response.code==StatusCode.OK.code){
-                    response.use {
-                        val userJson = response.body!!.string()
-                        deserializedUser = Gson().fromJson(userJson, ServerUser::class.java)
-                    }
-                }
-                code = getResponseCode(response.code)
-            }
-        })
         return Pair(code, deserializedUser)
     }
 
@@ -119,7 +124,7 @@ class ServerUserService {
 
         val request: Request = Request.Builder()
             .url("$BASE_URL/update_user_password/${userID}")
-            .post(requestBody)
+            .put(requestBody)
             .build()
 
         val call: Call = client.newCall(request)

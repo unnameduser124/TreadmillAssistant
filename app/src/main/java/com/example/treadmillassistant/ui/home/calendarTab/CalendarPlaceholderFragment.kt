@@ -5,13 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.CalendarTabBinding
 import com.example.treadmillassistant.ui.home.PageViewModel
 import java.util.*
+import kotlin.concurrent.thread
 
 class CalendarPlaceholderFragment: Fragment() {
     private lateinit var pageViewModel: PageViewModel
@@ -29,36 +35,66 @@ class CalendarPlaceholderFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = CalendarTabBinding.inflate(layoutInflater)
-        val calendar = Calendar.getInstance()
-        var dataset = user.trainingSchedule.getTrainingsForDate(calendar)
-        chosenDay = Calendar.getInstance()
 
-        val itemAdapter = CalendarTrainingItemAdapter(dataset)
-        val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        binding.dayTrainingsList.layoutManager = linearLayoutManager
-        binding.dayTrainingsList.adapter = itemAdapter
-        binding.dayTrainingsList.setHasFixedSize(true)
-        trainingList = binding.dayTrainingsList
+        val loaded: MutableLiveData<Boolean> by lazy{
+            MutableLiveData<Boolean>()
+        }
+        thread{
+            reloadTrainingList(Calendar.getInstance())
+            loaded.postValue(true)
+        }
+        var dataset = mutableListOf<Training>()
+        var itemAdapter = CalendarTrainingItemAdapter(dataset)
+        val observer = Observer<Boolean>{
+            dataset = user.trainingSchedule.trainingList
+            chosenDay = Calendar.getInstance()
+            itemAdapter = CalendarTrainingItemAdapter(dataset)
+            val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+            binding.dayTrainingsList.layoutManager = linearLayoutManager
+            binding.dayTrainingsList.adapter = itemAdapter
+            binding.dayTrainingsList.setHasFixedSize(true)
+            trainingList = binding.dayTrainingsList
+        }
+        loaded.observe(viewLifecycleOwner, observer)
+
 
         binding.trainingScheduleCalendar.setOnDateChangeListener { _, year, month, day ->
-            val newCalendar = Calendar.getInstance()
-            newCalendar.set(Calendar.YEAR, year)
-            newCalendar.set(Calendar.MONTH, month)
-            newCalendar.set(Calendar.DAY_OF_MONTH, day)
-            dataset = user.trainingSchedule.getTrainingsForDate(newCalendar)
-            val itemAdapter = CalendarTrainingItemAdapter(dataset)
-            binding.dayTrainingsList.adapter = itemAdapter
-            chosenDay = newCalendar
+            loaded.value = false
+            thread{
+                val newCalendar = Calendar.getInstance()
+                newCalendar.set(Calendar.YEAR, year)
+                newCalendar.set(Calendar.MONTH, month)
+                newCalendar.set(Calendar.DAY_OF_MONTH, day)
+                reloadTrainingList(newCalendar)
+                dataset = user.trainingSchedule.getTrainingsForDate(newCalendar)
+                itemAdapter = CalendarTrainingItemAdapter(dataset)
+                chosenDay = newCalendar
+                loaded.postValue(true)
+            }
+            val loadedObserver = Observer<Boolean>{
+                if(it){
+                    binding.dayTrainingsList.adapter = itemAdapter
+                }
+            }
+            loaded.observe(viewLifecycleOwner, loadedObserver)
         }
 
         return binding.root
+    }
+
+    private fun reloadTrainingList(newCalendar: Calendar){
+        user.trainingSchedule.trainingList.clear()
+        val allTrainingsPair = ServerTrainingService().getTrainingsForDay(newCalendar, 0, 10)
+        allTrainingsPair.second.forEach {
+            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+        }
     }
 
     companion object{
 
         private const val SECTION_NUMBER = "section number"
         lateinit var trainingList: RecyclerView
-        var chosenDay = Calendar.getInstance()
+        var chosenDay: Calendar = Calendar.getInstance()
 
         @JvmStatic
         fun newInstance(sectionNumber: Int): CalendarPlaceholderFragment{

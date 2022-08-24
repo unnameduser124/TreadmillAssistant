@@ -122,9 +122,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val calendar = Calendar.getInstance()
                 calendar.time = date
 
-                var trainingStatus: TrainingStatus
-
-                trainingStatus = if(status=="Upcoming"){
+                var trainingStatus: TrainingStatus = if(status=="Upcoming"){
                     TrainingStatus.Upcoming
                 } else if(status=="Finished"){
                     TrainingStatus.Finished
@@ -395,7 +393,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                     calendar.time = date
                 }
 
-                var trainingStatus: TrainingStatus = if(status=="Upcoming"){
+                val trainingStatus: TrainingStatus = if(status=="Upcoming"){
                     TrainingStatus.Upcoming
                 } else if(status=="Finished"){
                     TrainingStatus.Finished

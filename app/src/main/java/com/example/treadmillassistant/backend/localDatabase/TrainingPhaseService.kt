@@ -2,7 +2,6 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.DURATION
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPhaseTable.MODIFICATION_FLAG

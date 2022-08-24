@@ -65,7 +65,7 @@ class ServerTrainingPhaseService {
         
         val request = Request.Builder()
             .url("$BASE_URL/update_training_phase/$trainingPhaseID")
-            .post(body)
+            .put(body)
             .build()
         
         val call = client.newCall(request)
@@ -79,6 +79,7 @@ class ServerTrainingPhaseService {
 
         val request = Request.Builder()
             .url("$BASE_URL/delete_training_phase/$trainingPhaseID")
+            .delete()
             .build()
 
         val call = client.newCall(request)

@@ -1,24 +1,33 @@
 package com.example.treadmillassistant.backend
 
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerUser
 import com.example.treadmillassistant.backend.training.TrainingCalendar
-import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingPlanList
 import com.example.treadmillassistant.backend.training.TrainingStatus
-import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 
 class User(
-    var trainingSchedule: TrainingCalendar = TrainingCalendar(),
     var email: String,
     var password: String = "",
-    var firstName: String,
-    var lastName: String,
-    var username: String,
-    var age: Int,
-    var weight: Double,
+    var firstName: String = "",
+    var lastName: String = "",
+    var username: String = "",
+    var age: Int = 0,
+    var weight: Double = 0.0,
     var treadmillList: MutableList<Treadmill> = mutableListOf(),
     var trainingPlanList: TrainingPlanList = TrainingPlanList(),
-    var ID: Long = 0) {
+    var trainingSchedule: TrainingCalendar = TrainingCalendar(),
+    var ID: Long = 0
+) {
 
+    constructor(serverUser: ServerUser, userID: Long) : this(
+        serverUser.Email,
+        "",
+        serverUser.FirstName,
+        serverUser.LastName,
+        serverUser.Nick,
+        serverUser.Age,
+        serverUser.Weight,
+        ID = userID)
 
     fun getTotalDistance(): Double{
         var totalDistance = 0.0

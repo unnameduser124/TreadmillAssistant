@@ -11,14 +11,19 @@ import android.widget.NumberPicker
 import android.widget.PopupWindow
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.FragmentTrainingHistoryBinding
 import com.example.treadmillassistant.databinding.MonthPickerPopupBinding
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class TrainingHistoryFragment : Fragment() {
 
@@ -42,13 +47,26 @@ class TrainingHistoryFragment : Fragment() {
         updateDateButton(cal)
 
         //item adapter with training list sorted from newest to oldest as dataset
-        var itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.getHistoryTrainingsForMonth(cal))
+        val loaded: MutableLiveData<Boolean> by lazy{
+            MutableLiveData<Boolean>()
+        }
+
+        thread{
+            reloadTrainingList(Calendar.getInstance())
+            loaded.postValue(true)
+        }
+
+        val observer = Observer<Boolean>{
+            if(it){
+                val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingList)
+                binding.trainingHistoryTrainingList.adapter = itemAdapter
+                binding.trainingHistoryTrainingList.setHasFixedSize(true)
+            }
+        }
+        loaded.observe(viewLifecycleOwner, observer)
 
         val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-
-        binding.trainingHistoryTrainingList.adapter = itemAdapter
         binding.trainingHistoryTrainingList.layoutManager = linearLayoutManager
-        binding.trainingHistoryTrainingList.setHasFixedSize(true)
 
         binding.monthPickedButton.setOnClickListener {
             val popupBinding = MonthPickerPopupBinding.inflate(layoutInflater)
@@ -72,8 +90,23 @@ class TrainingHistoryFragment : Fragment() {
             popupBinding.dateConfirmButton.setOnClickListener {
                 cal.set(Calendar.YEAR, popupBinding.datePicker.year)
                 cal.set(Calendar.MONTH, popupBinding.datePicker.month)
-                itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.getHistoryTrainingsForMonth(cal))
-                binding.trainingHistoryTrainingList.adapter = itemAdapter
+                val loaded: MutableLiveData<Boolean> by lazy{
+                    MutableLiveData<Boolean>()
+                }
+
+                thread{
+                    reloadTrainingList(cal)
+                    loaded.postValue(true)
+                }
+
+                val observer = Observer<Boolean>{
+                    if(it){
+                        val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingList)
+                        binding.trainingHistoryTrainingList.adapter = itemAdapter
+                        binding.trainingHistoryTrainingList.setHasFixedSize(true)
+                    }
+                }
+                loaded.observe(viewLifecycleOwner, observer)
 
                 popupWindow.dismiss()
                 updateDateButton(cal)
@@ -87,6 +120,14 @@ class TrainingHistoryFragment : Fragment() {
         val monthFormat = SimpleDateFormat("MMMM", Locale.US)
         val monthName = monthFormat.format(calendar.time)
         binding.monthPickedButton.text = String.format(getString(R.string.month_and_year), monthName, calendar.get(Calendar.YEAR).toString())
+    }
+
+    private fun reloadTrainingList(newCalendar: Calendar){
+        user.trainingSchedule.trainingList.clear()
+        val allTrainingsPair = ServerTrainingService().getTrainingsForMonth(newCalendar, 0, 10)
+        allTrainingsPair.second.forEach {
+            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+        }
     }
 
 

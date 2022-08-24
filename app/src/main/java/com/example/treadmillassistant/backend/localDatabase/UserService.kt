@@ -2,7 +2,6 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.AGE
@@ -14,7 +13,6 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.USERNAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.UserTable.WEIGHT
-import com.example.treadmillassistant.backend.user
 
 class UserService(val context: Context): TrainingDatabaseService(context){
 
@@ -30,6 +28,7 @@ class UserService(val context: Context): TrainingDatabaseService(context){
             put(AGE, user.age)
             put(WEIGHT, user.weight)
             put(MODIFICATION_FLAG, "C")
+            put(BaseColumns._ID, user.ID)
         }
 
         val newUserID = db.insert(TABLE_NAME, null, contentValues)

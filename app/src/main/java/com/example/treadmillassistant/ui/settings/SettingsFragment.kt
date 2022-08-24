@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
-import com.example.treadmillassistant.backend.loadAllData
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
+import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ClearTrainingHistoryConfirmationPopupBinding
 import com.example.treadmillassistant.databinding.FragmentSettingsBinding
 
@@ -61,7 +61,7 @@ class SettingsFragment : Fragment() {
             }
             popupBinding.confirmDataDeletionButton.setOnClickListener {
                 TrainingDatabaseService(it.context).clearTrainingHistory()
-                loadAllData(it.context)
+                user.trainingSchedule.trainingList.clear()
                 popupWindow.dismiss()
             }
         }

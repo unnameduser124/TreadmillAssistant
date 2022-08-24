@@ -8,12 +8,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
-import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.training.TrainingPlan
-import com.example.treadmillassistant.ui.EditTrainingPlan
+import com.example.treadmillassistant.backend.Treadmill
 import com.example.treadmillassistant.ui.EditTreadmill
-import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
-import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.selectedTrainingPlan
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.selectedTreadmill
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.treadmillPopup
 import com.example.treadmillassistant.ui.editTraining.EditTraining

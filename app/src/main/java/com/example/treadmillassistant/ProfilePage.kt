@@ -3,7 +3,6 @@ package com.example.treadmillassistant
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
 import com.example.treadmillassistant.backend.tempUser
 import com.example.treadmillassistant.backend.training.TrainingStatus

@@ -1,7 +1,6 @@
 package com.example.treadmillassistant.backend.localDatabase
 
 import android.provider.BaseColumns
-import com.example.treadmillassistant.backend.training.Training
 
 object TrainingDatabaseConstants {
 
@@ -50,7 +49,7 @@ object TrainingDatabaseConstants {
 
 
     const val SQL_CREATE_USER_TABLE = "CREATE TABLE ${UserTable.TABLE_NAME} (" +
-            "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "${BaseColumns._ID} INTEGER PRIMARY KEY NOT NULL, " +
             "${UserTable.EMAIL} TEXT NOT NULL, " +
             "${UserTable.PASSWORD} TEXT NOT NULL, " +
             "${UserTable.FIRST_NAME} TEXT NOT NULL, " +

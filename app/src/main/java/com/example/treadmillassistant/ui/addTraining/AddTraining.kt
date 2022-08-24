@@ -3,6 +3,7 @@ package com.example.treadmillassistant.ui.addTraining
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.view.Gravity
 import android.widget.*
@@ -14,6 +15,9 @@ import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingStatus
@@ -24,6 +28,7 @@ import com.example.treadmillassistant.ui.AddTreadmill
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 import java.util.*
+import kotlin.concurrent.thread
 
 class AddTraining: AppCompatActivity(){
 
@@ -76,14 +81,24 @@ class AddTraining: AppCompatActivity(){
                     TrainingStatus.Upcoming,
                     selectedTrainingPlan,
                 )
-                newTraining.ID = TrainingService(this).insertNewTraining(newTraining)
-                user.trainingSchedule.addNewTraining(newTraining)
-                user.trainingSchedule.sortCalendar()
+                thread{
+                    val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
+                    if(responseCode == StatusCode.Created){
+                        newTraining.ID = TrainingService(this).insertNewTraining(newTraining)
+                        user.trainingSchedule.addNewTraining(newTraining)
+                        user.trainingSchedule.sortCalendar()
+                        println(responseCode)
+                        val intent = Intent(this, MainActivity::class.java)
+                        finishAffinity()
+                        startActivity(intent)
+                    }
+                    else{
+                        Looper.prepare()
+                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
 
-                val intent = Intent(this, MainActivity::class.java)
-                finishAffinity()
-                startActivity(intent)
             }
             else{
                 Toast.makeText(this, "Pick a treadmill", Toast.LENGTH_SHORT).show()

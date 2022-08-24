@@ -32,6 +32,7 @@ class ServerTrainingPlanService {
     }
 
     fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<TrainingPlan>>{
+
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -50,13 +51,12 @@ class ServerTrainingPlanService {
                 if(response.code==StatusCode.OK.code){
                     response.use {
                         val trainingPlanListJson = response.body!!.string()
-                        trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<TrainingPlan>>(){}.type)
+                        trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<ServerTrainingPlan>>(){}.type)
                     }
                 }
                 code = getResponseCode(response.code)
             }
         })
-
         return Pair(code, trainingPlanList)
     }
 
@@ -85,7 +85,7 @@ class ServerTrainingPlanService {
 
         val request = Request.Builder()
             .url("$BASE_URL/update_training_plan/$trainingPlanID")
-            .post(body)
+            .put(body)
             .build()
 
         val call = client.newCall(request)
@@ -99,6 +99,7 @@ class ServerTrainingPlanService {
 
         val request = Request.Builder()
             .url("$BASE_URL/delete_training_plan/$trainingPlanID")
+            .delete()
             .build()
 
         val call = client.newCall(request)

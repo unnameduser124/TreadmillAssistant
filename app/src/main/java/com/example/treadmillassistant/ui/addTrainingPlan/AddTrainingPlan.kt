@@ -13,11 +13,15 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
 import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
 import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.util.*
+import kotlin.concurrent.thread
 
 class AddTrainingPlan: AppCompatActivity() {
 
@@ -69,41 +73,31 @@ class AddTrainingPlan: AppCompatActivity() {
             updateTotalValues(phaseList)
         }
 
-        binding.trainingPlanSaveButton.setOnClickListener {
+        binding.trainingPlanSaveButton.setOnClickListener {//TODO("Need to send phase list to the server but can't because I don't have the fucking plan ID")
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
-                val intent: Intent
 
                 val trainingPlan = TrainingPlan(
                     name,
                     phaseList,
                     user.ID,
                 )
-                trainingPlan.ID = TrainingPlanService(this).insertNewTrainingPlan(trainingPlan)
-                val tpService = TrainingPhaseService(this)
-                trainingPlan.trainingPhaseList.forEach {
-                    it.trainingPlanID = trainingPlan.ID
-                    tpService.insertNewTrainingPhase(it)
-                }
-                user.trainingPlanList.addTrainingPlan(trainingPlan)
+                thread{
+                    val responseCode = ServerTrainingPlanService().createTrainingPlan(ServerTrainingPlan(name))
+                    if(responseCode == StatusCode.Created){
+                        trainingPlan.ID = TrainingPlanService(this).insertNewTrainingPlan(trainingPlan)
+                        val tpService = TrainingPhaseService(this)
+                        trainingPlan.trainingPhaseList.forEach {
+                            it.trainingPlanID = trainingPlan.ID
+                            tpService.insertNewTrainingPhase(it)
+                        }
+                        user.trainingPlanList.addTrainingPlan(trainingPlan)
 
-                if(fromTraining){
-                    intent = Intent(this, AddTraining::class.java)
-                    intent.putExtra("date", date.time)
-                    finish()
-                    startActivity(intent)
+                        exitActivity()
+                    }
                 }
-                else if(fromEditTraining){
-                    intent = Intent(this, EditTraining::class.java)
-                    intent.putExtra("id", trainingID)
-                    finish()
-                    startActivity(intent)
-                }
-                else{
-                    intent = Intent(this, MainActivity::class.java)
-                    finishAffinity()
-                    startActivity(intent)
-                }
+
+
             }
             else{
                 Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
@@ -111,23 +105,7 @@ class AddTrainingPlan: AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            if(fromTraining){
-                intent = Intent(this, AddTraining::class.java)
-                intent.putExtra("date", date.time)
-                finish()
-                startActivity(intent)
-            }
-            else if(fromEditTraining){
-                intent = Intent(this, EditTraining::class.java)
-                intent.putExtra("id", trainingID)
-                finish()
-                startActivity(intent)
-            }
-            else{
-                intent = Intent(this, MainActivity::class.java)
-                finishAffinity()
-                startActivity(intent)
-            }
+            exitActivity()
         }
     }
 
@@ -146,8 +124,7 @@ class AddTrainingPlan: AppCompatActivity() {
         binding.totalDistanceTrainingPlanLabel.text = String.format(this.getString(R.string.total_distance), distance)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    private fun exitActivity(){
         if(fromTraining){
             intent = Intent(this, AddTraining::class.java)
             intent.putExtra("date", date.time)
@@ -165,5 +142,10 @@ class AddTrainingPlan: AppCompatActivity() {
             finishAffinity()
             startActivity(intent)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        exitActivity()
     }
 }

@@ -2,12 +2,17 @@ package com.example.treadmillassistant.ui.registration
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.UserService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerUser
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerUserService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.databinding.RegisterPageHealthLayoutBinding
+import kotlin.concurrent.thread
 
 class RegisterHealthPage: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,13 +53,25 @@ class RegisterHealthPage: AppCompatActivity() {
             }
 
             if(firstName!="" && lastName!="" && username!="" && email!="" && password!="" && age!=0 && weight!=0.0) {
-                user = User(trainingCalendar, email, password,firstName,lastName, username, age, weight)
-                user.treadmillList.add(Treadmill())
-                user.trainingPlanList = trainingPlanList
-                UserService(this).insertNewUser(user)
-                val intent = Intent(this, MainActivity::class.java)
-                finishAffinity()
-                startActivity(intent)
+                thread{
+                    //user = User(trainingCalendar, email, password,firstName,lastName, username, age, weight)
+                    val newUser = ServerUser(firstName, lastName, username, age, weight, email, password)
+                    val responseCode = ServerUserService().createUser(newUser)
+                    println(responseCode)
+                    if(responseCode==StatusCode.Created){
+                        val serverUser = ServerUserService().getUser(user.ID)
+                        user = User(serverUser.second[0], user.ID)
+                        UserService(this).insertNewUser(user)
+                        val intent = Intent(this, MainActivity::class.java)
+                        finishAffinity()
+                        startActivity(intent)
+                    }
+                    else{
+                        Looper.prepare()
+                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
             }
             else{
                 Toast.makeText(this, "Fill in the fields!", Toast.LENGTH_SHORT).show()

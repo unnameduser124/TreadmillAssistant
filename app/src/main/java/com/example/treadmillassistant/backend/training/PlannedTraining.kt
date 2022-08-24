@@ -3,6 +3,8 @@ package com.example.treadmillassistant.backend.training
 import android.content.Context
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import java.text.SimpleDateFormat
 import java.util.*
 
 enum class TrainingStatus{
@@ -20,6 +22,43 @@ class PlannedTraining(
     override var trainingStatus: TrainingStatus = TrainingStatus.InProgress,
     override var trainingPlan: TrainingPlan = TrainingPlan(),
     override var ID: Long = 0): Training {
+    
+    constructor(serverTraining: ServerTraining): this(){
+        val cal = Calendar.getInstance()
+
+        if(serverTraining.Time != null){
+            val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ROOT)
+            val date = simpleDateFormat.parse("${serverTraining.Date} ${serverTraining.Time}")
+            if (date != null) {
+                cal.time = date
+            }
+        }
+        else{
+            val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ROOT)
+            val date = simpleDateFormat.parse(serverTraining.Date)
+            if (date != null) {
+                cal.time = date
+            }
+        }
+
+        trainingPlan = TrainingPlan(ID=serverTraining.TrainingPlanID)
+        treadmill = Treadmill(ID = serverTraining.Treadmill)
+        if(serverTraining.Link!=null){
+            mediaLink = serverTraining.Link
+        }
+        
+        trainingStatus = if(serverTraining.TrainingStatus=="Upcoming"){
+            TrainingStatus.Upcoming
+        } else if(serverTraining.TrainingStatus=="Finished"){
+            TrainingStatus.Finished
+        } else if(serverTraining.TrainingStatus=="InProgress"){
+            TrainingStatus.InProgress
+        } else if(serverTraining.TrainingStatus=="Paused"){
+            TrainingStatus.Paused
+        } else {
+            TrainingStatus.Abandoned
+        }
+    }
 
 
     override var lastPhaseStart: Long = 0L

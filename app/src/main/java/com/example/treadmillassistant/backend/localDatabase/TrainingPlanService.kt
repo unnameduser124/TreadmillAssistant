@@ -2,14 +2,13 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
-import android.os.Build.ID
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.PLAN_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.USER_ID
-import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.backend.training.TrainingPlan
+import com.example.treadmillassistant.backend.user
 
 class TrainingPlanService(val context: Context): TrainingDatabaseService(context){
 
@@ -69,7 +68,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
             USER_ID
         )
 
-        val sortOrder = "${BaseColumns._ID}"
+        val sortOrder = BaseColumns._ID
 
         val selection = "$PLAN_NAME != ? "
 
@@ -137,7 +136,7 @@ class TrainingPlanService(val context: Context): TrainingDatabaseService(context
             }
         }
         if(plan!=null){
-            var phaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(ID)
+            val phaseList = TrainingPhaseService(context).getPhasesForTrainingPlan(ID)
             plan?.trainingPhaseList = phaseList
         }
         cursor.close()

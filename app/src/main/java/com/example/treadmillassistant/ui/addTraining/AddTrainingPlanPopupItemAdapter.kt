@@ -4,7 +4,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +16,6 @@ import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.ui.EditTrainingPlan
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.selectedTrainingPlan
-import com.example.treadmillassistant.ui.editTraining.EditTraining
 import com.google.android.material.button.MaterialButton
 
 class AddTrainingPlanPopupItemAdapter(private val trainingPlanList: MutableList<TrainingPlan>, private val fromTraining: Boolean, private val trainingID: Long = -1): RecyclerView.Adapter<AddTrainingPlanPopupItemAdapter.ItemViewHolder>(){

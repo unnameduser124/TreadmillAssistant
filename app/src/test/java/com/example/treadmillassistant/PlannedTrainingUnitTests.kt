@@ -5,7 +5,6 @@ import com.example.treadmillassistant.backend.training.*
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.*
-import kotlin.coroutines.coroutineContext
 
 class PlannedTrainingUnitTests {
 
@@ -53,8 +52,8 @@ class PlannedTrainingUnitTests {
     @Test fun getAverageSpeedTest() {
         val training = PlannedTraining()
 
-        var phaseOne = TrainingPhase(10, 10.0)
-        var phaseTwo = TrainingPhase(10, 20.0)
+        val phaseOne = TrainingPhase(10, 10.0)
+        val phaseTwo = TrainingPhase(10, 20.0)
 
         training.trainingPlan.addNewPhase(phaseOne)
         training.trainingPlan.addNewPhase(phaseTwo)
@@ -63,8 +62,8 @@ class PlannedTrainingUnitTests {
     @Test fun getAverageTiltTest() {
         val training = PlannedTraining()
 
-        var phaseOne = TrainingPhase(10, tilt = 5.0)
-        var phaseTwo = TrainingPhase(10, tilt = 7.0)
+        val phaseOne = TrainingPhase(10, tilt = 5.0)
+        val phaseTwo = TrainingPhase(10, tilt = 7.0)
 
         training.trainingPlan.addNewPhase(phaseOne)
         training.trainingPlan.addNewPhase(phaseTwo)
@@ -72,10 +71,8 @@ class PlannedTrainingUnitTests {
     }
 
     @Test fun calculateTotalCaloriesTest() {
-        var user = User(TrainingCalendar(),"defaultUser@email.com", hashMessage("easyPassword"), "Jan", "Kowalski", "Janek", 20, 80.0)
-
         val training = PlannedTraining()
-        var phaseOne = TrainingPhase(120, 11.0)
+        val phaseOne = TrainingPhase(120, 11.0)
         training.trainingPlan.addNewPhase(phaseOne)
 
         val calories = training.calculateCalories()
@@ -85,8 +82,8 @@ class PlannedTrainingUnitTests {
 
         val training = PlannedTraining()
 
-        var phaseOne = TrainingPhase(10)
-        var phaseTwo = TrainingPhase(15)
+        val phaseOne = TrainingPhase(10)
+        val phaseTwo = TrainingPhase(15)
 
         training.trainingPlan.addNewPhase(phaseOne)
         training.trainingPlan.addNewPhase(phaseTwo)
@@ -95,7 +92,7 @@ class PlannedTrainingUnitTests {
     @Test fun getTotalDistance() {
         val training = PlannedTraining()
 
-        var phaseOne = TrainingPhase(60, speed = 60.0)
+        val phaseOne = TrainingPhase(60, speed = 60.0)
 
         training.trainingPlan.addNewPhase(phaseOne)
         assertTrue(training.getTotalDistance() == 1.0)
@@ -103,9 +100,9 @@ class PlannedTrainingUnitTests {
     @Test fun getCurrentPhase() {
         val training = PlannedTraining()
 
-        var phaseOne = TrainingPhase(10, orderNumber = 1)
-        var phaseTwo = TrainingPhase(15, orderNumber = 2)
-        var phaseThree = TrainingPhase(15, orderNumber = 3)
+        val phaseOne = TrainingPhase(10, orderNumber = 1)
+        val phaseTwo = TrainingPhase(15, orderNumber = 2)
+        val phaseThree = TrainingPhase(15, orderNumber = 3)
 
         training.trainingPlan.addNewPhase(phaseOne)
         training.trainingPlan.addNewPhase(phaseTwo)

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
@@ -15,7 +14,6 @@ import com.example.treadmillassistant.backend.round
 import com.example.treadmillassistant.backend.secondsToMinutes
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.ui.EditTrainingPlan
-import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.popupWindow
 import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTrainingPlan
 import com.google.android.material.button.MaterialButton
