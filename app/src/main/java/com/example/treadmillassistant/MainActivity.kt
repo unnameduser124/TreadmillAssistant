@@ -9,6 +9,8 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -18,10 +20,22 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.UserService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.getResponseCode
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,26 +53,6 @@ class MainActivity : AppCompatActivity() {
         if(appStart){
             val tempUser =  UserService(this).loadUser()
 
-            /*thread{
-                val client = OkHttpClient()
-
-                for(i in 0..50){
-                    val request = Request.Builder()
-                        .url("$BASE_URL/get_user_trainings/$i/24-08-2022?skip=0&limit=10")
-                        .build()
-
-                    val call = client.newCall(request)
-                    val response = call.execute()
-
-
-                    if(response.code == 200){
-                        println(getResponseCode(response.code))
-                        println(response.body!!.string())
-                    }
-                }
-
-            }*/
-
             if(tempUser!=null){
                 user = tempUser
             }
@@ -69,7 +63,46 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             loadUser(this)
+            /*thread{
+
+                val client = OkHttpClient()
+
+                val request = Request.Builder()
+                    .url("""$BASE_URL/get_all_user_trainings/${user.ID}/24-08-2022?skip=0&limit=5""")
+                    .build()
+
+                println("""$BASE_URL/get_all_user_trainings/${user.ID}/%08-2022%?skip=0&limit=5""")
+                val code: StatusCode
+                var trainingList = mutableListOf<ServerTraining>()
+
+                val call = client.newCall(request)
+                val response = call.execute()
+
+                code = getResponseCode(response.code)
+                println(code)
+                if(code == StatusCode.OK){
+                    val trainingJson = response.body!!.string()
+                    println(trainingJson)
+                    trainingList = Gson().fromJson(trainingJson, object: TypeToken<List<ServerTraining>>(){}.type)
+                }*//*
+                *//*val client = OkHttpClient()
+                val request = Request.Builder()
+                    .url("$BASE_URL/get_user_trainings/${user.ID}/24-08-2022?skip=0&limit=10")
+                    .build()
+
+                val call = client.newCall(request)
+                val response = call.execute()
+
+
+                println(getResponseCode(response.code))
+                if(response.code == 200){
+                    println(getResponseCode(response.code))
+                    println(response.body!!.string())
+                }
+
+            }*/
             appStart = false
+            return
         }
 
         setSupportActionBar(binding.appBarMain.toolbar)

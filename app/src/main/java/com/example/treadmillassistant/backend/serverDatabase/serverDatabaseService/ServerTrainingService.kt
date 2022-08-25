@@ -67,7 +67,7 @@ class ServerTrainingService {
         val client = OkHttpClient()
 
         val request = Request.Builder()
-            .url("$BASE_URL/get_all_user_trainings/${user.ID}/$date?skip=$skip&limit=$limit")
+            .url("$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit")
             .build()
         val code: StatusCode
         var trainingList = mutableListOf<ServerTraining>()

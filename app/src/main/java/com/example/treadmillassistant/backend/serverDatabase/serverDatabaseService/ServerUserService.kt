@@ -153,6 +153,9 @@ class ServerUserService {
         if (serverUser.Email == "") {
             exceptions.add("Email")
         }
+        if(serverUser.Password == ""){
+            exceptions.add("Password")
+        }
 
         return serializeWithExceptions(serverUser, exceptions)
     }

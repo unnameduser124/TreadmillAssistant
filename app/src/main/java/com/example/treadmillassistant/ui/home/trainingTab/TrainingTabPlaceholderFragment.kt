@@ -9,9 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
 import com.example.treadmillassistant.backend.training.GenericTraining
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
@@ -24,6 +28,7 @@ import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFra
 import com.example.treadmillassistant.ui.home.calendarTab.CalendarTrainingItemAdapter
 import com.google.android.material.button.MaterialButton
 import java.util.*
+import kotlin.concurrent.thread
 
 class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
     private lateinit var pageViewModel: PageViewModel
@@ -134,12 +139,31 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     unfinishPhases(training)
                     training.trainingStatus = TrainingStatus.Upcoming
                 }
-                if(training is GenericTraining){
-                    trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
+                val created: MutableLiveData<Boolean> by lazy{
+                    MutableLiveData<Boolean>(false)
                 }
-                newGenericTraining()
-                finishTrainingButton.isGone = true
-                binding.startTrainingButton.text = getString(R.string.start_new)
+                if(training is GenericTraining){
+                    thread{
+                        val code = ServerTrainingService().createTraining(ServerTraining(training))
+                        println(code)
+                        user.trainingSchedule.trainingList.clear()
+                        val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
+                        allTrainingsPair.second.forEach {
+                            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+                        }
+                        created.postValue(true)
+                    }
+                }
+                val observer = androidx.lifecycle.Observer<Boolean>{
+                    if(it){
+                        val dataset = user.trainingSchedule.trainingList
+                        trainingList.adapter = CalendarTrainingItemAdapter(dataset)
+                        newGenericTraining()
+                        finishTrainingButton.isGone = true
+                        binding.startTrainingButton.text = getString(R.string.start_new)
+                    }
+                }
+                created.observe(viewLifecycleOwner, observer)
             }
         }
 
@@ -208,9 +232,21 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
 
                         if(training.getCurrentMoment()>=training.getTotalDuration()){
                             training.finishTraining(binding.finishTrainingButton.context)
-                            binding.startTrainingButton.text = getString(R.string.training_finished)
-                            trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
-                            newGenericTraining()
+                            val updated: MutableLiveData<Boolean> by lazy{
+                                MutableLiveData<Boolean>(false)
+                            }
+                            thread{
+                                ServerTrainingService().updateTraining(ServerTraining(training), training.ID)
+                                updated.postValue(true)
+                            }
+                            val observer = androidx.lifecycle.Observer<Boolean>{
+                                if(it){
+                                    binding.startTrainingButton.text = getString(R.string.training_finished)
+                                    trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
+                                    newGenericTraining()
+                                }
+                            }
+                            updated.observe(viewLifecycleOwner, observer)
                         }
                         handler.postDelayed(this, 100)
                     }

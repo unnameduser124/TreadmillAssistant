@@ -46,7 +46,7 @@ class UserService(val context: Context): TrainingDatabaseService(context){
     }
 
     //returns number of rows updated
-    fun updateUser(newUser: User, userID: Int): Int{
+    fun updateUser(newUser: User, userID: Long): Int{
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(FIRST_NAME, newUser.firstName)

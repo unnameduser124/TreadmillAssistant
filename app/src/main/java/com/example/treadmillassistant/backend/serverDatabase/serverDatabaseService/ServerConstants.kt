@@ -1,7 +1,7 @@
 package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService
 
 object ServerConstants {
-    const val BASE_URL: String = "http://vps-a015c8d3.vps.ovh.net" //TODO("Replace with actual URL")
+    const val BASE_URL: String = "http://vps-a015c8d3.vps.ovh.net"
 }
 
 enum class StatusCode(val code: Int) {
