@@ -41,6 +41,8 @@ class PlannedTraining(
             }
         }
 
+        trainingTime = cal
+
         trainingPlan = TrainingPlan(ID=serverTraining.TrainingPlanID)
         treadmill = Treadmill(ID = serverTraining.Treadmill)
         if(serverTraining.Link!=null){

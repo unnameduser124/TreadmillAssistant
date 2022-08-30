@@ -16,6 +16,7 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.PlannedTraining
@@ -26,6 +27,10 @@ import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBind
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
 import com.example.treadmillassistant.ui.AddTreadmill
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
+import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.popupWindow
+import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTrainingPlan
+import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTreadmill
+import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.treadmillPopup
 import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 import java.util.*
 import kotlin.concurrent.thread
@@ -202,9 +207,17 @@ class AddTraining: AppCompatActivity(){
             popupWindow.contentView = popupBinding.root
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
 
-
             var start = 0
             var baseList = user.trainingPlanList.trainingPlanList
+            thread{
+                val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 10)
+                /*baseList = if(planPair.first == StatusCode.OK){
+                    planPair.second
+                } else {
+                    mutableListOf()
+                }*/
+            }
+
             var list = getTrainingPlansWithPagination(start, SEARCH_POPUP_LIST_SIZE, baseList)
             val itemAdapter = AddTrainingPlanPopupItemAdapter(
                 list,

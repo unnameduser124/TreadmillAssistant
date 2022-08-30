@@ -37,7 +37,7 @@ class CalendarPlaceholderFragment: Fragment() {
         val binding = CalendarTabBinding.inflate(layoutInflater)
 
         val loaded: MutableLiveData<Boolean> by lazy{
-            MutableLiveData<Boolean>()
+            MutableLiveData<Boolean>(false)
         }
         thread{
             reloadTrainingList(Calendar.getInstance())
@@ -66,7 +66,7 @@ class CalendarPlaceholderFragment: Fragment() {
                 newCalendar.set(Calendar.MONTH, month)
                 newCalendar.set(Calendar.DAY_OF_MONTH, day)
                 reloadTrainingList(newCalendar)
-                dataset = user.trainingSchedule.getTrainingsForDate(newCalendar)
+                dataset = user.trainingSchedule.trainingList
                 itemAdapter = CalendarTrainingItemAdapter(dataset)
                 chosenDay = newCalendar
                 loaded.postValue(true)

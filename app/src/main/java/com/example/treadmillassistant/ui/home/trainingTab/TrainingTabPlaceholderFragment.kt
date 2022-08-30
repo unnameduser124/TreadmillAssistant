@@ -10,11 +10,14 @@ import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPhaseService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
 import com.example.treadmillassistant.backend.training.GenericTraining
 import com.example.treadmillassistant.backend.training.PlannedTraining
@@ -144,8 +147,13 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                 }
                 if(training is GenericTraining){
                     thread{
-                        val code = ServerTrainingService().createTraining(ServerTraining(training))
-                        println(code)
+                        ServerTrainingService().createTraining(ServerTraining(training))
+                        val serverTrainingPlan = ServerTrainingPlan("${Calendar.getInstance().timeInMillis}")
+                        ServerTrainingPlanService().createTrainingPlan(serverTrainingPlan)
+                        training.trainingPlan.trainingPhaseList.forEach{
+                            it.trainingPlanID = serverTrainingPlan.ID
+                            println(ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it)))
+                        }
                         user.trainingSchedule.trainingList.clear()
                         val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
                         allTrainingsPair.second.forEach {

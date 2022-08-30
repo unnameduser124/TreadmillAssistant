@@ -13,7 +13,9 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
 import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPhaseService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.TrainingPhase
@@ -83,16 +85,15 @@ class AddTrainingPlan: AppCompatActivity() {
                     user.ID,
                 )
                 thread{
-                    val responseCode = ServerTrainingPlanService().createTrainingPlan(ServerTrainingPlan(name))
-                    if(responseCode == StatusCode.Created){
-                        trainingPlan.ID = TrainingPlanService(this).insertNewTrainingPlan(trainingPlan)
-                        val tpService = TrainingPhaseService(this)
+                    val response = ServerTrainingPlanService().createTrainingPlan(ServerTrainingPlan(name))
+                    if(response.first == StatusCode.Created){
+                        trainingPlan.ID = response.second
+                        println(response.second)
                         trainingPlan.trainingPhaseList.forEach {
-                            it.trainingPlanID = trainingPlan.ID
-                            tpService.insertNewTrainingPhase(it)
-                        }
-                        user.trainingPlanList.addTrainingPlan(trainingPlan)
 
+                            it.trainingPlanID = trainingPlan.ID
+                            println(ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it)).first)
+                        }
                         exitActivity()
                     }
                 }

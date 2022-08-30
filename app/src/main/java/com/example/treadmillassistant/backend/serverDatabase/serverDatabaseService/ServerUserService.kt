@@ -3,7 +3,7 @@ package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseServ
 import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.LoginUserID
-import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewUserID
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerUser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.user
@@ -34,7 +34,7 @@ class ServerUserService {
         code = getResponseCode(response.code)
         if(code == StatusCode.Created){
             val json = response.body!!.string()
-            val id = Gson().fromJson(json, NewUserID::class.java)
+            val id = Gson().fromJson(json, NewID::class.java)
             user.ID = id.id
         }
 

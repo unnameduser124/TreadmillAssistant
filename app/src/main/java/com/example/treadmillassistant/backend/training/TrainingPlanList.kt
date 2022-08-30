@@ -1,5 +1,8 @@
 package com.example.treadmillassistant.backend.training
 
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.user
 
 class TrainingPlanList(var trainingPlanList: MutableList<TrainingPlan> = mutableListOf()) {
@@ -21,6 +24,19 @@ class TrainingPlanList(var trainingPlanList: MutableList<TrainingPlan> = mutable
             null
         }
 
+    }
+
+    fun convertFromServer(list: MutableList<ServerTrainingPlan>): MutableList<TrainingPlan>{
+        val trainingPlanList = mutableListOf<TrainingPlan>()
+
+        list.forEach {
+            val serverPlanPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+            if(serverPlanPair.first == StatusCode.OK){
+
+            }
+        }
+
+        return trainingPlanList
     }
 
     fun updateTrainingPlan(newTrainingPlan: TrainingPlan, id: Long) {

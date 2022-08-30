@@ -1,10 +1,14 @@
 package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService
 
 import com.example.treadmillassistant.backend.serialize
+import com.example.treadmillassistant.backend.serializeWithExceptions
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFragment.Companion.trainingList
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
@@ -14,9 +18,9 @@ import java.io.IOException
 
 class ServerTrainingPlanService {
 
-    fun getTrainingPlan(trainingPlanID: Long): Pair<StatusCode, List<List<Any>>> {
-        val code = StatusCode.Unknown
-        val trainingPlan: List<List<Any>>
+    fun getTrainingPlan(trainingPlanID: Long): Pair<StatusCode, TrainingPlan> {
+        val code: StatusCode
+        var trainingPlan = TrainingPlan()
 
         val client = OkHttpClient()
 
@@ -26,12 +30,51 @@ class ServerTrainingPlanService {
 
         val call = client.newCall(request)
         val response = call.execute()
-        trainingPlan = Gson().fromJson(response.body.toString(), object : TypeToken<List<List<Any>>>(){}.type)
+        code = getResponseCode(response.code)
+        if(code == StatusCode.OK){
+            val json = response.body!!.string()
+            var tempData= ""
+            run breaking@{
+                json.forEach {
+                    if(it != ']' && it != '['){
+                        tempData += it
+                    }
+                    else if(it == ']'){
+                        return@breaking
+                    }
+                }
+            }
+            //println(tempData)
+            val plan = Gson().fromJson(tempData, ServerTrainingPlan::class.java)
+            tempData = ""
+            var list = false
+            run breaking@{
+                json.forEach {
+
+                    if(list){
+                        tempData += it
+                    }
+                    if(it == ']' && list){
+                        return@breaking
+                    }
+                    if(it == ','){
+                        list = true
+                    }
+                }
+            }
+            var planTrainingList = mutableListOf<ServerTrainingPhase>()
+            if(tempData!="[]"){
+                planTrainingList = Gson().fromJson(tempData, object: TypeToken<List<ServerTrainingPhase>>(){}.type)
+            }
+            trainingPlan.fromServerTrainingPlan(plan, planTrainingList)
+        }
+
+
 
         return Pair(code, trainingPlan)
     }
 
-    fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<TrainingPlan>>{
+    fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<ServerTrainingPlan>>{
 
         val client = OkHttpClient()
 
@@ -39,31 +82,24 @@ class ServerTrainingPlanService {
             .url("$BASE_URL/get_all_user_training_plans/${user.ID}?skip=$skip&limit=$limit")
             .build()
 
-        var code = StatusCode.Unknown
-        var trainingPlanList = mutableListOf<TrainingPlan>()
+        val code: StatusCode
+        var trainingPlanList = mutableListOf<ServerTrainingPlan>()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
+        val call = client.newCall(request)
+        val response = call.execute()
+        code = getResponseCode(response.code)
+        if(code == StatusCode.OK){
+            val trainingPlanListJson = response.body!!.string()
+            trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<ServerTrainingPlan>>(){}.type)
+        }
 
-            override fun onResponse(call: Call, response: Response) {
-                if(response.code==StatusCode.OK.code){
-                    response.use {
-                        val trainingPlanListJson = response.body!!.string()
-                        trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<ServerTrainingPlan>>(){}.type)
-                    }
-                }
-                code = getResponseCode(response.code)
-            }
-        })
         return Pair(code, trainingPlanList)
     }
 
-    fun createTrainingPlan(serverTrainingPlan: ServerTrainingPlan): StatusCode{
+    fun createTrainingPlan(serverTrainingPlan: ServerTrainingPlan): Pair<StatusCode, Long>{
         val client = OkHttpClient()
 
-        val json = serialize(serverTrainingPlan)
+        val json = serializeWithExceptions(serverTrainingPlan, mutableListOf("ID"))
         val body = json.toRequestBody()
 
         val request = Request.Builder()
@@ -73,8 +109,14 @@ class ServerTrainingPlanService {
 
         val call = client.newCall(request)
         val response = call.execute()
+        val code = getResponseCode(response.code)
+        var id = -1L
+        if(code == StatusCode.Created){
+            val json = response.body!!.string()
+            id = Gson().fromJson(json, NewID::class.java).id
+        }
 
-        return getResponseCode(response.code)
+        return Pair(getResponseCode(response.code), id)
     }
 
     fun updateTrainingPlan(serverTrainingPlan: ServerTrainingPlan, trainingPlanID: Long): StatusCode{

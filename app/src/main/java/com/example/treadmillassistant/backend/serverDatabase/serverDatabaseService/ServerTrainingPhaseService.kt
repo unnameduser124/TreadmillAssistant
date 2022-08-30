@@ -1,10 +1,9 @@
 package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService
 
-import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
-import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -26,21 +25,30 @@ class ServerTrainingPhaseService {
         return Pair(getResponseCode(response.code), serverTrainingPhase)
     }
 
-    fun createTrainingPhase(serverTrainingPhase: ServerTrainingPhase): StatusCode{
+    fun createTrainingPhase(serverTrainingPhase: ServerTrainingPhase): Pair<StatusCode, Long>{
         val client = OkHttpClient()
 
-        val json = serialize(serverTrainingPhase)
+        val exceptions = mutableListOf("ID")
+
+        val json = serializeWithExceptions(serverTrainingPhase, exceptions)
         val body = json.toRequestBody()
+        println(json)
 
         val request = Request.Builder()
-            .url("$BASE_URL/create_training_phase/${user.ID}")
+            .url("$BASE_URL/create_training_phase/${serverTrainingPhase.trainingPlanID}/${serverTrainingPhase.OrderNumber}")
             .post(body)
             .build()
 
         val call = client.newCall(request)
         val response = call.execute()
+        val code = getResponseCode(response.code)
+        var id = -1L
+        if(code == StatusCode.Created){
+            val json = response.body!!.string()
+            id = Gson().fromJson(json, NewID::class.java).id
+        }
 
-        return getResponseCode(response.code)
+        return Pair(code, id)
     }
 
     fun updateTrainingPhase(serverTrainingPhase: ServerTrainingPhase, trainingPhaseID: Long): StatusCode{

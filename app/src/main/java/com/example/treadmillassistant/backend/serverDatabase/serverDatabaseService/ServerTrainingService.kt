@@ -54,6 +54,7 @@ class ServerTrainingService {
         code = getResponseCode(response.code)
         if(code == StatusCode.OK){
             val trainingJson = response.body!!.string()
+            println(trainingJson)
             trainingList = Gson().fromJson(trainingJson, object: TypeToken<List<ServerTraining>>(){}.type)
         }
 
