@@ -25,7 +25,7 @@ class PlannedTraining(
     
     constructor(serverTraining: ServerTraining): this(){
         val cal = Calendar.getInstance()
-
+        ID = serverTraining.ID
         if(serverTraining.Time != null){
             val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ROOT)
             val date = simpleDateFormat.parse("${serverTraining.Date} ${serverTraining.Time}")

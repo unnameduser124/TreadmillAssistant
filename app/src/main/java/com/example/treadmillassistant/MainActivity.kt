@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             loadUser(this)
-            thread{
+            /*thread{
                 val allPlansPair = ServerTrainingPlanService().getAllTrainingPlans(0, 10)
                 //println(allPlansPair.first)
                 if(allPlansPair.first == StatusCode.OK){
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 }
-            }
+            }*/
             appStart = false
         }
         setSupportActionBar(binding.appBarMain.toolbar)

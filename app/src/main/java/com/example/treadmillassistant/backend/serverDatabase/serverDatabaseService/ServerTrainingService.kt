@@ -2,8 +2,10 @@ package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseServ
 
 import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -54,7 +56,6 @@ class ServerTrainingService {
         code = getResponseCode(response.code)
         if(code == StatusCode.OK){
             val trainingJson = response.body!!.string()
-            println(trainingJson)
             trainingList = Gson().fromJson(trainingJson, object: TypeToken<List<ServerTraining>>(){}.type)
         }
 
@@ -84,7 +85,7 @@ class ServerTrainingService {
         return Pair(code, trainingList)
     }
 
-    fun createTraining(serverTraining: ServerTraining): StatusCode{
+    fun createTraining(serverTraining: ServerTraining): Pair<StatusCode, Long>{
         val client = OkHttpClient()
 
         val json = serialize(serverTraining)
@@ -97,8 +98,14 @@ class ServerTrainingService {
 
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
+        val code = getResponseCode(response.code)
+        var id = -1L
+        if(code == StatusCode.Created){
+            val json = response.body!!.string()
+            id = Gson().fromJson(json, NewID::class.java).id
+        }
 
-        return getResponseCode(response.code)
+        return Pair(code, id)
     }
 
     fun updateTraining(serverTraining: ServerTraining, trainingID: Long): StatusCode{
@@ -148,6 +155,7 @@ class ServerTrainingService {
             .delete()
             .build()
 
+        println(request.url)
         val call = client.newCall(request)
         val response = call.execute()
 

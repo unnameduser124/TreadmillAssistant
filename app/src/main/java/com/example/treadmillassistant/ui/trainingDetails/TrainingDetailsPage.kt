@@ -2,19 +2,25 @@ package com.example.treadmillassistant.ui.trainingDetails
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.IndividualTrainingPageBinding
 import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 
 class TrainingDetailsPage: AppCompatActivity() {
@@ -88,11 +94,22 @@ class TrainingDetailsPage: AppCompatActivity() {
             binding.trainingDetailsPhaseList.setHasFixedSize(true)
 
             binding.trainingDetailsRemoveButton.setOnClickListener {
-                val intent = Intent(this, MainActivity::class.java)
-                finish()
-                startActivity(intent)
-                TrainingService(this).deleteTraining(training)
-                user.trainingSchedule.removeTraining(training)
+                thread{
+                    val code = ServerTrainingService().deleteTraining(training.ID)
+                    if(code == StatusCode.OK){
+                        user.trainingSchedule.removeTraining(training)
+                        Looper.prepare()
+                        Toast.makeText(this, "Deleted successfully!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, MainActivity::class.java)
+                        finish()
+                        startActivity(intent)
+                    }
+                    else{
+                        println(code)
+                        Looper.prepare()
+                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             binding.trainingDetailsEditButton.setOnClickListener {

@@ -7,11 +7,14 @@ import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.training.TrainingPlan
@@ -20,10 +23,14 @@ import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
 import com.example.treadmillassistant.ui.AddTreadmill
+import com.example.treadmillassistant.ui.addTraining.AddTraining
+import com.example.treadmillassistant.ui.addTraining.AddTrainingPlanPopupItemAdapter
 import com.example.treadmillassistant.ui.addTraining.AddTreadmillPopupItemAdapter
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
+import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.util.*
+import kotlin.concurrent.thread
 
 class EditTraining: AppCompatActivity() {
 
@@ -199,36 +206,82 @@ class EditTraining: AppCompatActivity() {
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
 
             var start = 0
-            var baseList = user.trainingPlanList.trainingPlanList
-            var list = getTrainingPlansWithPagination(start, SEARCH_POPUP_LIST_SIZE, baseList)
-            val itemAdapter = EditTrainingPlanPopupItemAdapter(
-                list,
-                false,
-                training!!.ID
-            )
-            start = SEARCH_POPUP_LIST_SIZE
+            var baseList = mutableListOf<TrainingPlan>()
+            var list = mutableListOf<TrainingPlan>()
+            val loaded: MutableLiveData<Boolean> by lazy{
+                MutableLiveData<Boolean>(false)
+            }
 
-            val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
-            popupBinding.trainingPlanSearchList.adapter = itemAdapter
-            popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
-            popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+            thread{
+                baseList.clear()
+                loop@do{
+                    val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 5)
+                    if(planPair.first == StatusCode.OK){
+                        planPair.second.forEach {
+                            val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+
+                            if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
+                                baseList.add(phaseListPair.second)
+                            }
+                        }
+                        start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
+                    }
+                    else{
+                        break@loop
+                    }
+                }while(baseList.size<13)
+                loaded.postValue(true)
+            }
+
+            val observer = androidx.lifecycle.Observer<Boolean>{
+                try{
+                    list = baseList
+                    val itemAdapter = EditTrainingPlanPopupItemAdapter(
+                        list,
+                        true
+                    )
+                    val linearLayoutManager = WrapContentLinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
+                    popupBinding.trainingPlanSearchList.adapter = itemAdapter
+                    popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
+                    popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+                }
+                catch(exception: IndexOutOfBoundsException){
+                    println("${exception.message} ${exception.stackTrace}")
+                    loaded.postValue(true)
+                }
+            }
+            loaded.observe(this, observer)
+
+
+
 
             popupBinding.trainingPlanSearchList.setOnScrollChangeListener { _, _, _, _, _ ->
-                if(list.size>=SEARCH_POPUP_LIST_SIZE && list.size<baseList.size){
+                if(list.size>= SEARCH_POPUP_LIST_SIZE){
                     if((popupBinding.trainingPlanSearchList.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == list.size - 1){
-                        val addList = getTrainingPlansWithPagination(
-                            start,
-                            SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT,
-                            baseList
-                        )
-                        if(addList.size>0){
-                            list += addList
-                            start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
-                            popupBinding.trainingPlanSearchList.post {
-                                popupBinding.trainingPlanSearchList.adapter?.notifyItemRangeInserted(
-                                    list.size - addList.size,
-                                    addList.size
-                                )
+                        thread{
+                            val sizeBefore = baseList.size
+                            val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT)
+                            if(planPair.first == StatusCode.OK){
+                                planPair.second.forEach {
+                                    val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+
+                                    if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
+                                        baseList.add(phaseListPair.second)
+                                    }
+                                }
+                            }
+                            if(baseList.size>sizeBefore){
+                                start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
+
+                                popupBinding.trainingPlanSearchList.post {
+                                    popupBinding.trainingPlanSearchList.adapter?.notifyItemRangeInserted(
+                                        baseList.size - (baseList.size - sizeBefore),
+                                        (baseList.size - sizeBefore)
+                                    )
+                                }
+                                popupBinding.trainingPlanSearchList.post{
+                                    popupBinding.trainingPlanSearchList.scrollBy(0,70)
+                                }
                             }
                         }
                     }
@@ -238,7 +291,6 @@ class EditTraining: AppCompatActivity() {
             popupBinding.trainingPlanSelectionCancelButton.setOnClickListener { popupWindow.dismiss() }
 
             popupWindow.setOnDismissListener {
-                popupWindow.dismiss()
                 if(selectedTrainingPlan.ID!=-1L){
                     binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
                 }
@@ -247,23 +299,15 @@ class EditTraining: AppCompatActivity() {
             popupBinding.trainingPlanSelectionAddNewButton.setOnClickListener {
                 val intent = Intent(this, AddTrainingPlan::class.java)
                 intent.putExtra("fromEditTraining", true)
-                intent.putExtra("id", training?.ID ?: -1)
                 startActivity(intent)
                 popupWindow.dismiss()
             }
 
             popupBinding.trainingPlanSearchInput.addTextChangedListener {typedText: Editable? ->
-                baseList = user.trainingPlanList.trainingPlanList.filter{
+                list = baseList.filter{
                     it.name.lowercase().contains(typedText.toString().lowercase())
                 }.toMutableList()
-                start = 0
-                list = getTrainingPlansWithPagination(
-                    start,
-                    SEARCH_POPUP_LIST_SIZE,
-                    baseList
-                )
-                start = SEARCH_POPUP_LIST_SIZE
-                val newAdapter = EditTrainingPlanPopupItemAdapter(list, false, training!!.ID)
+                val newAdapter = EditTrainingPlanPopupItemAdapter(list, false, TrainingTabPlaceholderFragment.training.ID)
 
                 popupBinding.trainingPlanSearchList.adapter = newAdapter
             }

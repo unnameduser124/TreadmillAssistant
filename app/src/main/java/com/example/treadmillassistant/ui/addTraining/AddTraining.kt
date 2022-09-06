@@ -9,6 +9,9 @@ import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
@@ -31,6 +34,7 @@ import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.pop
 import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTrainingPlan
 import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTreadmill
 import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.treadmillPopup
+import com.example.treadmillassistant.ui.editTraining.WrapContentLinearLayoutManager
 import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 import java.util.*
 import kotlin.concurrent.thread
@@ -88,11 +92,10 @@ class AddTraining: AppCompatActivity(){
                 )
                 thread{
                     val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
-                    if(responseCode == StatusCode.Created){
-                        newTraining.ID = TrainingService(this).insertNewTraining(newTraining)
+                    if(responseCode.first == StatusCode.Created){
+                        newTraining.ID = responseCode.second
                         user.trainingSchedule.addNewTraining(newTraining)
                         user.trainingSchedule.sortCalendar()
-                        println(responseCode)
                         val intent = Intent(this, MainActivity::class.java)
                         finishAffinity()
                         startActivity(intent)
@@ -208,52 +211,88 @@ class AddTraining: AppCompatActivity(){
             popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
 
             var start = 0
-            var baseList = user.trainingPlanList.trainingPlanList
-            thread{
-                val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 10)
-                /*baseList = if(planPair.first == StatusCode.OK){
-                    planPair.second
-                } else {
-                    mutableListOf()
-                }*/
+            val baseList = mutableListOf<TrainingPlan>()
+            var list = mutableListOf<TrainingPlan>()
+            val loaded: MutableLiveData<Boolean> by lazy{
+                MutableLiveData<Boolean>(false)
             }
 
-            var list = getTrainingPlansWithPagination(start, SEARCH_POPUP_LIST_SIZE, baseList)
-            val itemAdapter = AddTrainingPlanPopupItemAdapter(
-                list,
-                true
-            )
-            start= SEARCH_POPUP_LIST_SIZE
-            val linearLayoutManager = LinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
-            popupBinding.trainingPlanSearchList.adapter = itemAdapter
-            popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
-            popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+            thread{
+                baseList.clear()
+                loop@do{
+                    val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 5)
+                    if(planPair.first == StatusCode.OK){
+                        planPair.second.forEach {
+                            val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+
+                            if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
+                                baseList.add(phaseListPair.second)
+                            }
+                        }
+                        start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
+                    }
+                    else{
+                        break@loop
+                    }
+                }while(baseList.size<13)
+                loaded.postValue(true)
+            }
+
+            val observer = androidx.lifecycle.Observer<Boolean>{
+                list = baseList
+                val itemAdapter = AddTrainingPlanPopupItemAdapter(
+                    list,
+                    true
+                )
+                val linearLayoutManager = WrapContentLinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
+                popupBinding.trainingPlanSearchList.adapter = itemAdapter
+                popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
+                popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+            }
+            loaded.observe(this, observer)
+
+
 
 
             popupBinding.trainingPlanSearchList.setOnScrollChangeListener { _, _, _, _, _ ->
-                if(list.size>= SEARCH_POPUP_LIST_SIZE && list.size<baseList.size){
+                if(list.size >= SEARCH_POPUP_LIST_SIZE){
                     if((popupBinding.trainingPlanSearchList.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == list.size - 1){
-                        val addList = getTrainingPlansWithPagination(
+                        thread{
+                            val sizeBefore = baseList.size
+                            val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT)
+                            if(planPair.first == StatusCode.OK){
+                                planPair.second.forEach {
+                                    val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+
+                                    if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
+                                        baseList.add(phaseListPair.second)
+                                    }
+                                }
+                            }
+                            if(baseList.size>sizeBefore){
+                                start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
+
+                                popupBinding.trainingPlanSearchList.post {
+                                    popupBinding.trainingPlanSearchList.adapter?.notifyItemRangeInserted(
+                                        baseList.size - (baseList.size - sizeBefore),
+                                        (baseList.size - sizeBefore)
+                                    )
+                                }
+                                popupBinding.trainingPlanSearchList.post{
+                                    popupBinding.trainingPlanSearchList.scrollBy(0,70)
+                                }
+                            }
+                        }
+
+                        /*val addList = getTrainingPlansWithPagination(
                             start,
                             SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT,
                             baseList
-                        ).toMutableList()
+                        ).toMutableList()*/
 
-                        if(addList.size>0){
-                            list += addList
-                            start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
-
-                            popupBinding.trainingPlanSearchList.post {
-                                popupBinding.trainingPlanSearchList.adapter?.notifyItemRangeInserted(
-                                    list.size - addList.size,
-                                    addList.size
-                                )
-                            }
-                        }
                     }
                 }
             }
-
 
             popupBinding.trainingPlanSelectionCancelButton.setOnClickListener { popupWindow.dismiss() }
 
@@ -278,16 +317,9 @@ class AddTraining: AppCompatActivity(){
             }
 
             popupBinding.trainingPlanSearchInput.addTextChangedListener {typedText: Editable? ->
-                baseList = user.trainingPlanList.trainingPlanList.filter{
+                list = baseList.filter{
                     it.name.lowercase().contains(typedText.toString().lowercase())
                 }.toMutableList()
-                start = 0
-                list = getTrainingPlansWithPagination(
-                    start,
-                    SEARCH_POPUP_LIST_SIZE,
-                    baseList
-                )
-                start = SEARCH_POPUP_LIST_SIZE
                 val newAdapter = AddTrainingPlanPopupItemAdapter(list, false, training.ID)
 
                 popupBinding.trainingPlanSearchList.adapter = newAdapter

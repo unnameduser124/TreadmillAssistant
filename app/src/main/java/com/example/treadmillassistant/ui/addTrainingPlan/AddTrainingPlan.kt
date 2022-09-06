@@ -97,8 +97,6 @@ class AddTrainingPlan: AppCompatActivity() {
                         exitActivity()
                     }
                 }
-
-
             }
             else{
                 Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
