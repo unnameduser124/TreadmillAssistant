@@ -11,7 +11,7 @@ data class ServerTraining(
     val TrainingStatus: String,
     val Treadmill: Long = 0L,
     val TrainingPlanID: Long = 0L,
-    val ID: Long = -1L){
+    var ID: Long = -1L){
 
     constructor(training: Training): this(
         "",
@@ -27,6 +27,7 @@ data class ServerTraining(
         val sdfTime = SimpleDateFormat("HH:mm", Locale.ROOT)
         val time = sdfTime.format(training.trainingTime.time)
         Time = time
+        ID = training.ID
     }
 
 }

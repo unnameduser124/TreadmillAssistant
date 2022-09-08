@@ -1,6 +1,5 @@
 package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService
 
-import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
@@ -8,12 +7,10 @@ import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.Ser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
-import com.example.treadmillassistant.ui.home.calendarTab.CalendarPlaceholderFragment.Companion.trainingList
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
 import java.net.ConnectException
 
 
@@ -67,6 +64,9 @@ class ServerTrainingPlanService {
                 var planTrainingList = mutableListOf<ServerTrainingPhase>()
                 if(tempData!="[]"){
                     planTrainingList = Gson().fromJson(tempData, object: TypeToken<List<ServerTrainingPhase>>(){}.type)
+                }
+                if(planTrainingList.size>0){
+                    plan.ID = planTrainingList.first().TrainingPlanID
                 }
                 trainingPlan.fromServerTrainingPlan(plan, planTrainingList)
             }

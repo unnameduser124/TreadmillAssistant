@@ -105,7 +105,7 @@ class PlannedTraining(
     override fun getTotalDistance(): Double{
         var distance = 0.0
 
-        if(trainingStatus != TrainingStatus.Finished || trainingStatus == TrainingStatus.Upcoming || trainingStatus == TrainingStatus.Abandoned){
+        if(trainingStatus!= TrainingStatus.InProgress && trainingStatus != TrainingStatus.Paused){
             trainingPlan.trainingPhaseList.forEach {
                 distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
             }

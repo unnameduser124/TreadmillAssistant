@@ -35,7 +35,7 @@ class ServerTrainingPhaseService {
         println(json)
 
         val request = Request.Builder()
-            .url("$BASE_URL/create_training_phase/${serverTrainingPhase.trainingPlanID}/${serverTrainingPhase.OrderNumber}")
+            .url("$BASE_URL/create_training_phase/${serverTrainingPhase.TrainingPlanID}/${serverTrainingPhase.OrderNumber}")
             .post(body)
             .build()
 

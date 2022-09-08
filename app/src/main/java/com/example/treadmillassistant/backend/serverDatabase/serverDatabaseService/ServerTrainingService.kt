@@ -19,7 +19,7 @@ import java.util.*
 
 class ServerTrainingService {
 
-    fun getTrainingByID(trainingID: String): Pair<StatusCode, ServerTraining>{
+    fun getTrainingByID(trainingID: Long): Pair<StatusCode, ServerTraining>{
 
         val client = OkHttpClient()
         var serverTraining = ServerTraining("", "", "", "", -1, -1)
@@ -32,8 +32,10 @@ class ServerTrainingService {
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
         if(response.code == StatusCode.OK.code){
-            serverTraining = Gson().fromJson(response.body.toString(), ServerTraining::class.java)
+            val json = response.body!!.string()
+            serverTraining = Gson().fromJson(json.subSequence(1, json.length-1).toString(), ServerTraining::class.java)
         }
+        serverTraining.ID = trainingID
         return Pair(getResponseCode(response.code), serverTraining)
     }
 
@@ -128,9 +130,10 @@ class ServerTrainingService {
         else if(serverTraining.TrainingPlanID == -1L){
             exceptions.add("TrainingPlanID")
         }
-        else if(serverTraining.Link == " "){
+        else if(serverTraining.Link == ""){
             exceptions.add("Link")
         }
+        exceptions.add("ID")
 
         val json = serializeWithExceptions(serverTraining, exceptions)
         val body = json.toRequestBody()

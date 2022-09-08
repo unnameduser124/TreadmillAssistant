@@ -2,8 +2,10 @@ package com.example.treadmillassistant.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
@@ -11,6 +13,8 @@ import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
 import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
@@ -18,6 +22,7 @@ import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.TrainingPhaseItemAdapter
 import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.util.*
+import kotlin.concurrent.thread
 
 class EditTrainingPlan: AppCompatActivity() {
 
@@ -32,90 +37,113 @@ class EditTrainingPlan: AppCompatActivity() {
         binding = AddTrainingPlanLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val trainingPlan = user.trainingPlanList.getTrainingPlanByID(intent.getLongExtra("ID", -1))
-        if(trainingPlan==null){
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            return
-        }
-
+        val trainingPlanID = intent.getLongExtra("ID", -1)
         trainingID = intent.getLongExtra("trainingID", -1L)
-
         fromTraining = intent.getBooleanExtra("fromTraining", false)
         if(fromTraining){
             date.timeInMillis = intent.getLongExtra("date", Calendar.getInstance().timeInMillis)
         }
-
-        binding.planNameInput.setText(trainingPlan.name)
-        //phase list recycler view setup
-        val phaseList = trainingPlan.trainingPhaseList
-        updateTotalValues(phaseList)
-        val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
-        val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
-        binding.addTrainingPlanPhaseList.adapter = phaseListItemAdapter
-        binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
-
-
-        binding.addNewPhase.setOnClickListener{
-            //adding new phase with locally valid ID
-            if(phaseList.size>0){
-                phaseList.add(
-                    TrainingPhase(
-                        orderNumber = phaseList.last().orderNumber+1,
-                        speed = DEFAULT_PHASE_SPEED,
-                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
-                        trainingPlanID = trainingPlan.ID
-                    )
-                )
+        var trainingPlan: TrainingPlan? = null
+        val loadedTrainingPlan: MutableLiveData<Boolean> by lazy{
+            MutableLiveData<Boolean>()
+        }
+        thread {
+            val plan = ServerTrainingPlanService().getTrainingPlan(trainingPlanID)
+            if(plan.first == StatusCode.OK){
+                trainingPlan = plan.second
+                loadedTrainingPlan.postValue(true)
             }
             else{
-                phaseList.add(
-                    TrainingPhase(
-                        orderNumber = 0,
-                        speed = DEFAULT_PHASE_SPEED,
-                        duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
-                        trainingPlanID = trainingPlan.ID
-                    )
-                )
-            }
-            binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
-            binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
-
-            updateTotalValues(phaseList)
-        }
-
-        binding.trainingPlanSaveButton.setOnClickListener {
-            val name = binding.planNameInput.text.toString()
-            if(name!="" && name!=" " && phaseList.size>0){
-                val newTrainingPlan = TrainingPlan(name, phaseList, user.ID)
-                TrainingPlanService(this).updateTrainingPlan(newTrainingPlan, trainingPlan.ID)
-                val tpService = TrainingPhaseService(this)
-                phaseList.forEach {
-                    if(it.ID==-1L){
-                        it.ID = tpService.insertNewTrainingPhase(it)
-                    }
-                }
-                removedPhaseIDs.forEach {
-                    tpService.deleteTrainingPhase(it)
-                }
-                user.trainingPlanList.updateTrainingPlan(newTrainingPlan, trainingPlan.ID)
                 exitActivity()
             }
-            else{
-                Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
+        }
+
+        val loadedTrainingPlanObserver = androidx.lifecycle.Observer<Boolean>{
+            if(trainingPlan==null){
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return@Observer
+            }
+            binding.planNameInput.setText(trainingPlan!!.name)
+            //phase list recycler view setup
+            val phaseList = trainingPlan!!.trainingPhaseList
+            updateTotalValues(phaseList)
+            val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
+            val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
+            binding.addTrainingPlanPhaseList.adapter = phaseListItemAdapter
+            binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
+
+
+            binding.addNewPhase.setOnClickListener{
+                //adding new phase with locally valid ID
+                if(phaseList.size>0){
+                    phaseList.add(
+                        TrainingPhase(
+                            orderNumber = phaseList.last().orderNumber+1,
+                            speed = DEFAULT_PHASE_SPEED,
+                            duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
+                            trainingPlanID = trainingPlan!!.ID
+                        )
+                    )
+                }
+                else{
+                    phaseList.add(
+                        TrainingPhase(
+                            orderNumber = 0,
+                            speed = DEFAULT_PHASE_SPEED,
+                            duration = minutesToSeconds(DEFAULT_PHASE_DURATION),
+                            trainingPlanID = trainingPlan!!.ID
+                        )
+                    )
+                }
+                binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
+                binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
+
+                updateTotalValues(phaseList)
+            }
+
+            binding.trainingPlanSaveButton.setOnClickListener {
+                val name = binding.planNameInput.text.toString()
+                if(name!="" && name!=" " && phaseList.size>0){
+                    val newTrainingPlan = TrainingPlan(name, phaseList, user.ID)
+                    TrainingPlanService(this).updateTrainingPlan(newTrainingPlan, trainingPlan!!.ID)
+                    val tpService = TrainingPhaseService(this)
+                    phaseList.forEach {
+                        if(it.ID==-1L){
+                            it.ID = tpService.insertNewTrainingPhase(it)
+                        }
+                    }
+                    removedPhaseIDs.forEach {
+                        tpService.deleteTrainingPhase(it)
+                    }
+                    user.trainingPlanList.updateTrainingPlan(newTrainingPlan, trainingPlan!!.ID)
+                    exitActivity()
+                }
+                else{
+                    Toast.makeText(this, "Fill in the fields", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            binding.cancelButton.setOnClickListener {
+                exitActivity()
+            }
+
+            binding.trainingPlanRemoveButton.setOnClickListener {
+                thread{
+                    val removePlan = ServerTrainingPlanService().deleteTrainingPlan(trainingPlanID)
+                    if(removePlan == StatusCode.OK){
+                        exitActivity()
+                    }
+                    else{
+                        Looper.prepare()
+                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
-        binding.cancelButton.setOnClickListener {
-            exitActivity()
-        }
-
-        binding.trainingPlanRemoveButton.setOnClickListener {
-            TrainingPlanService(this).deleteTrainingPlan(trainingPlan)
-            user.trainingPlanList.removeTrainingPlan(trainingPlan)
-            exitActivity()
-        }
+        loadedTrainingPlan.observe(this, loadedTrainingPlanObserver)
     }
 
     private fun updateTotalValues(phaseList: MutableList<TrainingPhase>) {

@@ -10,7 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
@@ -86,7 +88,12 @@ class CalendarPlaceholderFragment: Fragment() {
         user.trainingSchedule.trainingList.clear()
         val allTrainingsPair = ServerTrainingService().getTrainingsForDay(newCalendar, 0, 10)
         allTrainingsPair.second.forEach {
-            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+            val training = PlannedTraining(it)
+            val plan = ServerTrainingPlanService().getTrainingPlan(training.trainingPlan.ID)
+            if(plan.first == StatusCode.OK){
+                training.trainingPlan = plan.second
+            }
+            user.trainingSchedule.trainingList.add(training)
         }
     }
 

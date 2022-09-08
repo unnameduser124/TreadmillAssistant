@@ -82,13 +82,13 @@ class AddTraining: AppCompatActivity(){
                 dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
                 dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
                 dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
-
+                println("SELECTED PLAN: ${selectedTrainingPlan.ID}")
                 val newTraining = PlannedTraining(
                     dateCal,
                     selectedTreadmill,
                     binding.mediaLink.text.toString(),
                     TrainingStatus.Upcoming,
-                    selectedTrainingPlan,
+                    selectedTrainingPlan
                 )
                 thread{
                     val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
@@ -220,34 +220,39 @@ class AddTraining: AppCompatActivity(){
             thread{
                 baseList.clear()
                 loop@do{
-                    val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 5)
-                    if(planPair.first == StatusCode.OK){
-                        planPair.second.forEach {
-                            val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
+                    if(loaded.value==false){
+                        val planPair = ServerTrainingPlanService().getAllTrainingPlans(start, 5)
+                        if(planPair.first == StatusCode.OK){
+                            planPair.second.forEach {
+                                val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
 
-                            if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
-                                baseList.add(phaseListPair.second)
+                                if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
+                                    baseList.add(phaseListPair.second)
+                                    loaded.postValue(true)
+                                }
                             }
+                            start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
                         }
-                        start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
-                    }
-                    else{
-                        break@loop
+                        else{
+                            break@loop
+                        }
                     }
                 }while(baseList.size<13)
-                loaded.postValue(true)
             }
 
             val observer = androidx.lifecycle.Observer<Boolean>{
-                list = baseList
-                val itemAdapter = AddTrainingPlanPopupItemAdapter(
-                    list,
-                    true
-                )
-                val linearLayoutManager = WrapContentLinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
-                popupBinding.trainingPlanSearchList.adapter = itemAdapter
-                popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
-                popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+                if(it){
+                    list = baseList
+                    val itemAdapter = AddTrainingPlanPopupItemAdapter(
+                        list,
+                        true
+                    )
+                    val linearLayoutManager = WrapContentLinearLayoutManager(popupBinding.trainingPlanSearchList.context, RecyclerView.VERTICAL, false)
+                    popupBinding.trainingPlanSearchList.adapter = itemAdapter
+                    popupBinding.trainingPlanSearchList.layoutManager = linearLayoutManager
+                    popupBinding.trainingPlanSearchList.setHasFixedSize(false)
+                    loaded.value = false
+                }
             }
             loaded.observe(this, observer)
 
