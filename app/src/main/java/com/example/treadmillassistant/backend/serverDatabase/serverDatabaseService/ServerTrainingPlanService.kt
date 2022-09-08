@@ -11,14 +11,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.net.ConnectException
 
 
 class ServerTrainingPlanService {
 
     fun getTrainingPlan(trainingPlanID: Long): Pair<StatusCode, TrainingPlan> {
-        var code: StatusCode = StatusCode.Unknown
-        var trainingPlan = TrainingPlan()
+        val code: StatusCode
+        val trainingPlan = TrainingPlan()
 
         val client = OkHttpClient()
 
@@ -27,52 +26,45 @@ class ServerTrainingPlanService {
             .build()
 
         val call = client.newCall(request)
-        try{
-            val response = call.execute()
-            code = getResponseCode(response.code)
-            if(code == StatusCode.OK){
-                val json = response.body!!.string()
-                var tempData= ""
-                run breaking@{
-                    json.forEach {
-                        if(it != ']' && it != '['){
-                            tempData += it
-                        }
-                        else if(it == ']'){
-                            return@breaking
-                        }
-                    }
-                }
-                //println(tempData)
-                val plan = Gson().fromJson(tempData, ServerTrainingPlan::class.java)
-                tempData = ""
-                var list = false
-                run breaking@{
-                    json.forEach {
+        val response = call.execute()
+        code = getResponseCode(response.code)
 
-                        if(list){
-                            tempData += it
-                        }
-                        if(it == ']' && list){
-                            return@breaking
-                        }
-                        if(it == ','){
-                            list = true
-                        }
+        if(code == StatusCode.OK){
+            val json = response.body!!.string()
+            var tempData= ""
+            run breaking@{
+                json.forEach {
+                    if(it != ']' && it != '['){
+                        tempData += it
+                    }
+                    else if(it == ']'){
+                        return@breaking
                     }
                 }
-                var planTrainingList = mutableListOf<ServerTrainingPhase>()
-                if(tempData!="[]"){
-                    planTrainingList = Gson().fromJson(tempData, object: TypeToken<List<ServerTrainingPhase>>(){}.type)
-                }
-                if(planTrainingList.size>0){
-                    plan.ID = planTrainingList.first().TrainingPlanID
-                }
-                trainingPlan.fromServerTrainingPlan(plan, planTrainingList)
             }
-        }
-        catch(exception: ConnectException){
-            println("${exception.message} ${exception.stackTrace}")
+            val plan = Gson().fromJson(tempData, ServerTrainingPlan::class.java)
+
+            tempData = ""
+            var list = false
+            run breaking@{
+                json.forEach {
+                    if(list){
+                        tempData += it
+                    }
+                    if(it == ']' && list){
+                        return@breaking
+                    }
+                    if(it == ','){
+                        list = true
+                    }
+                }
+            }
+            var planTrainingList = mutableListOf<ServerTrainingPhase>()
+            if(tempData!="[]"){
+                planTrainingList = Gson().fromJson(tempData, object: TypeToken<List<ServerTrainingPhase>>(){}.type)
+                plan.ID = planTrainingList.first().TrainingPlanID
+            }
+            trainingPlan.fromServerTrainingPlan(plan, planTrainingList)
         }
 
         return Pair(code, trainingPlan)

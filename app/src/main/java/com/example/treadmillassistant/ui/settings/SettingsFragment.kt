@@ -2,17 +2,23 @@ package com.example.treadmillassistant.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerUserService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ClearTrainingHistoryConfirmationPopupBinding
 import com.example.treadmillassistant.databinding.FragmentSettingsBinding
+import kotlin.concurrent.thread
 
 class SettingsFragment : Fragment() {
 
@@ -60,9 +66,23 @@ class SettingsFragment : Fragment() {
                 popupWindow.dismiss()
             }
             popupBinding.confirmDataDeletionButton.setOnClickListener {
-                TrainingDatabaseService(it.context).clearTrainingHistory()
-                user.trainingSchedule.trainingList.clear()
-                popupWindow.dismiss()
+                thread{
+                    val clearData = ServerTrainingService().clearUserTrainingHistory()
+                    if(clearData == StatusCode.OK){
+                        Looper.prepare()
+                        Toast.makeText(context, "Data deleted!", Toast.LENGTH_SHORT).show()
+                        binding.clearUserDataButton.post {
+                            popupWindow.dismiss()
+                        }
+                    }
+                    else{
+                        Looper.prepare()
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        binding.clearUserDataButton.post {
+                            popupWindow.dismiss()
+                        }
+                    }
+                }
             }
         }
 

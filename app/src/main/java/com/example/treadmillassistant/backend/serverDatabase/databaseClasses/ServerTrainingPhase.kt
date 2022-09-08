@@ -10,6 +10,8 @@ data class ServerTrainingPhase(val Tilt: Double, val Speed: Double, val Duration
         trainingPhase.speed,
         trainingPhase.duration,
         trainingPhase.orderNumber,
-        trainingPhase.trainingPlanID
+        trainingPhase.trainingPlanID,
+        trainingPhase.ID
     )
+
 }

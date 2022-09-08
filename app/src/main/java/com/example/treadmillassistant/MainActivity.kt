@@ -60,17 +60,6 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             loadUser(this)
-            /*thread{
-                val allPlansPair = ServerTrainingPlanService().getAllTrainingPlans(0, 10)
-                //println(allPlansPair.first)
-                if(allPlansPair.first == StatusCode.OK){
-                    allPlansPair.second.forEach {
-                        val getPlanPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
-                        println(getPlanPair.second.name)
-                    }
-
-                }
-            }*/
             appStart = false
         }
         setSupportActionBar(binding.appBarMain.toolbar)

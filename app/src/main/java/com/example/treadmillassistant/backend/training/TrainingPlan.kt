@@ -4,7 +4,12 @@ import com.example.treadmillassistant.backend.SECONDS_IN_HOUR
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
 
-class TrainingPlan(var name: String = "default name", var trainingPhaseList: MutableList<TrainingPhase> = mutableListOf(), var userID: Long = 0, var ID: Long = -1) {
+class TrainingPlan(
+    var name: String = "default name",
+    var trainingPhaseList: MutableList<TrainingPhase> = mutableListOf(),
+    var userID: Long = 0,
+    var ID: Long = -1
+) {
 
     fun addTrainingPhaseList(trainingPhaseList: MutableList<TrainingPhase>){
         this.trainingPhaseList = trainingPhaseList

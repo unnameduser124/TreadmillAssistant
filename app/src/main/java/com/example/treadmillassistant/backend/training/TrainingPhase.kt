@@ -10,5 +10,12 @@ class TrainingPhase(
     var orderNumber: Int = -1,
     var isFinished: Boolean = false,
     var ID: Long =-1) {
-    constructor(serverPhase: ServerTrainingPhase) : this(serverPhase.Duration, serverPhase.Speed, serverPhase.Tilt, serverPhase.TrainingPlanID, serverPhase.OrderNumber, ID = serverPhase.ID)
+    constructor(serverPhase: ServerTrainingPhase) :
+            this(
+                serverPhase.Duration,
+                serverPhase.Speed,
+                serverPhase.Tilt,
+                serverPhase.TrainingPlanID,
+                serverPhase.OrderNumber,
+                ID = serverPhase.ID)
 }

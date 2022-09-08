@@ -19,6 +19,7 @@ import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.Ser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPhaseService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.GenericTraining
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
@@ -141,37 +142,71 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                 if(training is PlannedTraining){
                     unfinishPhases(training)
                     training.trainingStatus = TrainingStatus.Upcoming
-                }
-                val created: MutableLiveData<Boolean> by lazy{
-                    MutableLiveData<Boolean>(false)
+                    newGenericTraining()
+                    finishTrainingButton.isGone = true
+                    binding.startTrainingButton.isGone = false
+                    binding.startTrainingButton.text = getString(R.string.start_new)
                 }
                 if(training is GenericTraining){
+                    binding.startTrainingButton.isGone = true
+                    finishTrainingButton.isGone = true
+                    val created: MutableLiveData<Boolean> by lazy{
+                        MutableLiveData<Boolean>(false)
+                    }
                     thread{
-                        ServerTrainingService().createTraining(ServerTraining(training))
                         val serverTrainingPlan = ServerTrainingPlan("${Calendar.getInstance().timeInMillis}")
-                        ServerTrainingPlanService().createTrainingPlan(serverTrainingPlan)
+                        serverTrainingPlan.ID = ServerTrainingPlanService().createTrainingPlan(serverTrainingPlan).second
                         training.trainingPlan.trainingPhaseList.forEach{
                             it.trainingPlanID = serverTrainingPlan.ID
-                            println(ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it)))
+                            ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it))
                         }
                         user.trainingSchedule.trainingList.clear()
                         val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
                         allTrainingsPair.second.forEach {
-                            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+                            val training = PlannedTraining(it)
+                            val plan = ServerTrainingPlanService().getTrainingPlan(training.trainingPlan.ID)
+                            if(plan.first == StatusCode.OK){
+                                training.trainingPlan = plan.second
+                            }
+                            user.trainingSchedule.trainingList.add(training)
                         }
+                        training.trainingPlan.ID = serverTrainingPlan.ID
+                        ServerTrainingService().createTraining(ServerTraining(training))
                         created.postValue(true)
+
+
                     }
-                }
-                val observer = androidx.lifecycle.Observer<Boolean>{
-                    if(it){
-                        val dataset = user.trainingSchedule.trainingList
-                        trainingList.adapter = CalendarTrainingItemAdapter(dataset)
-                        newGenericTraining()
-                        finishTrainingButton.isGone = true
-                        binding.startTrainingButton.text = getString(R.string.start_new)
+                    val observer = androidx.lifecycle.Observer<Boolean>{
+                        if(it){
+                            newGenericTraining()
+                            binding.startTrainingButton.isGone = false
+                            binding.startTrainingButton.text = getString(R.string.start_new)
+                            thread{
+                                user.trainingSchedule.trainingList.clear()
+                                val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
+                                allTrainingsPair.second.forEach { serverTraining ->
+                                    val training = PlannedTraining(serverTraining)
+                                    val plan = ServerTrainingPlanService().getTrainingPlan(training.trainingPlan.ID)
+                                    if(plan.first == StatusCode.OK){
+                                        training.trainingPlan = plan.second
+                                    }
+                                    user.trainingSchedule.trainingList.add(training)
+                                }
+                                if(allTrainingsPair.first != StatusCode.NotFound && allTrainingsPair.first != StatusCode.OK){
+                                    Looper.prepare()
+                                    Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                                    return@thread
+                                }
+                                binding.startTrainingButton.post{
+                                    val dataset = user.trainingSchedule.trainingList
+                                    trainingList.adapter = CalendarTrainingItemAdapter(dataset)
+                                }
+                            }
+                        }
                     }
+                    created.observe(viewLifecycleOwner, observer)
                 }
-                created.observe(viewLifecycleOwner, observer)
+
             }
         }
 

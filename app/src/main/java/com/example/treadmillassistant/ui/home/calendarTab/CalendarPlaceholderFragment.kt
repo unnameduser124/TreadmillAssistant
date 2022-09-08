@@ -1,9 +1,11 @@
 package com.example.treadmillassistant.ui.home.calendarTab
 
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -38,24 +40,28 @@ class CalendarPlaceholderFragment: Fragment() {
     ): View {
         val binding = CalendarTabBinding.inflate(layoutInflater)
 
+        var dataset = mutableListOf<Training>()
+        var itemAdapter = CalendarTrainingItemAdapter(dataset)
+
         val loaded: MutableLiveData<Boolean> by lazy{
             MutableLiveData<Boolean>(false)
         }
         thread{
-            reloadTrainingList(Calendar.getInstance())
-            loaded.postValue(true)
+            if(reloadTrainingList(Calendar.getInstance())){
+                loaded.postValue(true)
+            }
         }
-        var dataset = mutableListOf<Training>()
-        var itemAdapter = CalendarTrainingItemAdapter(dataset)
         val observer = Observer<Boolean>{
-            dataset = user.trainingSchedule.trainingList
-            chosenDay = Calendar.getInstance()
-            itemAdapter = CalendarTrainingItemAdapter(dataset)
-            val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-            binding.dayTrainingsList.layoutManager = linearLayoutManager
-            binding.dayTrainingsList.adapter = itemAdapter
-            binding.dayTrainingsList.setHasFixedSize(true)
-            trainingList = binding.dayTrainingsList
+            if(it){
+                dataset = user.trainingSchedule.trainingList
+                chosenDay = Calendar.getInstance()
+                itemAdapter = CalendarTrainingItemAdapter(dataset)
+                val linearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+                binding.dayTrainingsList.layoutManager = linearLayoutManager
+                binding.dayTrainingsList.adapter = itemAdapter
+                binding.dayTrainingsList.setHasFixedSize(true)
+                trainingList = binding.dayTrainingsList
+            }
         }
         loaded.observe(viewLifecycleOwner, observer)
 
@@ -84,7 +90,7 @@ class CalendarPlaceholderFragment: Fragment() {
         return binding.root
     }
 
-    private fun reloadTrainingList(newCalendar: Calendar){
+    private fun reloadTrainingList(newCalendar: Calendar): Boolean {
         user.trainingSchedule.trainingList.clear()
         val allTrainingsPair = ServerTrainingService().getTrainingsForDay(newCalendar, 0, 10)
         allTrainingsPair.second.forEach {
@@ -95,6 +101,14 @@ class CalendarPlaceholderFragment: Fragment() {
             }
             user.trainingSchedule.trainingList.add(training)
         }
+        if(allTrainingsPair.first == StatusCode.OK){
+            return true
+        }
+        else if(allTrainingsPair.first != StatusCode.NotFound){
+            Looper.prepare()
+            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+        }
+        return false
     }
 
     companion object{

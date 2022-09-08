@@ -32,7 +32,6 @@ class ServerTrainingPhaseService {
 
         val json = serializeWithExceptions(serverTrainingPhase, exceptions)
         val body = json.toRequestBody()
-        println(json)
 
         val request = Request.Builder()
             .url("$BASE_URL/create_training_phase/${serverTrainingPhase.TrainingPlanID}/${serverTrainingPhase.OrderNumber}")

@@ -19,7 +19,8 @@ data class ServerTraining(
         training.mediaLink,
         training.trainingStatus.toString(),
         training.treadmill.ID,
-        training.trainingPlan.ID
+        training.trainingPlan.ID,
+        training.ID
     ){
         val sdfDate = SimpleDateFormat("dd-MM-yyyy", Locale.ROOT)
         val date = sdfDate.format(training.trainingTime.time)
@@ -27,7 +28,6 @@ data class ServerTraining(
         val sdfTime = SimpleDateFormat("HH:mm", Locale.ROOT)
         val time = sdfTime.format(training.trainingTime.time)
         Time = time
-        ID = training.ID
     }
 
 }

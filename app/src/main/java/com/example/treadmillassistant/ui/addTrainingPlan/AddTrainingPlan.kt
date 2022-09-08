@@ -2,6 +2,7 @@ package com.example.treadmillassistant.ui.addTrainingPlan
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -60,7 +61,7 @@ class AddTrainingPlan: AppCompatActivity() {
         updateTotalValues(phaseList)
 
         binding.addNewPhase.setOnClickListener{
-            //adding new phase with locally valid ID
+            //adding new phase
             if(phaseList.size>0){
                 phaseList.add(TrainingPhase(
                     orderNumber = phaseList.last().orderNumber+1, speed = DEFAULT_PHASE_SPEED,
@@ -71,11 +72,9 @@ class AddTrainingPlan: AppCompatActivity() {
             }
             binding.addTrainingPlanPhaseList.adapter?.notifyItemInserted(phaseList.size-1)
             binding.addTrainingPlanPhaseList.setItemViewCacheSize(phaseList.size)
-
-            updateTotalValues(phaseList)
         }
 
-        binding.trainingPlanSaveButton.setOnClickListener {//TODO("Need to send phase list to the server but can't because I don't have the fucking plan ID")
+        binding.trainingPlanSaveButton.setOnClickListener {
             val name = binding.planNameInput.text.toString()
             if(name!="" && name!=" " && phaseList.size>0){
 
@@ -88,13 +87,15 @@ class AddTrainingPlan: AppCompatActivity() {
                     val response = ServerTrainingPlanService().createTrainingPlan(ServerTrainingPlan(name))
                     if(response.first == StatusCode.Created){
                         trainingPlan.ID = response.second
-                        println(response.second)
                         trainingPlan.trainingPhaseList.forEach {
-
                             it.trainingPlanID = trainingPlan.ID
-                            println(ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it)).first)
+                            ServerTrainingPhaseService().createTrainingPhase(ServerTrainingPhase(it))
                         }
                         exitActivity()
+                    }
+                    else{
+                        Looper.prepare()
+                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

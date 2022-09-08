@@ -54,10 +54,8 @@ class RegisterHealthPage: AppCompatActivity() {
 
             if(firstName!="" && lastName!="" && username!="" && email!="" && password!="" && age!=0 && weight!=0.0) {
                 thread{
-                    //user = User(trainingCalendar, email, password,firstName,lastName, username, age, weight)
                     val newUser = ServerUser(firstName, lastName, username, age, weight, email, password)
                     val responseCode = ServerUserService().createUser(newUser)
-                    println(responseCode)
                     if(responseCode==StatusCode.Created){
                         val serverUser = ServerUserService().getUser(user.ID)
                         user = User(serverUser.second[0], user.ID)

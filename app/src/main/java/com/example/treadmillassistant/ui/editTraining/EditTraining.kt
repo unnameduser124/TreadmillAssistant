@@ -2,35 +2,30 @@ package com.example.treadmillassistant.ui.editTraining
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.view.Gravity
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
-import com.example.treadmillassistant.backend.training.PlannedTraining
-import com.example.treadmillassistant.backend.training.Training
-import com.example.treadmillassistant.backend.training.TrainingPlan
-import com.example.treadmillassistant.backend.training.TrainingStatus
+import com.example.treadmillassistant.backend.training.*
 import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
 import com.example.treadmillassistant.ui.AddTreadmill
-import com.example.treadmillassistant.ui.addTraining.AddTraining
-import com.example.treadmillassistant.ui.addTraining.AddTrainingPlanPopupItemAdapter
 import com.example.treadmillassistant.ui.addTraining.AddTreadmillPopupItemAdapter
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
-import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment
 import com.example.treadmillassistant.ui.trainingDetails.TrainingDetailsPage
 import java.util.*
 import kotlin.concurrent.thread
@@ -38,11 +33,11 @@ import kotlin.concurrent.thread
 class EditTraining: AppCompatActivity() {
 
     var training: Training? = null
-
+    lateinit var binding: AddTrainingLayoutBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = AddTrainingLayoutBinding.inflate(layoutInflater)
+        binding = AddTrainingLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.trainingTime.setIs24HourView(true)
@@ -51,6 +46,7 @@ class EditTraining: AppCompatActivity() {
         val loadTraining: MutableLiveData<Boolean> by lazy{
             MutableLiveData<Boolean>()
         }
+
         thread{
             val fromServer = ServerTrainingService().getTrainingByID(itemID)
             if(fromServer.first == StatusCode.OK){
@@ -85,33 +81,12 @@ class EditTraining: AppCompatActivity() {
                         selectedTreadmill = training!!.treadmill
                         binding.selectedTreadmillName.text = selectedTreadmill.name
                     }
+
                     if(training!!.trainingPlan.ID==-1L){
-                        binding.selectedTrainingPlanName.text = if(user.trainingPlanList.trainingPlanList.isEmpty()){
-                            selectedTrainingPlan = training!!.trainingPlan
-                            getString(R.string.no_training_plan)
-                        } else{
-                            selectedTrainingPlan = user.trainingPlanList.trainingPlanList.first()
-                            selectedTrainingPlan.name
-                        }
+                        loadDefaultTrainingPlanName()
                     }
                     else{
-                        val loadedPlan: MutableLiveData<Boolean> by lazy {
-                            MutableLiveData<Boolean>(false)
-                        }
-                        thread{
-                            val plan = ServerTrainingPlanService().getTrainingPlan(training!!.trainingPlan.ID)
-                            if(plan.first == StatusCode.OK){
-                                selectedTrainingPlan = plan.second
-                                loadedPlan.postValue(true)
-                            }
-                        }
-
-                        val planObserver = androidx.lifecycle.Observer<Boolean>{
-                            if(it){
-                                binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
-                            }
-                        }
-                        loadedPlan.observe(this, planObserver)
+                        loadTrainingPlanName()
                     }
                     setUpDatePicker(binding.trainingDate, chosenDate)
                     setUpTimePicker(binding.trainingTime, chosenDate)
@@ -120,31 +95,32 @@ class EditTraining: AppCompatActivity() {
 
 
                 binding.saveTrainingButton.setOnClickListener {
-                    if(selectedTreadmill.ID!=-1L){
-                        val dateCal = Calendar.getInstance()
-                        dateCal.set(Calendar.YEAR, binding.trainingDate.year)
-                        dateCal.set(Calendar.MONTH, binding.trainingDate.month)
-                        dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
-                        dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
-                        dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
+                    val dateCal = Calendar.getInstance()
+                    dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+                    dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+                    dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+                    dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+                    dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
 
-                        val newTraining = PlannedTraining(
-                            dateCal,
-                            selectedTreadmill,
-                            binding.mediaLink.text.toString(),
-                            TrainingStatus.Upcoming,
-                            selectedTrainingPlan
-                        )
-                        thread{
-                            val updateTraining = ServerTrainingService().updateTraining(ServerTraining(newTraining), training!!.ID)
+                    val newTraining = PlannedTraining(
+                        dateCal,
+                        selectedTreadmill,
+                        binding.mediaLink.text.toString(),
+                        TrainingStatus.Upcoming,
+                        selectedTrainingPlan
+                    )
+                    thread{
+                        val updateTraining = ServerTrainingService().updateTraining(ServerTraining(newTraining), training!!.ID)
+                        if(updateTraining == StatusCode.OK){
                             val intent = Intent(this, TrainingDetailsPage::class.java)
                             intent.putExtra("id", training!!.ID)
                             finish()
                             startActivity(intent)
                         }
-                    }
-                    else{
-                        Toast.makeText(this, "Pick a treadmill!", Toast.LENGTH_SHORT).show()
+                        else{
+                            Looper.prepare()
+                            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -251,12 +227,11 @@ class EditTraining: AppCompatActivity() {
                                 if(planPair.first == StatusCode.OK){
                                     planPair.second.forEach {
                                         val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
-
                                         if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
                                             baseList.add(phaseListPair.second)
-                                            loaded.postValue(true)
                                         }
                                     }
+                                    loaded.postValue(true)
                                     start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
                                 }
                                 else{
@@ -301,13 +276,14 @@ class EditTraining: AppCompatActivity() {
                                             }
                                         }
                                     }
+
                                     if(baseList.size>sizeBefore){
                                         start += SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
 
                                         popupBinding.trainingPlanSearchList.post {
                                             popupBinding.trainingPlanSearchList.adapter?.notifyItemRangeInserted(
                                                 baseList.size - (baseList.size - sizeBefore),
-                                                (baseList.size - sizeBefore)
+                                                baseList.size - sizeBefore
                                             )
                                         }
                                         popupBinding.trainingPlanSearchList.post{
@@ -351,6 +327,56 @@ class EditTraining: AppCompatActivity() {
 
         loadTraining.observe(this, trainingLoadedObserver)
 
+    }
+
+    private fun loadTrainingPlanName() {
+        val loadedPlan: MutableLiveData<Boolean> by lazy {
+            MutableLiveData<Boolean>(false)
+        }
+
+        thread{
+            val plan = ServerTrainingPlanService().getTrainingPlan(training!!.trainingPlan.ID)
+            if(plan.first == StatusCode.OK){
+                selectedTrainingPlan = plan.second
+                loadedPlan.postValue(true)
+            }
+        }
+
+        val planObserver = androidx.lifecycle.Observer<Boolean>{ loadedPLan ->
+            if(loadedPLan){
+                binding.selectedTrainingPlanName.text = selectedTrainingPlan.name
+            }
+        }
+        loadedPlan.observe(this, planObserver)
+    }
+
+    private fun loadDefaultTrainingPlanName() {
+        thread{
+            val firstPlan = ServerTrainingPlanService().getAllTrainingPlans(0, 10)
+            if(firstPlan.first == StatusCode.OK){
+                if(firstPlan.second.size>0){
+                    run breaking@{
+                        firstPlan.second.forEach{
+                            val plan = ServerTrainingPlanService().getTrainingPlan(it.ID)
+                            if(plan.first == StatusCode.OK){
+                                if(plan.second.trainingPhaseList != emptyList<TrainingPhase>()){
+                                    binding.selectedTrainingPlanName.post{
+                                        binding.selectedTrainingPlanName.text = plan.second.name
+                                    }
+                                    selectedTrainingPlan = plan.second
+                                    return@breaking
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    binding.selectedTrainingPlanName.post{
+                        binding.selectedTrainingPlanName.text = getString(R.string.no_training_plan)
+                    }
+                }
+            }
+        }
     }
 
     companion object {

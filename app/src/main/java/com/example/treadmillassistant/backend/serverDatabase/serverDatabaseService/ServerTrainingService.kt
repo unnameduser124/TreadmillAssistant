@@ -31,11 +31,12 @@ class ServerTrainingService {
 
         val call: Call = client.newCall(request)
         val response: Response = call.execute()
+
         if(response.code == StatusCode.OK.code){
             val json = response.body!!.string()
             serverTraining = Gson().fromJson(json.subSequence(1, json.length-1).toString(), ServerTraining::class.java)
+            serverTraining.ID = trainingID
         }
-        serverTraining.ID = trainingID
         return Pair(getResponseCode(response.code), serverTraining)
     }
 
@@ -71,7 +72,7 @@ class ServerTrainingService {
         val client = OkHttpClient()
 
         val request = Request.Builder()
-            .url("$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit")
+            .url("""$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit""")
             .build()
         val code: StatusCode
         var trainingList = mutableListOf<ServerTraining>()
@@ -158,7 +159,6 @@ class ServerTrainingService {
             .delete()
             .build()
 
-        println(request.url)
         val call = client.newCall(request)
         val response = call.execute()
 
@@ -170,11 +170,12 @@ class ServerTrainingService {
 
         val request = Request.Builder()
             .url("$BASE_URL/clear_user_training_history/${user.ID}")
+            .delete()
             .build()
 
         val call = client.newCall(request)
         val response = call.execute()
-
+        println(response.code)
         return getResponseCode(response.code)
     }
 

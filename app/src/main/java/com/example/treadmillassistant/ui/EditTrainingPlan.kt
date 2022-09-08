@@ -76,7 +76,7 @@ class EditTrainingPlan: AppCompatActivity() {
 
 
             binding.addNewPhase.setOnClickListener{
-                //adding new phase with locally valid ID
+                //adding new phase
                 if(phaseList.size>0){
                     phaseList.add(
                         TrainingPhase(
@@ -133,6 +133,8 @@ class EditTrainingPlan: AppCompatActivity() {
                 thread{
                     val removePlan = ServerTrainingPlanService().deleteTrainingPlan(trainingPlanID)
                     if(removePlan == StatusCode.OK){
+                        Looper.prepare()
+                        Toast.makeText(this, "Deleted successfully!", Toast.LENGTH_SHORT).show()
                         exitActivity()
                     }
                     else{

@@ -6,23 +6,23 @@ import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.view.Gravity
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
@@ -30,21 +30,17 @@ import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBind
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
 import com.example.treadmillassistant.ui.AddTreadmill
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
-import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.popupWindow
-import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTrainingPlan
-import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.selectedTreadmill
-import com.example.treadmillassistant.ui.editTraining.EditTraining.Companion.treadmillPopup
 import com.example.treadmillassistant.ui.editTraining.WrapContentLinearLayoutManager
 import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
 import java.util.*
 import kotlin.concurrent.thread
 
 class AddTraining: AppCompatActivity(){
-
+    lateinit var binding: AddTrainingLayoutBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = AddTrainingLayoutBinding.inflate(layoutInflater)
+         binding = AddTrainingLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.trainingTime.setIs24HourView(true)
@@ -57,12 +53,7 @@ class AddTraining: AppCompatActivity(){
 
         binding.trainingDate.minDate = today.timeInMillis
 
-        binding.selectedTrainingPlanName.text = if(user.trainingPlanList.trainingPlanList.isEmpty()){
-            getString(R.string.no_training_plan)
-        } else{
-            selectedTrainingPlan = user.trainingPlanList.trainingPlanList.first()
-            user.trainingPlanList.trainingPlanList.first().name
-        }
+        loadDefaultTrainingPlanName()
 
         binding.selectedTreadmillName.text = if(user.treadmillList.isEmpty()){
             selectedTreadmill = Treadmill()
@@ -75,41 +66,32 @@ class AddTraining: AppCompatActivity(){
         }
 
         binding.saveTrainingButton.setOnClickListener{
-            if(selectedTreadmill.ID != -1L){
-                val dateCal = Calendar.getInstance()
-                dateCal.set(Calendar.YEAR, binding.trainingDate.year)
-                dateCal.set(Calendar.MONTH, binding.trainingDate.month)
-                dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
-                dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
-                dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
-                println("SELECTED PLAN: ${selectedTrainingPlan.ID}")
-                val newTraining = PlannedTraining(
-                    dateCal,
-                    selectedTreadmill,
-                    binding.mediaLink.text.toString(),
-                    TrainingStatus.Upcoming,
-                    selectedTrainingPlan
-                )
-                thread{
-                    val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
-                    if(responseCode.first == StatusCode.Created){
-                        newTraining.ID = responseCode.second
-                        user.trainingSchedule.addNewTraining(newTraining)
-                        user.trainingSchedule.sortCalendar()
-                        val intent = Intent(this, MainActivity::class.java)
-                        finishAffinity()
-                        startActivity(intent)
-                    }
-                    else{
-                        Looper.prepare()
-                        Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
-                    }
+            val dateCal = Calendar.getInstance()
+            dateCal.set(Calendar.YEAR, binding.trainingDate.year)
+            dateCal.set(Calendar.MONTH, binding.trainingDate.month)
+            dateCal.set(Calendar.DAY_OF_MONTH, binding.trainingDate.dayOfMonth)
+            dateCal.set(Calendar.HOUR_OF_DAY, binding.trainingTime.hour)
+            dateCal.set(Calendar.MINUTE, binding.trainingTime.minute)
+
+            val newTraining = PlannedTraining(
+                dateCal,
+                selectedTreadmill,
+                binding.mediaLink.text.toString(),
+                TrainingStatus.Upcoming,
+                selectedTrainingPlan
+            )
+
+            thread{
+                val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
+                if(responseCode.first == StatusCode.Created){
+                    val intent = Intent(this, MainActivity::class.java)
+                    finishAffinity()
+                    startActivity(intent)
                 }
-
-
-            }
-            else{
-                Toast.makeText(this, "Pick a treadmill", Toast.LENGTH_SHORT).show()
+                else{
+                    Looper.prepare()
+                    Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -122,8 +104,6 @@ class AddTraining: AppCompatActivity(){
             treadmillPopup = PopupWindow(popupBinding.root, width, height, focusable)
             treadmillPopup.contentView = popupBinding.root
             treadmillPopup.showAtLocation(binding.addTreadmillButton, Gravity.CENTER, 0, 0)
-
-
 
             popupBinding.treadmillSelectionCancelButton.setOnClickListener { treadmillPopup.dismiss() }
 
@@ -225,12 +205,11 @@ class AddTraining: AppCompatActivity(){
                         if(planPair.first == StatusCode.OK){
                             planPair.second.forEach {
                                 val phaseListPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
-
                                 if(phaseListPair.second.trainingPhaseList.size>0 && phaseListPair.first == StatusCode.OK){
                                     baseList.add(phaseListPair.second)
-                                    loaded.postValue(true)
                                 }
                             }
+                            loaded.postValue(true)
                             start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
                         }
                         else{
@@ -282,19 +261,10 @@ class AddTraining: AppCompatActivity(){
                                         baseList.size - (baseList.size - sizeBefore),
                                         (baseList.size - sizeBefore)
                                     )
-                                }
-                                popupBinding.trainingPlanSearchList.post{
                                     popupBinding.trainingPlanSearchList.scrollBy(0,70)
                                 }
                             }
                         }
-
-                        /*val addList = getTrainingPlansWithPagination(
-                            start,
-                            SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT,
-                            baseList
-                        ).toMutableList()*/
-
                     }
                 }
             }
@@ -328,6 +298,35 @@ class AddTraining: AppCompatActivity(){
                 val newAdapter = AddTrainingPlanPopupItemAdapter(list, false, training.ID)
 
                 popupBinding.trainingPlanSearchList.adapter = newAdapter
+            }
+        }
+    }
+
+    private fun loadDefaultTrainingPlanName() {
+        thread{
+            val firstPlan = ServerTrainingPlanService().getAllTrainingPlans(0, 10)
+            if(firstPlan.first == StatusCode.OK){
+                if(firstPlan.second.size>0){
+                    run breaking@{
+                        firstPlan.second.forEach{
+                            val plan = ServerTrainingPlanService().getTrainingPlan(it.ID)
+                            if(plan.first == StatusCode.OK){
+                                if(plan.second.trainingPhaseList != emptyList<TrainingPhase>()){
+                                    binding.selectedTrainingPlanName.post{
+                                        binding.selectedTrainingPlanName.text = plan.second.name
+                                    }
+                                    selectedTrainingPlan = plan.second
+                                    return@breaking
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    binding.selectedTrainingPlanName.post{
+                        binding.selectedTrainingPlanName.text = getString(R.string.no_training_plan)
+                    }
+                }
             }
         }
     }
