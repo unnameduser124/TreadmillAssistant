@@ -88,7 +88,8 @@ class ServerTrainingPlanService {
             val trainingPlanListJson = response.body!!.string()
             trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<ServerTrainingPlan>>(){}.type)
         }
-        return Pair(code, trainingPlanList)
+
+        return Pair(code, trainingPlanList.filter { !it.Name.startsWith("genericTrainingPlan") }.toMutableList())
     }
 
     fun createTrainingPlan(serverTrainingPlan: ServerTrainingPlan): Pair<StatusCode, Long>{

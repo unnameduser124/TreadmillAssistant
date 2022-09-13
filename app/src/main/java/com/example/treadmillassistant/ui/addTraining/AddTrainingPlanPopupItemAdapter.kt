@@ -13,7 +13,7 @@ import com.example.treadmillassistant.backend.DURATION_ROUND_MULTIPLIER
 import com.example.treadmillassistant.backend.round
 import com.example.treadmillassistant.backend.secondsToMinutes
 import com.example.treadmillassistant.backend.training.TrainingPlan
-import com.example.treadmillassistant.ui.EditTrainingPlan
+import com.example.treadmillassistant.ui.editTrainingPlan.EditTrainingPlan
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.popupWindow
 import com.example.treadmillassistant.ui.addTraining.AddTraining.Companion.selectedTrainingPlan
 import com.google.android.material.button.MaterialButton

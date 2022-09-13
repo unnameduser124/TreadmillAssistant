@@ -147,14 +147,14 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                     binding.startTrainingButton.isGone = false
                     binding.startTrainingButton.text = getString(R.string.start_new)
                 }
-                if(training is GenericTraining){
+                else if(training is GenericTraining){
                     binding.startTrainingButton.isGone = true
                     finishTrainingButton.isGone = true
                     val created: MutableLiveData<Boolean> by lazy{
                         MutableLiveData<Boolean>(false)
                     }
                     thread{
-                        val serverTrainingPlan = ServerTrainingPlan("${Calendar.getInstance().timeInMillis}")
+                        val serverTrainingPlan = ServerTrainingPlan("genericTrainingPlan${Calendar.getInstance().timeInMillis}")
                         serverTrainingPlan.ID = ServerTrainingPlanService().createTrainingPlan(serverTrainingPlan).second
                         training.trainingPlan.trainingPhaseList.forEach{
                             it.trainingPlanID = serverTrainingPlan.ID

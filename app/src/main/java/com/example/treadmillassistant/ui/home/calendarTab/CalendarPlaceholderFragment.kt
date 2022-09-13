@@ -47,9 +47,8 @@ class CalendarPlaceholderFragment: Fragment() {
             MutableLiveData<Boolean>(false)
         }
         thread{
-            if(reloadTrainingList(Calendar.getInstance())){
-                loaded.postValue(true)
-            }
+            reloadTrainingList(Calendar.getInstance())
+            loaded.postValue(true)
         }
         val observer = Observer<Boolean>{
             if(it){

@@ -60,4 +60,14 @@ class TrainingPlan(
             trainingPhaseList.add(TrainingPhase(it))
         }
     }
+
+    fun copyPhaseList(): MutableList<TrainingPhase>{
+        val list = mutableListOf<TrainingPhase>()
+
+        trainingPhaseList.forEach {
+            list.add(it.copy())
+        }
+
+        return list
+    }
 }

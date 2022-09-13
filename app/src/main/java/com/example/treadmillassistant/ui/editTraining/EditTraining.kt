@@ -231,7 +231,6 @@ class EditTraining: AppCompatActivity() {
                                             baseList.add(phaseListPair.second)
                                         }
                                     }
-                                    loaded.postValue(true)
                                     start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
                                 }
                                 else{
@@ -239,6 +238,7 @@ class EditTraining: AppCompatActivity() {
                                 }
                             }
                         }while(baseList.size<13)
+                        loaded.postValue(true)
                     }
 
                     val observer = androidx.lifecycle.Observer<Boolean>{
@@ -306,6 +306,7 @@ class EditTraining: AppCompatActivity() {
                     popupBinding.trainingPlanSelectionAddNewButton.setOnClickListener {
                         val intent = Intent(this, AddTrainingPlan::class.java)
                         intent.putExtra("fromEditTraining", true)
+                        intent.putExtra("id", training!!.ID)
                         startActivity(intent)
                         popupWindow.dismiss()
                     }

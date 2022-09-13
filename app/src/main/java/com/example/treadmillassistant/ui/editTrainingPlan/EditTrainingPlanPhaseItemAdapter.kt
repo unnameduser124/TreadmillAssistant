@@ -1,4 +1,4 @@
-package com.example.treadmillassistant.ui.addTrainingPlan
+package com.example.treadmillassistant.ui.editTrainingPlan
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.training.TrainingPhase
+import com.example.treadmillassistant.ui.editTrainingPlan.EditTrainingPlan.Companion.removedPhaseIDs
 import com.example.treadmillassistant.ui.InputFilterMinMax
 import com.google.android.material.textfield.TextInputEditText
 import java.lang.NumberFormatException
 
-class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>,
-                               private val totalDuration: TextView,
-                               private val totalDistance: TextView): RecyclerView.Adapter<TrainingPhaseItemAdapter.ItemViewHolder>(){
+class EditTrainingPlanPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>,
+                                       private val totalDuration: TextView,
+                                       private val totalDistance: TextView): RecyclerView.Adapter<EditTrainingPlanPhaseItemAdapter.ItemViewHolder>(){
 
     class ItemViewHolder(view: View): RecyclerView.ViewHolder(view){
         val durationInput: TextInputEditText = view.findViewById(R.id.phase_duration_input)
@@ -49,6 +50,7 @@ class TrainingPhaseItemAdapter(private val phaseList: MutableList<TrainingPhase>
         holder.removeButton.setOnClickListener {
             if(position<phaseList.size){
                 phaseList.removeAt(position)
+                removedPhaseIDs.add(item.ID)
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position, phaseList.size)
                 setDuration(holder.durationInput.context)

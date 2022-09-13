@@ -209,7 +209,6 @@ class AddTraining: AppCompatActivity(){
                                     baseList.add(phaseListPair.second)
                                 }
                             }
-                            loaded.postValue(true)
                             start+= SELECT_TRAINING_PLAN_LIST_LOAD_LIMIT
                         }
                         else{
@@ -217,6 +216,7 @@ class AddTraining: AppCompatActivity(){
                         }
                     }
                 }while(baseList.size<13)
+                loaded.postValue(true)
             }
 
             val observer = androidx.lifecycle.Observer<Boolean>{

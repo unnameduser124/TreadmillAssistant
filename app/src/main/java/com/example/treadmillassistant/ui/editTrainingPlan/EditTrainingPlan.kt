@@ -1,4 +1,4 @@
-package com.example.treadmillassistant.ui
+package com.example.treadmillassistant.ui.editTrainingPlan
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
-import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPhaseService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.databinding.AddTrainingPlanLayoutBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
-import com.example.treadmillassistant.ui.addTrainingPlan.TrainingPhaseItemAdapter
 import com.example.treadmillassistant.ui.editTraining.EditTraining
 import java.util.*
 import kotlin.concurrent.thread
@@ -66,9 +66,9 @@ class EditTrainingPlan: AppCompatActivity() {
             }
             binding.planNameInput.setText(trainingPlan!!.name)
             //phase list recycler view setup
-            val phaseList = trainingPlan!!.trainingPhaseList
+            val phaseList = trainingPlan!!.copyPhaseList()
             updateTotalValues(phaseList)
-            val phaseListItemAdapter = TrainingPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
+            val phaseListItemAdapter = EditTrainingPlanPhaseItemAdapter(phaseList, binding.totalDurationTrainingPlanLabel, binding.totalDistanceTrainingPlanLabel)
             val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.addTrainingPlanPhaseList.layoutManager = linearLayoutManager
             binding.addTrainingPlanPhaseList.adapter = phaseListItemAdapter
@@ -105,19 +105,24 @@ class EditTrainingPlan: AppCompatActivity() {
 
             binding.trainingPlanSaveButton.setOnClickListener {
                 val name = binding.planNameInput.text.toString()
+                comparePhaseLists(trainingPlan!!.trainingPhaseList, phaseList)
                 if(name!="" && name!=" " && phaseList.size>0){
-                    val newTrainingPlan = TrainingPlan(name, phaseList, user.ID)
-                    TrainingPlanService(this).updateTrainingPlan(newTrainingPlan, trainingPlan!!.ID)
-                    val tpService = TrainingPhaseService(this)
-                    phaseList.forEach {
-                        if(it.ID==-1L){
-                            it.ID = tpService.insertNewTrainingPhase(it)
+                    val newTrainingPlan = ServerTrainingPlan(name, trainingPlan!!.ID)
+                    thread{
+                        if(name!=trainingPlan!!.name){
+                            ServerTrainingPlanService().updateTrainingPlan(newTrainingPlan, trainingPlan!!.ID)
+                        }
+                        val tpService = ServerTrainingPhaseService()
+                        addedPhases.forEach {
+                            tpService.createTrainingPhase(it)
+                        }
+                        updatedPhases.forEach{
+                            tpService.updateTrainingPhase(it, it.ID)
+                        }
+                        removedPhaseIDs.forEach {
+                            tpService.deleteTrainingPhase(it)
                         }
                     }
-                    removedPhaseIDs.forEach {
-                        tpService.deleteTrainingPhase(it)
-                    }
-                    user.trainingPlanList.updateTrainingPlan(newTrainingPlan, trainingPlan!!.ID)
                     exitActivity()
                 }
                 else{
@@ -170,6 +175,8 @@ class EditTrainingPlan: AppCompatActivity() {
 
     companion object{
         val removedPhaseIDs = mutableListOf<Long>()
+        val updatedPhases = mutableListOf<ServerTrainingPhase>()
+        val addedPhases = mutableListOf<ServerTrainingPhase>()
     }
 
     private fun exitActivity(){
@@ -184,6 +191,19 @@ class EditTrainingPlan: AppCompatActivity() {
             intent.putExtra("id", trainingID)
             finish()
             startActivity(intent)
+        }
+    }
+
+    private fun comparePhaseLists(originalList: List<TrainingPhase>, modifiedList: List<TrainingPhase>){
+        modifiedList.forEach {trainingPhase ->
+            if(!originalList.contains(trainingPhase)){
+                if(trainingPhase.ID == -1L){
+                    addedPhases.add(ServerTrainingPhase(trainingPhase))
+                }
+                else if(originalList.any { it.ID == trainingPhase.ID }){
+                    updatedPhases.add(ServerTrainingPhase(trainingPhase))
+                }
+            }
         }
     }
 }

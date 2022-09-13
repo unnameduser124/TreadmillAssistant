@@ -18,4 +18,23 @@ class TrainingPhase(
                 serverPhase.TrainingPlanID,
                 serverPhase.OrderNumber,
                 ID = serverPhase.ID)
+
+    fun copy(): TrainingPhase{
+        return TrainingPhase(duration, speed, tilt, trainingPlanID, orderNumber, ID = ID)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other is TrainingPhase){
+            if(
+                duration == other.duration &&
+                speed == other.speed &&
+                tilt == other.tilt &&
+                trainingPlanID == other.trainingPlanID &&
+                orderNumber == other.orderNumber &&
+                ID == other.ID
+            ){ return true }
+            return false
+        }
+        return super.equals(other)
+    }
 }
