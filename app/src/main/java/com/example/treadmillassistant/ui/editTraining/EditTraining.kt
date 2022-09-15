@@ -58,8 +58,8 @@ class EditTraining: AppCompatActivity() {
             }
         }
 
-        val trainingLoadedObserver = androidx.lifecycle.Observer<Boolean>{
-            if(it){
+        val trainingLoadedObserver = androidx.lifecycle.Observer<Boolean>{ trainingLoaded ->
+            if(trainingLoaded){
                 if (training == null) {
                     onBackPressed()
                     return@Observer
@@ -213,7 +213,7 @@ class EditTraining: AppCompatActivity() {
                     popupWindow.showAtLocation(binding.addTrainingPlanButton, Gravity.CENTER, 0, 0)
 
                     var start = 0
-                    var baseList = mutableListOf<TrainingPlan>()
+                    val baseList = mutableListOf<TrainingPlan>()
                     var list = mutableListOf<TrainingPlan>()
                     val loaded: MutableLiveData<Boolean> by lazy{
                         MutableLiveData<Boolean>(false)
@@ -241,8 +241,8 @@ class EditTraining: AppCompatActivity() {
                         loaded.postValue(true)
                     }
 
-                    val observer = androidx.lifecycle.Observer<Boolean>{
-                        if(it){
+                    val observer = androidx.lifecycle.Observer<Boolean>{ dataLoaded ->
+                        if(dataLoaded){
                             list = baseList
                             val itemAdapter = EditTrainingPlanPopupItemAdapter(
                                 list,
@@ -321,7 +321,7 @@ class EditTraining: AppCompatActivity() {
                     }
                 }
             }
-            else if (!it){
+            else if (!trainingLoaded){
                 onBackPressed()
             }
         }
