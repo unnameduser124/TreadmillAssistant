@@ -6,6 +6,7 @@ import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.New
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.training.PlannedTraining
+import com.example.treadmillassistant.backend.training.Training
 import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -19,7 +20,7 @@ import java.util.*
 
 class ServerTrainingService {
 
-    fun getTrainingByID(trainingID: Long): Pair<StatusCode, ServerTraining>{
+    fun getTrainingByID(trainingID: Long): Pair<StatusCode, Training>{
 
         val client = OkHttpClient()
         var serverTraining = ServerTraining("", "", "", "", -1, -1)
@@ -37,10 +38,11 @@ class ServerTrainingService {
             serverTraining = Gson().fromJson(json.subSequence(1, json.length-1).toString(), ServerTraining::class.java)
             serverTraining.ID = trainingID
         }
-        return Pair(getResponseCode(response.code), serverTraining)
+        val plannedTraining = PlannedTraining(serverTraining)
+        return Pair(getResponseCode(response.code), plannedTraining)
     }
 
-    fun getTrainingsForDay(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<ServerTraining>>{
+    fun getTrainingsForDay(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<Training>>{
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ROOT)
         val date = sdf.format(calendar.time)
 
@@ -62,10 +64,10 @@ class ServerTrainingService {
             trainingList = Gson().fromJson(trainingJson, object: TypeToken<List<ServerTraining>>(){}.type)
         }
 
-        return Pair(code, trainingList)
+        return Pair(code, serverTrainingListToTrainingList(trainingList))
     }
 
-    fun getTrainingsForMonth(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<ServerTraining>>{
+    fun getTrainingsForMonth(calendar: Calendar, skip: Int, limit: Int): Pair<StatusCode, MutableList<Training>>{
         val sdf = SimpleDateFormat("MM-yyyy", Locale.ROOT)
         val date = sdf.format(calendar.time)
 
@@ -85,7 +87,7 @@ class ServerTrainingService {
             trainingList = Gson().fromJson(trainingListJson, object: TypeToken<List<ServerTraining>>(){}.type)
         }
 
-        return Pair(code, trainingList)
+        return Pair(code, serverTrainingListToTrainingList(trainingList))
     }
 
     fun createTraining(serverTraining: ServerTraining): Pair<StatusCode, Long>{
@@ -177,6 +179,16 @@ class ServerTrainingService {
         val response = call.execute()
         println(response.code)
         return getResponseCode(response.code)
+    }
+
+    private fun serverTrainingListToTrainingList(serverTrainingList: List<ServerTraining>): MutableList<Training>{
+        val trainingList = mutableListOf<Training>()
+
+        serverTrainingList.forEach {
+            trainingList.add(PlannedTraining(it))
+        }
+
+        return trainingList
     }
 
 }

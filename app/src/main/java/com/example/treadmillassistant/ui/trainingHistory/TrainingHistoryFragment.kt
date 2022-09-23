@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
-import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.FragmentTrainingHistoryBinding
 import com.example.treadmillassistant.databinding.MonthPickerPopupBinding
@@ -90,23 +89,23 @@ class TrainingHistoryFragment : Fragment() {
             popupBinding.dateConfirmButton.setOnClickListener {
                 cal.set(Calendar.YEAR, popupBinding.datePicker.year)
                 cal.set(Calendar.MONTH, popupBinding.datePicker.month)
-                val loaded: MutableLiveData<Boolean> by lazy{
+                val loadedTrainings: MutableLiveData<Boolean> by lazy{
                     MutableLiveData<Boolean>()
                 }
 
                 thread{
                     reloadTrainingList(cal)
-                    loaded.postValue(true)
+                    loadedTrainings.postValue(true)
                 }
 
-                val observer = Observer<Boolean>{
+                val observerLoadedTrainings = Observer<Boolean>{
                     if(it){
                         val itemAdapter = TrainingHistoryItemAdapter(user.trainingSchedule.trainingList)
                         binding.trainingHistoryTrainingList.adapter = itemAdapter
                         binding.trainingHistoryTrainingList.setHasFixedSize(true)
                     }
                 }
-                loaded.observe(viewLifecycleOwner, observer)
+                loadedTrainings.observe(viewLifecycleOwner, observerLoadedTrainings)
 
                 popupWindow.dismiss()
                 updateDateButton(cal)
@@ -126,7 +125,7 @@ class TrainingHistoryFragment : Fragment() {
         user.trainingSchedule.trainingList.clear()
         val allTrainingsPair = ServerTrainingService().getTrainingsForMonth(newCalendar, 0, 10)
         allTrainingsPair.second.forEach {
-            user.trainingSchedule.trainingList.add(PlannedTraining(it))
+            user.trainingSchedule.trainingList.add(it)
         }
     }
 

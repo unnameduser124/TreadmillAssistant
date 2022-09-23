@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,20 +18,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.UserService
-import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.getResponseCode
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {

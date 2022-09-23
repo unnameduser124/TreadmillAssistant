@@ -1,5 +1,6 @@
 package com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService
 
+import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.serialize
 import com.example.treadmillassistant.backend.serializeWithExceptions
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.LoginUserID
@@ -96,7 +97,7 @@ class ServerUserService {
         return getResponseCode(response.code)
     }
 
-    fun getUser(userID: Long): Pair<StatusCode, List<ServerUser>>{
+    fun getUser(userID: Long): Pair<StatusCode, User>{
         val client = OkHttpClient()
         var code: StatusCode = StatusCode.Unknown
         var deserializedUser = mutableListOf<ServerUser>()
@@ -112,8 +113,11 @@ class ServerUserService {
             val userJson = response.body!!.string()
             deserializedUser = Gson().fromJson(userJson, object: TypeToken<List<ServerUser>>(){}.type)
         }
-
-        return Pair(code, deserializedUser)
+        var user = User()
+        if(deserializedUser.isNotEmpty()){
+            user = User(deserializedUser.first(), userID)
+        }
+        return Pair(code, user)
     }
 
     fun updateUserPassword(password: String, userID: Long): StatusCode{

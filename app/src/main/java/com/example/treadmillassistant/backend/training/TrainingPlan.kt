@@ -3,6 +3,7 @@ package com.example.treadmillassistant.backend.training
 import com.example.treadmillassistant.backend.SECONDS_IN_HOUR
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.user
 
 class TrainingPlan(
     var name: String = "default name",
@@ -10,6 +11,8 @@ class TrainingPlan(
     var userID: Long = 0,
     var ID: Long = -1
 ) {
+
+    constructor(serverTrainingPlan: ServerTrainingPlan): this(serverTrainingPlan.Name, mutableListOf(), user.ID, serverTrainingPlan.ID)
 
     fun addTrainingPhaseList(trainingPhaseList: MutableList<TrainingPhase>){
         this.trainingPhaseList = trainingPhaseList
@@ -51,14 +54,6 @@ class TrainingPlan(
             }
 
         return distance
-    }
-
-    fun fromServerTrainingPlan(serverPlan: ServerTrainingPlan, phaseList: MutableList<ServerTrainingPhase>){
-        name = serverPlan.Name
-        ID = serverPlan.ID
-        phaseList.forEach {
-            trainingPhaseList.add(TrainingPhase(it))
-        }
     }
 
     fun copyPhaseList(): MutableList<TrainingPhase>{

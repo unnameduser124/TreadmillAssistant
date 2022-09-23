@@ -37,6 +37,8 @@ class TrainingCalendar(var trainingList: MutableList<Training> = mutableListOf()
         trainingList.sortBy{ it.trainingTime }
     }
 
+
+    //replaced by getTrainingsForMonth from ServerTrainingService
     fun getHistoryTrainingsForMonth(calendar: Calendar): MutableList<Training>{
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -71,6 +73,8 @@ class TrainingCalendar(var trainingList: MutableList<Training> = mutableListOf()
         }
     }
 
+
+    //replaced with getTrainingsForDay from ServerTrainingService
     fun getTrainingsForDate(calendar: Calendar): MutableList<Training> {
         return user.trainingSchedule.trainingList.filter{ it.trainingTime.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)
                 && it.trainingTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)

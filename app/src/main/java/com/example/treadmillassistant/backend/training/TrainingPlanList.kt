@@ -26,19 +26,6 @@ class TrainingPlanList(var trainingPlanList: MutableList<TrainingPlan> = mutable
 
     }
 
-    fun convertFromServer(list: MutableList<ServerTrainingPlan>): MutableList<TrainingPlan>{
-        val trainingPlanList = mutableListOf<TrainingPlan>()
-
-        list.forEach {
-            val serverPlanPair = ServerTrainingPlanService().getTrainingPlan(it.ID)
-            if(serverPlanPair.first == StatusCode.OK){
-
-            }
-        }
-
-        return trainingPlanList
-    }
-
     fun updateTrainingPlan(newTrainingPlan: TrainingPlan, id: Long) {
         trainingPlanList.find{it.ID == id}?.updateTrainingPlan(newTrainingPlan)
     }

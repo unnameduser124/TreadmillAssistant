@@ -12,8 +12,6 @@ import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
-import com.example.treadmillassistant.backend.localDatabase.TrainingPhaseService
-import com.example.treadmillassistant.backend.localDatabase.TrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPhaseService

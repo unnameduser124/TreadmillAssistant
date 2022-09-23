@@ -75,18 +75,27 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
             if(training is GenericTraining){
                 showGenericTrainingItems()
                 updateSteeringDisplays()
-                binding.startTrainingButton.text = getString(R.string.stop)
-                runTimer()
+                updateStatusDisplays()
             }
             else{
                 showTrainingItems()
                 updateSteeringDisplays()
                 updateStatusDisplays()
-                binding.startTrainingButton.text = getString(R.string.stop)
-                runTimer()
             }
+            binding.startTrainingButton.text = getString(R.string.stop)
+            runTimer()
         }
         else if(training.trainingStatus == TrainingStatus.Paused){
+            if(training is GenericTraining){
+                showGenericTrainingItems()
+                updateSteeringDisplays()
+                updateStatusDisplays()
+            }
+            else{
+                showTrainingItems()
+                updateSteeringDisplays()
+                updateStatusDisplays()
+            }
             binding.startTrainingButton.text = getString(R.string.resume)
             binding.finishTrainingButton.isGone = false
         }
@@ -163,12 +172,11 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                         user.trainingSchedule.trainingList.clear()
                         val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
                         allTrainingsPair.second.forEach {
-                            val training = PlannedTraining(it)
-                            val plan = ServerTrainingPlanService().getTrainingPlan(training.trainingPlan.ID)
+                            val plan = ServerTrainingPlanService().getTrainingPlan(it.trainingPlan.ID)
                             if(plan.first == StatusCode.OK){
-                                training.trainingPlan = plan.second
+                                it.trainingPlan = plan.second
                             }
-                            user.trainingSchedule.trainingList.add(training)
+                            user.trainingSchedule.trainingList.add(it)
                         }
                         training.trainingPlan.ID = serverTrainingPlan.ID
                         ServerTrainingService().createTraining(ServerTraining(training))
@@ -184,8 +192,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                             thread{
                                 user.trainingSchedule.trainingList.clear()
                                 val allTrainingsPair = ServerTrainingService().getTrainingsForDay(chosenDay, 0, 10)
-                                allTrainingsPair.second.forEach { serverTraining ->
-                                    val training = PlannedTraining(serverTraining)
+                                allTrainingsPair.second.forEach { training ->
                                     val plan = ServerTrainingPlanService().getTrainingPlan(training.trainingPlan.ID)
                                     if(plan.first == StatusCode.OK){
                                         training.trainingPlan = plan.second
@@ -285,7 +292,7 @@ class TrainingTabPlaceholderFragment: Fragment(), OnStartClickedListener {
                             val observer = androidx.lifecycle.Observer<Boolean>{
                                 if(it){
                                     binding.startTrainingButton.text = getString(R.string.training_finished)
-                                    trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.getTrainingsForDate(chosenDay))
+                                    trainingList.adapter = CalendarTrainingItemAdapter(user.trainingSchedule.trainingList)
                                     newGenericTraining()
                                 }
                             }

@@ -5,6 +5,7 @@ import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.New
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
 import com.google.gson.Gson
@@ -17,7 +18,7 @@ class ServerTrainingPlanService {
 
     fun getTrainingPlan(trainingPlanID: Long): Pair<StatusCode, TrainingPlan> {
         val code: StatusCode
-        val trainingPlan = TrainingPlan()
+        var trainingPlan = TrainingPlan()
 
         val client = OkHttpClient()
 
@@ -64,13 +65,13 @@ class ServerTrainingPlanService {
                 planTrainingList = Gson().fromJson(tempData, object: TypeToken<List<ServerTrainingPhase>>(){}.type)
                 plan.ID = planTrainingList.first().TrainingPlanID
             }
-            trainingPlan.fromServerTrainingPlan(plan, planTrainingList)
+            trainingPlan = toTrainingPlan(plan, planTrainingList)
         }
 
         return Pair(code, trainingPlan)
     }
 
-    fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<ServerTrainingPlan>>{
+    fun getAllTrainingPlans(skip: Int, limit: Int): Pair<StatusCode, MutableList<TrainingPlan>>{
 
         val client = OkHttpClient()
 
@@ -88,8 +89,8 @@ class ServerTrainingPlanService {
             val trainingPlanListJson = response.body!!.string()
             trainingPlanList = Gson().fromJson(trainingPlanListJson, object: TypeToken<List<ServerTrainingPlan>>(){}.type)
         }
-
-        return Pair(code, trainingPlanList.filter { !it.Name.startsWith("genericTrainingPlan") }.toMutableList())
+        val filtered = trainingPlanList.filter { !it.Name.startsWith("genericTrainingPlan") }.toMutableList()
+        return Pair(code, listToTrainingPlan(filtered))
     }
 
     fun createTrainingPlan(serverTrainingPlan: ServerTrainingPlan): Pair<StatusCode, Long>{
@@ -108,8 +109,8 @@ class ServerTrainingPlanService {
         val code = getResponseCode(response.code)
         var id = -1L
         if(code == StatusCode.Created){
-            val json = response.body!!.string()
-            id = Gson().fromJson(json, NewID::class.java).id
+            val responseJson = response.body!!.string()
+            id = Gson().fromJson(responseJson, NewID::class.java).id
         }
 
         return Pair(getResponseCode(response.code), id)
@@ -146,4 +147,23 @@ class ServerTrainingPlanService {
         return getResponseCode(response.code)
     }
 
+    private fun toTrainingPlan(serverPlan: ServerTrainingPlan, phaseList: MutableList<ServerTrainingPhase>): TrainingPlan {
+        val trainingPlan = TrainingPlan()
+        trainingPlan.name = serverPlan.Name
+        trainingPlan.ID = serverPlan.ID
+        phaseList.forEach {
+            trainingPlan.trainingPhaseList.add(TrainingPhase(it))
+        }
+        return trainingPlan
+    }
+
+    private fun listToTrainingPlan(serverPlanList: List<ServerTrainingPlan>): MutableList<TrainingPlan>{
+        val planList = mutableListOf<TrainingPlan>()
+
+        serverPlanList.forEach {
+            planList.add(TrainingPlan(it))
+        }
+
+        return planList
+    }
 }

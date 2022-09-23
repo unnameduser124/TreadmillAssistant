@@ -58,7 +58,7 @@ class RegisterHealthPage: AppCompatActivity() {
                     val responseCode = ServerUserService().createUser(newUser)
                     if(responseCode==StatusCode.Created){
                         val serverUser = ServerUserService().getUser(user.ID)
-                        user = User(serverUser.second[0], user.ID)
+                        user = serverUser.second
                         UserService(this).insertNewUser(user)
                         val intent = Intent(this, MainActivity::class.java)
                         finishAffinity()

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.treadmillassistant.MainActivity
-import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.localDatabase.UserService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerUser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerUserService
@@ -36,7 +35,7 @@ class ChangeHealthData: AppCompatActivity() {
                 if(response == StatusCode.OK){
                     val serverUser = ServerUserService().getUser(user.ID)
                     if(serverUser.first == StatusCode.OK){
-                        user = User(serverUser.second[0], user.ID)
+                        user = serverUser.second
                         UserService(this).updateUser(user, user.ID)
                         finishAffinity()
                         val intent = Intent(this, MainActivity::class.java)
