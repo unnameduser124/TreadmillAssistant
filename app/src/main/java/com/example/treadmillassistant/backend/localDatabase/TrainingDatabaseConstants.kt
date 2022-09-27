@@ -59,6 +59,10 @@ object TrainingDatabaseConstants {
             "${UserTable.WEIGHT} REAL NOT NULL, " +
             "${UserTable.MODIFICATION_FLAG} TEXT NOT NULL)"
 
+    const val SQL_CREATE_NOTIFICATION_TABLE = "CREATE TABLE ${NotificationTable.TABLE_NAME} (" +
+            "${BaseColumns._ID} INTEGER PRIMARY KEY NOT NULL," +
+            "${NotificationTable.notificationTime} TEXT)"
+
     const val SQL_CLEAR_USER_TABLE = "DELETE FROM ${UserTable.TABLE_NAME}"
 
     const val SQL_CLEAR_TREADMILL_TABLE = "DELETE FROM ${TreadmillTable.TABLE_NAME}"
@@ -120,5 +124,10 @@ object TrainingDatabaseConstants {
         const val AGE = "Age"
         const val WEIGHT = "Weight"
         const val MODIFICATION_FLAG = "AccessFlag"
+    }
+
+    object NotificationTable: BaseColumns{
+        const val TABLE_NAME = "Notification"
+        const val notificationTime = "Time"
     }
 }

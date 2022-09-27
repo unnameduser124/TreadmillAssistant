@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             loadUser(this)
             appStart = false
         }
+
         setSupportActionBar(binding.appBarMain.toolbar)
         //navigation drawer setup
         val header = binding.navView.getHeaderView(0)
@@ -87,7 +88,6 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
             }
             else{
-
                 lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({drawerLayout.closeDrawers()}, 50)

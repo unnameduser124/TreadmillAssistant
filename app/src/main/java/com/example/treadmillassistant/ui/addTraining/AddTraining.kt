@@ -1,6 +1,9 @@
 package com.example.treadmillassistant.ui.addTraining
 
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.MainActivity
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.*
+import com.example.treadmillassistant.backend.localDatabase.NotificationService
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTraining
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
@@ -28,10 +32,11 @@ import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.databinding.AddTrainingLayoutBinding
 import com.example.treadmillassistant.databinding.TrainingPlanSelectionPopupBinding
 import com.example.treadmillassistant.databinding.TreadmillSelectionPopupBinding
-import com.example.treadmillassistant.ui.AddTreadmill
+import com.example.treadmillassistant.ui.*
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.example.treadmillassistant.ui.editTraining.WrapContentLinearLayoutManager
 import com.example.treadmillassistant.ui.home.trainingTab.TrainingTabPlaceholderFragment.Companion.training
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -80,6 +85,8 @@ class AddTraining: AppCompatActivity(){
                 TrainingStatus.Upcoming,
                 selectedTrainingPlan
             )
+
+            scheduleNotification(dateCal)
 
             thread{
                 val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
@@ -300,6 +307,42 @@ class AddTraining: AppCompatActivity(){
                 popupBinding.trainingPlanSearchList.adapter = newAdapter
             }
         }
+    }
+
+    private fun scheduleNotification(dateCal: Calendar) {
+        dateCal.set(Calendar.SECOND, 0)
+
+        val notificationCal = Calendar.getInstance()
+        notificationCal.set(
+            dateCal.get(Calendar.YEAR),
+            dateCal.get(Calendar.MONTH),
+            dateCal.get(Calendar.DAY_OF_MONTH),
+            dateCal.get(Calendar.HOUR_OF_DAY),
+            dateCal.get(Calendar.MINUTE)-5,
+            0
+        )
+        val notificationIntent = Intent(applicationContext, ScheduledTrainingNotification::class.java)
+        val sdfTime = SimpleDateFormat("HH:mm", Locale.ROOT)
+        val trainingTime = sdfTime.format(dateCal.time)
+        val newNotificationID = NotificationService(this).insertNewNotification(notificationCal.time.toString())
+        notificationIntent.putExtra(trainingNotificationTime, trainingTime.toString())
+        notificationIntent.putExtra(notificationID, newNotificationID.toInt())
+
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            newNotificationID.toInt(),
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = notificationCal.timeInMillis
+        alarmManager.setAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
     }
 
     private fun loadDefaultTrainingPlanName() {
