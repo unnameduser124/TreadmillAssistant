@@ -61,7 +61,8 @@ object TrainingDatabaseConstants {
 
     const val SQL_CREATE_NOTIFICATION_TABLE = "CREATE TABLE ${NotificationTable.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY NOT NULL," +
-            "${NotificationTable.notificationTime} TEXT)"
+            "${NotificationTable.TRAINING_ID} INTEGER," +
+            "${NotificationTable.NOTIFICATION_TIME} TEXT)"
 
     const val SQL_CLEAR_USER_TABLE = "DELETE FROM ${UserTable.TABLE_NAME}"
 
@@ -127,7 +128,8 @@ object TrainingDatabaseConstants {
     }
 
     object NotificationTable: BaseColumns{
+        const val NOTIFICATION_TIME = "NotificationTime"
         const val TABLE_NAME = "Notification"
-        const val notificationTime = "Time"
+        const val TRAINING_ID = "TrainingID"
     }
 }

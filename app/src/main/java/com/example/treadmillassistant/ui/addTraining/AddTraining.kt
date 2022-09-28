@@ -56,7 +56,7 @@ class AddTraining: AppCompatActivity(){
         setUpTimePicker(binding.trainingTime, chosenDate)
         val today = Calendar.getInstance()
 
-        binding.trainingDate.minDate = today.timeInMillis
+        binding.trainingDate.maxDate = today.timeInMillis
 
         loadDefaultTrainingPlanName()
 
@@ -86,11 +86,11 @@ class AddTraining: AppCompatActivity(){
                 selectedTrainingPlan
             )
 
-            scheduleNotification(dateCal)
 
             thread{
                 val responseCode = ServerTrainingService().createTraining(ServerTraining(newTraining))
                 if(responseCode.first == StatusCode.Created){
+                    scheduleNotification(dateCal, responseCode.second)
                     val intent = Intent(this, MainActivity::class.java)
                     finishAffinity()
                     startActivity(intent)
@@ -309,7 +309,7 @@ class AddTraining: AppCompatActivity(){
         }
     }
 
-    private fun scheduleNotification(dateCal: Calendar) {
+    private fun scheduleNotification(dateCal: Calendar, trainingID: Long) {
         dateCal.set(Calendar.SECOND, 0)
 
         val notificationCal = Calendar.getInstance()
@@ -321,10 +321,13 @@ class AddTraining: AppCompatActivity(){
             dateCal.get(Calendar.MINUTE)-5,
             0
         )
+        if(dateCal.timeInMillis < Calendar.getInstance().timeInMillis){
+            return
+        }
         val notificationIntent = Intent(applicationContext, ScheduledTrainingNotification::class.java)
         val sdfTime = SimpleDateFormat("HH:mm", Locale.ROOT)
         val trainingTime = sdfTime.format(dateCal.time)
-        val newNotificationID = NotificationService(this).insertNewNotification(notificationCal.time.toString())
+        val newNotificationID = NotificationService(this).insertNewNotification(trainingID)
         notificationIntent.putExtra(trainingNotificationTime, trainingTime.toString())
         notificationIntent.putExtra(notificationID, newNotificationID.toInt())
 
