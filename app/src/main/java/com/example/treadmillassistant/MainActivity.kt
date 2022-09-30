@@ -1,5 +1,6 @@
 package com.example.treadmillassistant
 
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -50,6 +51,12 @@ class MainActivity : AppCompatActivity() {
             }
             loadUser(this)
             appStart = false
+        }
+        //cancel notification if it started the activity
+        val notificationID = intent.getIntExtra("notificationID", -1)
+        if(notificationID!=-1){
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.cancel(notificationID)
         }
 
         setSupportActionBar(binding.appBarMain.toolbar)
