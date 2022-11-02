@@ -12,6 +12,7 @@ import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.Ser
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
 import com.example.treadmillassistant.backend.training.PlannedTraining
 import com.example.treadmillassistant.backend.training.Training
+import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.ui.ScheduledTrainingNotification
 import com.example.treadmillassistant.ui.notificationID
@@ -25,6 +26,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
 class ServerTrainingService {
 
@@ -92,7 +94,7 @@ class ServerTrainingService {
         val client = OkHttpClient()
 
         val request = Request.Builder()
-            .url("""$BASE_URL/get_all_user_trainings/${user.ID}/%$date?skip=$skip&limit=$limit""")
+            .url("""$BASE_URL/get_all_month_trainings/${user.ID}/$date""")
             .build()
         val code: StatusCode
         var trainingList = mutableListOf<ServerTraining>()
@@ -105,7 +107,32 @@ class ServerTrainingService {
             trainingList = Gson().fromJson(trainingListJson, object: TypeToken<List<ServerTraining>>(){}.type)
         }
 
-        return Pair(code, serverTrainingListToTrainingList(trainingList))
+        val returnList = serverTrainingListToTrainingList(trainingList)
+
+        return Pair(code, returnList)
+    }
+
+    fun getAllTrainings(): Pair<StatusCode, MutableList<Training>>{
+
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("""$BASE_URL/get_user_finished_trainings/${user.ID}""")
+            .build()
+        val code: StatusCode
+        var trainingList = mutableListOf<ServerTraining>()
+
+        val call = client.newCall(request)
+        val response = call.execute()
+        code = getResponseCode(response.code)
+        if(code == StatusCode.OK){
+            val trainingListJson = response.body!!.string()
+            trainingList = Gson().fromJson(trainingListJson, object: TypeToken<List<ServerTraining>>(){}.type)
+        }
+
+        val returnList = serverTrainingListToTrainingList(trainingList)
+
+        return Pair(code, returnList)
     }
 
     fun createTraining(serverTraining: ServerTraining): Pair<StatusCode, Long>{
@@ -204,6 +231,10 @@ class ServerTrainingService {
 
         serverTrainingList.forEach {
             trainingList.add(PlannedTraining(it))
+            if(it.TrainingPlanID!=-1L){
+                val plan = ServerTrainingPlanService().getTrainingPlan(it.TrainingPlanID)
+                trainingList.last().trainingPlan = plan.second
+            }
         }
 
         return trainingList

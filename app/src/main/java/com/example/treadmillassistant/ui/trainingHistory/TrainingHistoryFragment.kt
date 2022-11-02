@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.treadmillassistant.R
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
+import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.FragmentTrainingHistoryBinding
 import com.example.treadmillassistant.databinding.MonthPickerPopupBinding
@@ -127,6 +128,7 @@ class TrainingHistoryFragment : Fragment() {
         allTrainingsPair.second.forEach {
             user.trainingSchedule.trainingList.add(it)
         }
+        user.trainingSchedule.trainingList = user.trainingSchedule.trainingList.filter{it.trainingStatus == TrainingStatus.Finished}.toMutableList()
     }
 
 

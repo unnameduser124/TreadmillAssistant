@@ -1,7 +1,6 @@
 package com.example.treadmillassistant.backend.training
 
-import com.example.treadmillassistant.backend.setUpDayCalendarCopy
-import com.example.treadmillassistant.backend.user
+import com.example.treadmillassistant.backend.*
 import java.util.*
 import kotlin.NoSuchElementException
 
@@ -80,4 +79,56 @@ class TrainingCalendar(var trainingList: MutableList<Training> = mutableListOf()
                 && it.trainingTime.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
                 && it.trainingTime.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)}.toMutableList()
     }
+
+    fun getTotalDistance(): Double{
+        var totalDistance = 0.0
+        trainingList.forEach {
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalDistance+=it.getTotalDistance()
+            }
+        }
+        return round(totalDistance, DISTANCE_ROUND_MULTIPLIER)
+    }
+
+    fun getTotalDuration(): Double{
+        var totalDuration = 0
+        trainingList.forEach {
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalDuration+=it.getTotalDuration()
+            }
+        }
+        return secondsToHours(totalDuration.toDouble())
+    }
+
+    fun getTotalCalories(): Int{
+        var totalCalories = 0
+        trainingList.forEach {
+            if(it.trainingStatus == TrainingStatus.Finished){
+                totalCalories+= it.calculateCalories()
+            }
+        }
+        return totalCalories
+    }
+
+    fun getLongestDistance(): Double {
+        var longestDistance = 0.0
+
+        trainingList.forEach {
+            if(it.getTotalDistance()>longestDistance && it.trainingStatus == TrainingStatus.Finished){
+                longestDistance = it.getTotalDistance()
+            }
+        }
+        return round(longestDistance, DISTANCE_ROUND_MULTIPLIER)
+    }
+
+    fun getLongestDuration(): Double{
+        var longestDuration = 0
+        trainingList.forEach {
+            if(it.getTotalDuration()>longestDuration && it.trainingStatus == TrainingStatus.Finished){
+                longestDuration = it.getTotalDuration()
+            }
+        }
+        return secondsToHours(longestDuration.toDouble())
+    }
+
 }

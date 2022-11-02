@@ -41,7 +41,7 @@ object TrainingDatabaseConstants {
             "${TreadmillTable.TREADMILL_NAME} TEXT NOT NULL, " +
             "${TreadmillTable.MAX_SPEED} REAL NOT NULL, " +
             "${TreadmillTable.MIN_SPEED} REAL NOT NULL, " +
-            "${TreadmillTable.MAX_TILT} REAL NOT NULL, " +
+            "${TreadmillTable.MAX_TILT} REAL NOT NULL, "+
             "${TreadmillTable.MIN_TILT} REAL NOT NULL, " +
             "${TreadmillTable.USER_ID} INTEGER NOT NULL, " +
             "${TreadmillTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
