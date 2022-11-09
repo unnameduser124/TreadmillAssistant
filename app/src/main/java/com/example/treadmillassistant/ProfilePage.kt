@@ -10,10 +10,8 @@ import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseServi
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
 import com.example.treadmillassistant.backend.tempUser
 import com.example.treadmillassistant.backend.training.TrainingCalendar
-import com.example.treadmillassistant.backend.training.TrainingStatus
 import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ProfilePageLayoutBinding
-import com.example.treadmillassistant.ui.trainingHistory.TrainingHistoryItemAdapter
 import kotlin.concurrent.thread
 
 class ProfilePage: AppCompatActivity() {
@@ -37,18 +35,19 @@ class ProfilePage: AppCompatActivity() {
             val allTrainingsPair = ServerTrainingService().getAllTrainings()
             if(allTrainingsPair.first== StatusCode.OK){
                 trainingCal.trainingList = allTrainingsPair.second
+
                 trainingsLoaded.postValue(true)
             }
         }
 
         val observer = Observer<Boolean>{
             if(it){
-                binding.totalCaloriesTrainingValue.text = String.format(getString(R.string.calories), user.getTotalCalories())
-                binding.totalDistanceValue.text = String.format(getString(R.string.distance), user.getTotalDistance())
-                binding.totalDurationValue.text = String.format(getString(R.string.duration_hours), user.getTotalDuration())
-                binding.totalTrainingNumberValue.text = "${user.trainingSchedule.trainingList.filter{it.trainingStatus == TrainingStatus.Finished}.size}"
-                binding.longestDistanceTrainingValue.text = String.format(getString(R.string.distance), user.getLongestDistance())
-                binding.longestDurationTrainingValue.text = String.format(getString(R.string.duration_hours), user.getLongestDuration())
+                binding.totalCaloriesTrainingValue.text = String.format(getString(R.string.calories), trainingCal.getTotalCalories())
+                binding.totalDistanceValue.text = String.format(getString(R.string.distance), trainingCal.getTotalDistance())
+                binding.totalDurationValue.text = String.format(getString(R.string.duration_hours), trainingCal.getTotalDuration())
+                binding.totalTrainingNumberValue.text = "${trainingCal.trainingList.size}"
+                binding.longestDistanceTrainingValue.text = String.format(getString(R.string.distance), trainingCal.getLongestDistance())
+                binding.longestDurationTrainingValue.text = String.format(getString(R.string.duration_hours), trainingCal.getLongestDuration())
                 binding.fullNameTextView.text = String.format(getString(R.string.full_name), user.firstName, user.lastName)
             }
         }
