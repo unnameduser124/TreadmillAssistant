@@ -2,11 +2,15 @@ package com.example.treadmillassistant.backend.localDatabase
 
 import android.content.ContentValues
 import android.content.Context
+import android.os.Build.ID
 import android.provider.BaseColumns
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.MODIFICATION_FLAG
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.PLAN_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.TABLE_NAME
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.TrainingPlanTable.USER_ID
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
+import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
+import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.example.treadmillassistant.backend.training.TrainingPlan
 import com.example.treadmillassistant.backend.user
 

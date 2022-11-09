@@ -116,7 +116,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val treadmillID = getLong(getColumnIndexOrThrow(TREADMILL_ID))
                 val trainingPlanID = getLong(getColumnIndexOrThrow(TRAINING_PLAN_ID))
 
-                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm")
+                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ROOT)
                 val date = simpleDateFormat.parse("$trainingDate $trainingTime")
 
                 val calendar = Calendar.getInstance()
@@ -205,15 +205,13 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val treadmillID = getLong(getColumnIndexOrThrow(TREADMILL_ID))
                 val trainingPlanID = getLong(getColumnIndexOrThrow(TRAINING_PLAN_ID))
 
-                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm")
-                val date = simpleDateFormat.parse("$trainingDate $trainingTime")
+                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ROOT)
+                val dateFormatted = simpleDateFormat.parse("$trainingDate $trainingTime")
 
                 val calendar = Calendar.getInstance()
-                calendar.time = date
+                calendar.time = dateFormatted
 
-                var trainingStatus: TrainingStatus
-
-                trainingStatus = if(status=="Upcoming"){
+                val trainingStatus: TrainingStatus = if(status=="Upcoming"){
                     TrainingStatus.Upcoming
                 } else if(status=="Finished"){
                     TrainingStatus.Finished
@@ -283,7 +281,7 @@ class TrainingService(val context: Context): TrainingDatabaseService(context){
                 val treadmillID = getLong(getColumnIndexOrThrow(TREADMILL_ID))
                 val trainingPlanID = getLong(getColumnIndexOrThrow(TRAINING_PLAN_ID))
 
-                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm")
+                val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ROOT)
                 val date = simpleDateFormat.parse("$trainingDate $trainingTime")
 
                 val calendar = Calendar.getInstance()

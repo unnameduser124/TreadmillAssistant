@@ -52,7 +52,7 @@ class ServerHandlingUnitTests {
         Assert.assertEquals(training.treadmill.ID, serverTraining.Treadmill)
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ROOT)
         val date = simpleDateFormat.parse("${serverTraining.Date} ${serverTraining.Time}")
-        Assert.assertEquals(simpleDateFormat.format(training.trainingTime.time), simpleDateFormat.format(date))
+        Assert.assertEquals(simpleDateFormat.format(training.trainingTime.time), simpleDateFormat.format(date!!))
     }
 
     @Test fun convertServerTrainingPhaseToTrainingPhase(){

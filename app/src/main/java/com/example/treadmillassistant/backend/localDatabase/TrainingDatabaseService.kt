@@ -8,6 +8,7 @@ import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseCons
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CLEAR_TRAINING_TABLE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CLEAR_TREADMILL_TABLE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CLEAR_USER_TABLE
+import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_NOTIFICATION_TABLE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PHASE_TABLE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_PLAN_TABLE
 import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseConstants.SQL_CREATE_TRAINING_TABLE
@@ -22,6 +23,7 @@ open class TrainingDatabaseService(context: Context) : SQLiteOpenHelper(context,
         db.execSQL(SQL_CREATE_TRAINING_PLAN_TABLE)
         db.execSQL(SQL_CREATE_TREADMILL_TABLE)
         db.execSQL(SQL_CREATE_TRAINING_TABLE)
+        db.execSQL(SQL_CREATE_NOTIFICATION_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

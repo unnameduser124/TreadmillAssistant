@@ -6,7 +6,7 @@ import com.example.treadmillassistant.backend.training.TrainingPlanList
 import com.example.treadmillassistant.backend.training.TrainingStatus
 
 class User(
-    var email: String,
+    var email: String = "",
     var password: String = "",
     var firstName: String = "",
     var lastName: String = "",

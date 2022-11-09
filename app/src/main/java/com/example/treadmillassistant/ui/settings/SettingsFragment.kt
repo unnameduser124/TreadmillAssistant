@@ -11,11 +11,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.treadmillassistant.backend.localDatabase.TrainingDatabaseService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingService
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerUserService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
-import com.example.treadmillassistant.backend.user
 import com.example.treadmillassistant.databinding.ClearTrainingHistoryConfirmationPopupBinding
 import com.example.treadmillassistant.databinding.FragmentSettingsBinding
 import kotlin.concurrent.thread
@@ -66,16 +63,15 @@ class SettingsFragment : Fragment() {
                 popupWindow.dismiss()
             }
             popupBinding.confirmDataDeletionButton.setOnClickListener {
-                thread{
+                thread {
                     val clearData = ServerTrainingService().clearUserTrainingHistory()
-                    if(clearData == StatusCode.OK){
+                    if (clearData == StatusCode.OK) {
                         Looper.prepare()
                         Toast.makeText(context, "Data deleted!", Toast.LENGTH_SHORT).show()
                         binding.clearUserDataButton.post {
                             popupWindow.dismiss()
                         }
-                    }
-                    else{
+                    } else {
                         Looper.prepare()
                         Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
                         binding.clearUserDataButton.post {

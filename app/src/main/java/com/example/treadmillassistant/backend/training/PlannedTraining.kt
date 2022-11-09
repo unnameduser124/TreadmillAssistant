@@ -83,7 +83,6 @@ class PlannedTraining(
     override fun finishTraining(context: Context){
         super.finishTraining(context)
         trainingPlan.trainingPhaseList.last().isFinished = true
-        TrainingService(context).updateTraining(this, ID)
     }
 
     override fun pauseTraining(){
@@ -103,28 +102,13 @@ class PlannedTraining(
     }
 
     override fun getTotalDistance(): Double{
-        var distance = 0.0
-
-        if(trainingStatus!= TrainingStatus.InProgress && trainingStatus != TrainingStatus.Paused){
-            trainingPlan.trainingPhaseList.forEach {
-                distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
-            }
-        }
-        else{
-            trainingPlan.trainingPhaseList.filter{ it.isFinished }.forEach {
-                distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
-            }
-        }
+        val distance = trainingPlan.getDistance()
 
         return distance + partialPhaseCompletionDistance
     }
 
-    override fun getTotalDuration(): Int{
-        var duration = 0
-        trainingPlan.trainingPhaseList.forEach {
-            duration += it.duration
-        }
-        return duration
+    override fun getTotalDuration(): Int {
+        return trainingPlan.getDuration()
     }
 
     override fun getCurrentMoment(): Int{
@@ -134,7 +118,10 @@ class PlannedTraining(
                 duration += it.duration
             }
         }
-        val timeInSeconds = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis, lastPhaseStart)
+        var timeInSeconds = 0
+        if(trainingStatus == TrainingStatus.InProgress){
+            timeInSeconds = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis, lastPhaseStart)
+        }
         return duration + timeInSeconds + phasePartialCompletion
     }
 
@@ -151,15 +138,5 @@ class PlannedTraining(
 
     }
 
-    override fun addNewPhase(){
-        val lastPhaseTimeInSeconds = (millisecondsToSeconds(Calendar.getInstance().timeInMillis) - millisecondsToSeconds(lastPhaseStart)).toInt()
-        val phase = TrainingPhase(lastPhaseTimeInSeconds,
-            treadmill.getSpeed(),
-            treadmill.getTilt(),
-            trainingPlan.ID,
-            trainingPlan.trainingPhaseList.size,
-            true)
-        trainingPlan.addNewPhase(phase)
-        lastPhaseStart = Calendar.getInstance().timeInMillis
-    }
+    override fun addNewPhase(){ }
 }

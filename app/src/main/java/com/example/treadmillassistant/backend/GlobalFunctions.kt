@@ -97,6 +97,7 @@ fun serializeWithExceptions(item: Any, exceptions: List<String>): String{
     return gsonBuilder.toJson(item)
 }
 
+//replaced with getAllTrainingPlans from ServerTrainingPlanService
 fun getTrainingPlansWithPagination(start: Int, offset: Int, list: MutableList<TrainingPlan>): MutableList<TrainingPlan>{
     return if(start + offset < list.size){
         list.filter { list.indexOf(it) >= start && list.indexOf(it) < start + offset }.toMutableList()

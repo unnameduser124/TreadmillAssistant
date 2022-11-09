@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.treadmillassistant.backend.User
 import com.example.treadmillassistant.backend.localDatabase.UserService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerUserService
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
@@ -29,7 +28,7 @@ class LoginPage: AppCompatActivity() {
                 if(responseCode == StatusCode.OK){
                     val serverUser = ServerUserService().getUser(user.ID)
                     if(serverUser.first == StatusCode.OK){
-                        user = User(serverUser.second[0], user.ID)
+                        user = serverUser.second
                         UserService(this).insertNewUser(user)
                         finishAffinity()
                         val intent = Intent(this, MainActivity::class.java)

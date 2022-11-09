@@ -34,47 +34,16 @@ class GenericTraining(
         user.trainingSchedule.addNewTraining(this)
         trainingPlan.trainingPhaseList.last().isFinished = true
         val newTrainingPlan = TrainingPlan("GenericTrainingPlan", trainingPlan.trainingPhaseList, userID = user.ID)
-        newTrainingPlan.ID = TrainingPlanService(context).insertNewTrainingPlan(newTrainingPlan)
-        val tpService = TrainingPhaseService(context)
-        newTrainingPlan.trainingPhaseList.forEach {
-            it.trainingPlanID = newTrainingPlan.ID
-            it.ID = tpService.insertNewTrainingPhase(it)
-        }
         this.trainingPlan = newTrainingPlan
-        this.ID = TrainingService(context).insertNewTraining(this)
 
     }
 
     override fun getTotalDistance(): Double {
-        var distance = 0.0
-
-        if(trainingStatus != TrainingStatus.Finished || trainingStatus == TrainingStatus.Upcoming || trainingStatus == TrainingStatus.Abandoned){
-            trainingPlan.trainingPhaseList.forEach {
-                distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
-            }
-        }
-        else{
-            trainingPlan.trainingPhaseList.filter{ it.isFinished }.forEach {
-                distance += (it.duration.toDouble()/ SECONDS_IN_HOUR.toDouble())*it.speed
-            }
-        }
-
-        return distance
+        return trainingPlan.getDistance()
     }
 
     override fun getTotalDuration(): Int {
-        var duration = 0
-        if(trainingStatus != TrainingStatus.Finished || trainingStatus == TrainingStatus.Upcoming || trainingStatus == TrainingStatus.Abandoned){
-            trainingPlan.trainingPhaseList.forEach {
-                duration += it.duration
-            }
-        }
-        else{
-            trainingPlan.trainingPhaseList.filter{ it.isFinished }.forEach {
-                duration += it.duration
-            }
-        }
-        return duration
+        return trainingPlan.getDuration()
     }
 
     override fun getCurrentMoment(): Int{
@@ -84,7 +53,10 @@ class GenericTraining(
                 duration += it.duration
             }
         }
-        val timeInSeconds = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis, lastPhaseStart)
+        var timeInSeconds = 0
+        if(trainingStatus == TrainingStatus.InProgress){
+            timeInSeconds = durationBetweenMillisToSeconds(Calendar.getInstance().timeInMillis, lastPhaseStart)
+        }
         return duration + timeInSeconds
     }
 

@@ -4,6 +4,7 @@ import com.example.treadmillassistant.backend.serializeWithExceptions
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.NewID
 import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPhase
 import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
+import com.example.treadmillassistant.backend.training.TrainingPhase
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,7 +12,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class ServerTrainingPhaseService {
 
-    fun getTrainingPhase(trainingPhaseID: Long): Pair<StatusCode, ServerTrainingPhase>{
+    fun getTrainingPhase(trainingPhaseID: Long): Pair<StatusCode, TrainingPhase>{
         val serverTrainingPhase: ServerTrainingPhase
         val client = OkHttpClient()
 
@@ -22,7 +23,7 @@ class ServerTrainingPhaseService {
         val call = client.newCall(request)
         val response = call.execute()
         serverTrainingPhase = Gson().fromJson(response.body.toString(), ServerTrainingPhase::class.java)
-        return Pair(getResponseCode(response.code), serverTrainingPhase)
+        return Pair(getResponseCode(response.code), TrainingPhase(serverTrainingPhase))
     }
 
     fun createTrainingPhase(serverTrainingPhase: ServerTrainingPhase): Pair<StatusCode, Long>{

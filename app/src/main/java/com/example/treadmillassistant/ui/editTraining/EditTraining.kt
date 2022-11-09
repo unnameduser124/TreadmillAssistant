@@ -50,7 +50,7 @@ class EditTraining: AppCompatActivity() {
         thread{
             val fromServer = ServerTrainingService().getTrainingByID(itemID)
             if(fromServer.first == StatusCode.OK){
-                training = PlannedTraining(fromServer.second)
+                training = fromServer.second
                 loadTraining.postValue(true)
             }
             else{

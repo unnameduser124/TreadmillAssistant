@@ -1,5 +1,6 @@
 package com.example.treadmillassistant
 
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,7 +10,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,20 +19,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.treadmillassistant.backend.*
 import com.example.treadmillassistant.backend.localDatabase.UserService
-import com.example.treadmillassistant.backend.serverDatabase.databaseClasses.ServerTrainingPlan
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerConstants.BASE_URL
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.ServerTrainingPlanService
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.StatusCode
-import com.example.treadmillassistant.backend.serverDatabase.serverDatabaseService.getResponseCode
 import com.example.treadmillassistant.databinding.ActivityMainBinding
 import com.example.treadmillassistant.ui.addTraining.AddTraining
 import com.example.treadmillassistant.ui.addTrainingPlan.AddTrainingPlan
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
@@ -62,6 +52,13 @@ class MainActivity : AppCompatActivity() {
             loadUser(this)
             appStart = false
         }
+        //cancel notification if it started the activity
+        val notificationID = intent.getIntExtra("notificationID", -1)
+        if(notificationID!=-1){
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.cancel(notificationID)
+        }
+
         setSupportActionBar(binding.appBarMain.toolbar)
         //navigation drawer setup
         val header = binding.navView.getHeaderView(0)
@@ -98,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.toolbar.menu.setGroupVisible(0, false)
             }
             else{
-
                 lastNavViewPosition = SETTINGS_TAB_NAV_VIEW_POSITION
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({drawerLayout.closeDrawers()}, 50)

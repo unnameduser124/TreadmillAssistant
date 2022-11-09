@@ -41,7 +41,7 @@ object TrainingDatabaseConstants {
             "${TreadmillTable.TREADMILL_NAME} TEXT NOT NULL, " +
             "${TreadmillTable.MAX_SPEED} REAL NOT NULL, " +
             "${TreadmillTable.MIN_SPEED} REAL NOT NULL, " +
-            "${TreadmillTable.MAX_TILT} REAL NOT NULL, " +
+            "${TreadmillTable.MAX_TILT} REAL NOT NULL, "+
             "${TreadmillTable.MIN_TILT} REAL NOT NULL, " +
             "${TreadmillTable.USER_ID} INTEGER NOT NULL, " +
             "${TreadmillTable.MODIFICATION_FLAG} TEXT NOT NULL, " +
@@ -58,6 +58,11 @@ object TrainingDatabaseConstants {
             "${UserTable.AGE} INTEGER NOT NULL, " +
             "${UserTable.WEIGHT} REAL NOT NULL, " +
             "${UserTable.MODIFICATION_FLAG} TEXT NOT NULL)"
+
+    const val SQL_CREATE_NOTIFICATION_TABLE = "CREATE TABLE ${NotificationTable.TABLE_NAME} (" +
+            "${BaseColumns._ID} INTEGER PRIMARY KEY NOT NULL," +
+            "${NotificationTable.TRAINING_ID} INTEGER," +
+            "${NotificationTable.NOTIFICATION_TIME} TEXT)"
 
     const val SQL_CLEAR_USER_TABLE = "DELETE FROM ${UserTable.TABLE_NAME}"
 
@@ -120,5 +125,11 @@ object TrainingDatabaseConstants {
         const val AGE = "Age"
         const val WEIGHT = "Weight"
         const val MODIFICATION_FLAG = "AccessFlag"
+    }
+
+    object NotificationTable: BaseColumns{
+        const val NOTIFICATION_TIME = "NotificationTime"
+        const val TABLE_NAME = "Notification"
+        const val TRAINING_ID = "TrainingID"
     }
 }
